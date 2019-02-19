@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   const _root = this;
@@ -44,14 +42,11 @@
   sigma.utils.extend = function() {
     let i;
 
-      
-let k;
+    let k;
 
-      
-const res = {};
+    const res = {};
 
-      
-const l = arguments.length;
+    const l = arguments.length;
 
     for (i = l - 1; i >= 0; i--)
       for (k in arguments[i]) res[k] = arguments[i][k];
@@ -134,14 +129,11 @@ const l = arguments.length;
 
     const original = val;
 
-      
-let r = 0;
+    let r = 0;
 
-      
-let g = 0;
+    let g = 0;
 
-      
-let b = 0;
+    let b = 0;
 
     if (val[0] === "#") {
       val = val.slice(1);
@@ -196,17 +188,13 @@ let b = 0;
   sigma.utils.zoomTo = function(camera, x, y, ratio, animation) {
     const settings = camera.settings;
 
-      
-let count;
+    let count;
 
-      
-let newRatio;
+    let newRatio;
 
-      
-let animationSettings;
+    let animationSettings;
 
-      
-let coordinates;
+    let coordinates;
 
     // Create the newRatio dealing with min / max:
     newRatio = Math.max(
@@ -308,14 +296,11 @@ let coordinates;
     // Blending functions:
     const B0_t = Math.pow(1 - t, 3);
 
-      
-const B1_t = 3 * t * Math.pow(1 - t, 2);
+    const B1_t = 3 * t * Math.pow(1 - t, 2);
 
-      
-const B2_t = 3 * Math.pow(t, 2) * (1 - t);
+    const B2_t = 3 * Math.pow(t, 2) * (1 - t);
 
-      
-const B3_t = Math.pow(t, 3);
+    const B3_t = Math.pow(t, 3);
 
     return {
       x: B0_t * x1 + B1_t * cx + B2_t * dx + B3_t * x2,
@@ -373,7 +358,15 @@ const B3_t = Math.pow(t, 3);
    */
   sigma.utils.getCircleIntersection = function(x0, y0, r0, x1, y1, r1) {
     // http://stackoverflow.com/a/12219802
-    let a; let dx; let dy; let d; let h; let rx; let ry; let x2; let y2;
+    let a;
+    let dx;
+    let dy;
+    let d;
+    let h;
+    let rx;
+    let ry;
+    let x2;
+    let y2;
 
     // dx and dy are the vertical and horizontal distances between the circle
     // centers:
@@ -437,11 +430,9 @@ const B3_t = Math.pow(t, 3);
     // http://stackoverflow.com/a/328122
     const crossProduct = Math.abs((y - y1) * (x2 - x1) - (x - x1) * (y2 - y1));
 
-      
-const d = sigma.utils.getDistance(x1, y1, x2, y2);
+    const d = sigma.utils.getDistance(x1, y1, x2, y2);
 
-      
-const nCrossProduct = crossProduct / d; // normalized cross product
+    const nCrossProduct = crossProduct / d; // normalized cross product
 
     return (
       nCrossProduct < epsilon &&
@@ -487,29 +478,21 @@ const nCrossProduct = crossProduct / d; // normalized cross product
 
     const dP1 = sigma.utils.getDistance(x, y, x1, y1);
 
-      
-const dP2 = sigma.utils.getDistance(x, y, x2, y2);
+    const dP2 = sigma.utils.getDistance(x, y, x2, y2);
 
-      
-let t = 0.5;
+    let t = 0.5;
 
-      
-let r = dP1 < dP2 ? -0.01 : 0.01;
+    let r = dP1 < dP2 ? -0.01 : 0.01;
 
-      
-const rThreshold = 0.001;
+    const rThreshold = 0.001;
 
-      
-let i = 100;
+    let i = 100;
 
-      
-let pt = sigma.utils.getPointOnQuadraticCurve(t, x1, y1, x2, y2, cpx, cpy);
+    let pt = sigma.utils.getPointOnQuadraticCurve(t, x1, y1, x2, y2, cpx, cpy);
 
-      
-let dt = sigma.utils.getDistance(x, y, pt.x, pt.y);
+    let dt = sigma.utils.getDistance(x, y, pt.x, pt.y);
 
-      
-let old_dt;
+    let old_dt;
 
     // This algorithm minimizes the distance from the point to the curve. It
     // find the optimal t value where t=0 is the start point and t=1 is the end
@@ -584,39 +567,31 @@ let old_dt;
 
     const dP1 = sigma.utils.getDistance(x, y, x1, y1);
 
-      
-const dP2 = sigma.utils.getDistance(x, y, x2, y2);
+    const dP2 = sigma.utils.getDistance(x, y, x2, y2);
 
-      
-let t = 0.5;
+    let t = 0.5;
 
-      
-let r = dP1 < dP2 ? -0.01 : 0.01;
+    let r = dP1 < dP2 ? -0.01 : 0.01;
 
-      
-const rThreshold = 0.001;
+    const rThreshold = 0.001;
 
-      
-let i = 100;
+    let i = 100;
 
-      
-let pt = sigma.utils.getPointOnBezierCurve(
-        t,
-        x1,
-        y1,
-        x2,
-        y2,
-        cpx1,
-        cpy1,
-        cpx2,
-        cpy2
-      );
+    let pt = sigma.utils.getPointOnBezierCurve(
+      t,
+      x1,
+      y1,
+      x2,
+      y2,
+      cpx1,
+      cpy1,
+      cpx2,
+      cpy2
+    );
 
-      
-let dt = sigma.utils.getDistance(x, y, pt.x, pt.y);
+    let dt = sigma.utils.getDistance(x, y, pt.x, pt.y);
 
-      
-let old_dt;
+    let old_dt;
 
     // This algorithm minimizes the distance from the point to the curve. It
     // find the optimal t value where t=0 is the start point and t=1 is the end
@@ -816,8 +791,7 @@ let old_dt;
   sigma.utils.getOffset = function(dom) {
     let left = 0;
 
-      
-let top = 0;
+    let top = 0;
 
     while (dom) {
       top += parseInt(dom.offsetTop);
@@ -841,11 +815,9 @@ let top = 0;
   sigma.utils.doubleClick = function(target, type, callback) {
     let clicks = 0;
 
-      
-const self = this;
+    const self = this;
 
-      
-let handlers;
+    let handlers;
 
     target._doubleClickHandler = target._doubleClickHandler || {};
     target._doubleClickHandler[type] = target._doubleClickHandler[type] || [];
@@ -857,7 +829,8 @@ let handlers;
       if (clicks === 2) {
         clicks = 0;
         return callback(e);
-      } if (clicks === 1) {
+      }
+      if (clicks === 1) {
         setTimeout(function() {
           clicks = 0;
         }, sigma.settings.doubleClickTimeout);
@@ -876,8 +849,7 @@ let handlers;
   sigma.utils.unbindDoubleClick = function(target, type) {
     let handler;
 
-      
-const handlers = (target._doubleClickHandler || {})[type] || [];
+    const handlers = (target._doubleClickHandler || {})[type] || [];
 
     while ((handler = handlers.pop())) {
       target.removeEventListener(type, handler);
@@ -937,8 +909,7 @@ const handlers = (target._doubleClickHandler || {})[type] || [];
   sigma.utils.loadShader = function(gl, shaderSource, shaderType, error) {
     let compiled;
 
-      
-const shader = gl.createShader(shaderType);
+    const shader = gl.createShader(shaderType);
 
     // Load the shader source
     gl.shaderSource(shader, shaderSource);
@@ -953,10 +924,7 @@ const shader = gl.createShader(shaderType);
     if (!compiled) {
       if (error) {
         error(
-          `Error compiling shader "${ 
-            shader 
-            }":${ 
-            gl.getShaderInfoLog(shader)}`
+          `Error compiling shader "${shader}":${gl.getShaderInfoLog(shader)}`
         );
       }
 
@@ -980,11 +948,9 @@ const shader = gl.createShader(shaderType);
   sigma.utils.loadProgram = function(gl, shaders, attribs, loc, error) {
     let i;
 
-      
-let linked;
+    let linked;
 
-      
-const program = gl.createProgram();
+    const program = gl.createProgram();
 
     for (i = 0; i < shaders.length; ++i) gl.attachShader(program, shaders[i]);
 
@@ -1002,7 +968,7 @@ const program = gl.createProgram();
     linked = gl.getProgramParameter(program, gl.LINK_STATUS);
     if (!linked) {
       if (error)
-        error(`Error in program linking: ${  gl.getProgramInfoLog(program)}`);
+        error(`Error in program linking: ${gl.getProgramInfoLog(program)}`);
 
       gl.deleteProgram(program);
       return null;
@@ -1041,8 +1007,7 @@ const program = gl.createProgram();
   sigma.utils.matrices.rotation = function(angle, m2) {
     const cos = Math.cos(angle);
 
-      
-const sin = Math.sin(angle);
+    const sin = Math.sin(angle);
 
     return m2 ? [cos, -sin, sin, cos] : [cos, -sin, 0, sin, cos, 0, 0, 0, 1];
   };
@@ -1070,59 +1035,41 @@ const sin = Math.sin(angle);
   sigma.utils.matrices.multiply = function(a, b, m2) {
     const l = m2 ? 2 : 3;
 
-      
-const a00 = a[0 * l + 0];
+    const a00 = a[0 * l + 0];
 
-      
-const a01 = a[0 * l + 1];
+    const a01 = a[0 * l + 1];
 
-      
-const a02 = a[0 * l + 2];
+    const a02 = a[0 * l + 2];
 
-      
-const a10 = a[1 * l + 0];
+    const a10 = a[1 * l + 0];
 
-      
-const a11 = a[1 * l + 1];
+    const a11 = a[1 * l + 1];
 
-      
-const a12 = a[1 * l + 2];
+    const a12 = a[1 * l + 2];
 
-      
-const a20 = a[2 * l + 0];
+    const a20 = a[2 * l + 0];
 
-      
-const a21 = a[2 * l + 1];
+    const a21 = a[2 * l + 1];
 
-      
-const a22 = a[2 * l + 2];
+    const a22 = a[2 * l + 2];
 
-      
-const b00 = b[0 * l + 0];
+    const b00 = b[0 * l + 0];
 
-      
-const b01 = b[0 * l + 1];
+    const b01 = b[0 * l + 1];
 
-      
-const b02 = b[0 * l + 2];
+    const b02 = b[0 * l + 2];
 
-      
-const b10 = b[1 * l + 0];
+    const b10 = b[1 * l + 0];
 
-      
-const b11 = b[1 * l + 1];
+    const b11 = b[1 * l + 1];
 
-      
-const b12 = b[1 * l + 2];
+    const b12 = b[1 * l + 2];
 
-      
-const b20 = b[2 * l + 0];
+    const b20 = b[2 * l + 0];
 
-      
-const b21 = b[2 * l + 1];
+    const b21 = b[2 * l + 1];
 
-      
-const b22 = b[2 * l + 2];
+    const b22 = b[2 * l + 2];
 
     return m2
       ? [

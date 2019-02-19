@@ -1,6 +1,4 @@
 (function() {
-  
-
   /**
    * This utils aims to facilitate the manipulation of each instance setting.
    * Using a function instead of an object brings two main advantages: First,
@@ -13,14 +11,11 @@
   var configurable = function() {
     let i;
 
-      
-let l;
+    let l;
 
-      
-const data = {};
+    const data = {};
 
-      
-const datas = Array.prototype.slice.call(arguments, 0);
+    const datas = Array.prototype.slice.call(arguments, 0);
 
     /**
      * The method to use to set or get any property of this instance.
@@ -55,25 +50,28 @@ const datas = Array.prototype.slice.call(arguments, 0);
      *  > settings({hisSetting: 'abc'}, 'mySetting'); // Logs: 456
      */
     var settings = function(a1, a2) {
-      let o; let i; let l; let k;
+      let o;
+      let i;
+      let l;
+      let k;
 
       if (arguments.length === 1 && typeof a1 === "string") {
         if (data[a1] !== undefined) return data[a1];
         for (i = 0, l = datas.length; i < l; i++)
           if (datas[i][a1] !== undefined) return datas[i][a1];
         return undefined;
-      } if (typeof a1 === "object" && typeof a2 === "string") {
+      }
+      if (typeof a1 === "object" && typeof a2 === "string") {
         return (a1 || {})[a2] !== undefined ? a1[a2] : settings(a2);
-      } 
-        o = typeof a1 === "object" && a2 === undefined ? a1 : {};
+      }
+      o = typeof a1 === "object" && a2 === undefined ? a1 : {};
 
-        if (typeof a1 === "string") o[a1] = a2;
+      if (typeof a1 === "string") o[a1] = a2;
 
-        for (i = 0, k = Object.keys(o), l = k.length; i < l; i++)
-          data[k[i]] = o[k[i]];
+      for (i = 0, k = Object.keys(o), l = k.length; i < l; i++)
+        data[k[i]] = o[k[i]];
 
-        return this;
-      
+      return this;
     };
 
     /**

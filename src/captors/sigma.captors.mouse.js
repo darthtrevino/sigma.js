@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Initialize packages:
@@ -19,63 +17,49 @@
   sigma.captors.mouse = function(target, camera, settings) {
     const _self = this;
 
-      
-const _target = target;
+    const _target = target;
 
-      
-const _camera = camera;
+    const _camera = camera;
 
-      
-const _settings = settings;
+    const _settings = settings;
 
-      // CAMERA MANAGEMENT:
-      // ******************
-      // The camera position when the user starts dragging:
-      
-let _startCameraX;
+    // CAMERA MANAGEMENT:
+    // ******************
+    // The camera position when the user starts dragging:
 
-      
-let _startCameraY;
+    let _startCameraX;
 
-      
-let _startCameraAngle;
+    let _startCameraY;
 
-      // The latest stage position:
-      
-let _lastCameraX;
+    let _startCameraAngle;
 
-      
-let _lastCameraY;
+    // The latest stage position:
 
-      
-let _lastCameraAngle;
+    let _lastCameraX;
 
-      
-let _lastCameraRatio;
+    let _lastCameraY;
 
-      // MOUSE MANAGEMENT:
-      // *****************
-      // The mouse position when the user starts dragging:
-      
-let _startMouseX;
+    let _lastCameraAngle;
 
-      
-let _startMouseY;
+    let _lastCameraRatio;
 
-      
-let _isMouseDown;
+    // MOUSE MANAGEMENT:
+    // *****************
+    // The mouse position when the user starts dragging:
 
-      
-let _isMoving;
+    let _startMouseX;
 
-      
-let _hasDragged;
+    let _startMouseY;
 
-      
-let _downStartTime;
+    let _isMouseDown;
 
-      
-let _movingTimeoutId;
+    let _isMoving;
+
+    let _hasDragged;
+
+    let _downStartTime;
+
+    let _movingTimeoutId;
 
     sigma.classes.dispatcher.extend(this);
 
@@ -112,7 +96,9 @@ let _movingTimeoutId;
      * @param {event} e A mouse event.
      */
     function _moveHandler(e) {
-      let x; let y; let pos;
+      let x;
+      let y;
+      let pos;
 
       // Dispatch event:
       if (_settings("mouseEnabled")) {
@@ -174,8 +160,7 @@ let _movingTimeoutId;
 
         const x = sigma.utils.getX(e);
 
-          
-const y = sigma.utils.getY(e);
+        const y = sigma.utils.getY(e);
 
         if (_isMoving) {
           sigma.misc.animation.killAll(_camera);
@@ -290,7 +275,9 @@ const y = sigma.utils.getY(e);
      * @param {event} e A mouse event.
      */
     function _doubleClickHandler(e) {
-      let pos; let ratio; let animation;
+      let pos;
+      let ratio;
+      let animation;
 
       if (_settings("mouseEnabled")) {
         ratio = 1 / _settings("doubleClickZoomingRatio");
@@ -331,14 +318,11 @@ const y = sigma.utils.getY(e);
     function _wheelHandler(e) {
       let pos;
 
-        
-let ratio;
+      let ratio;
 
-        
-let animation;
+      let animation;
 
-        
-const wheelDelta = sigma.utils.getDelta(e);
+      const wheelDelta = sigma.utils.getDelta(e);
 
       if (
         _settings("mouseEnabled") &&

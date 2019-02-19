@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Initialize packages:
@@ -19,78 +17,59 @@
   sigma.captors.touch = function(target, camera, settings) {
     const _self = this;
 
-      
-const _target = target;
+    const _target = target;
 
-      
-const _camera = camera;
+    const _camera = camera;
 
-      
-const _settings = settings;
+    const _settings = settings;
 
-      // CAMERA MANAGEMENT:
-      // ******************
-      // The camera position when the user starts dragging:
-      
-let _startCameraX;
+    // CAMERA MANAGEMENT:
+    // ******************
+    // The camera position when the user starts dragging:
 
-      
-let _startCameraY;
+    let _startCameraX;
 
-      
-let _startCameraAngle;
+    let _startCameraY;
 
-      
-let _startCameraRatio;
+    let _startCameraAngle;
 
-      // The latest stage position:
-      
-let _lastCameraX;
+    let _startCameraRatio;
 
-      
-let _lastCameraY;
+    // The latest stage position:
 
-      
-let _lastCameraAngle;
+    let _lastCameraX;
 
-      
-let _lastCameraRatio;
+    let _lastCameraY;
 
-      // TOUCH MANAGEMENT:
-      // *****************
-      // Touches that are down:
-      
-let _downTouches = [];
+    let _lastCameraAngle;
 
-      
-let _startTouchX0;
+    let _lastCameraRatio;
 
-      
-let _startTouchY0;
+    // TOUCH MANAGEMENT:
+    // *****************
+    // Touches that are down:
 
-      
-let _startTouchX1;
+    let _downTouches = [];
 
-      
-let _startTouchY1;
+    let _startTouchX0;
 
-      
-let _startTouchAngle;
+    let _startTouchY0;
 
-      
-let _startTouchDistance;
+    let _startTouchX1;
 
-      
-let _touchMode;
+    let _startTouchY1;
 
-      
-let _isMoving;
+    let _startTouchAngle;
 
-      
-let _doubleTap;
+    let _startTouchDistance;
 
-      
-let _movingTimeoutId;
+    let _touchMode;
+
+    let _isMoving;
+
+    let _doubleTap;
+
+    let _movingTimeoutId;
 
     sigma.classes.dispatcher.extend(this);
 
@@ -132,7 +111,12 @@ let _movingTimeoutId;
      */
     function _handleStart(e) {
       if (_settings("touchEnabled")) {
-        let x0; let x1; let y0; let y1; let pos0; let pos1;
+        let x0;
+        let x1;
+        let y0;
+        let y1;
+        let pos0;
+        let pos1;
 
         _downTouches = e.touches;
 
@@ -257,53 +241,37 @@ let _movingTimeoutId;
       if (!_doubleTap && _settings("touchEnabled")) {
         let x0;
 
-          
-let x1;
+        let x1;
 
-          
-let y0;
+        let y0;
 
-          
-let y1;
+        let y1;
 
-          
-let cos;
+        let cos;
 
-          
-let sin;
+        let sin;
 
-          
-let end;
+        let end;
 
-          
-let pos0;
+        let pos0;
 
-          
-let pos1;
+        let pos1;
 
-          
-let diff;
+        let diff;
 
-          
-let start;
+        let start;
 
-          
-let dAngle;
+        let dAngle;
 
-          
-let dRatio;
+        let dRatio;
 
-          
-let newStageX;
+        let newStageX;
 
-          
-let newStageY;
+        let newStageY;
 
-          
-let newStageRatio;
+        let newStageRatio;
 
-          
-let newStageAngle;
+        let newStageAngle;
 
         _downTouches = e.touches;
         _isMoving = true;
@@ -428,7 +396,9 @@ let newStageAngle;
      * @param {event} e A touch event.
      */
     function _doubleTapHandler(e) {
-      let pos; let ratio; let animation;
+      let pos;
+      let ratio;
+      let animation;
 
       if (e.touches && e.touches.length === 1 && _settings("touchEnabled")) {
         _doubleTap = true;

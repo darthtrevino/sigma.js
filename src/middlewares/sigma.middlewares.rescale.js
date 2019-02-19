@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Initialize packages:
@@ -21,74 +19,53 @@
   sigma.middlewares.rescale = function(readPrefix, writePrefix, options) {
     let i;
 
-      
-let l;
+    let l;
 
-      
-let a;
+    let a;
 
-      
-let b;
+    let b;
 
-      
-let c;
+    let c;
 
-      
-let d;
+    let d;
 
-      
-let scale;
+    let scale;
 
-      
-let margin;
+    let margin;
 
-      
-const n = this.graph.nodes();
+    const n = this.graph.nodes();
 
-      
-const e = this.graph.edges();
+    const e = this.graph.edges();
 
-      
-const settings = this.settings.embedObjects(options || {});
+    const settings = this.settings.embedObjects(options || {});
 
-      
-const bounds =
-        settings("bounds") ||
-        sigma.utils.getBoundaries(this.graph, readPrefix, true);
+    const bounds =
+      settings("bounds") ||
+      sigma.utils.getBoundaries(this.graph, readPrefix, true);
 
-      
-let minX = bounds.minX;
+    let minX = bounds.minX;
 
-      
-let minY = bounds.minY;
+    let minY = bounds.minY;
 
-      
-let maxX = bounds.maxX;
+    let maxX = bounds.maxX;
 
-      
-let maxY = bounds.maxY;
+    let maxY = bounds.maxY;
 
-      
-const sizeMax = bounds.sizeMax;
+    const sizeMax = bounds.sizeMax;
 
-      
-const weightMax = bounds.weightMax;
+    const weightMax = bounds.weightMax;
 
-      
-const w = settings("width") || 1;
+    const w = settings("width") || 1;
 
-      
-const h = settings("height") || 1;
+    const h = settings("height") || 1;
 
-      
-let rescaleSettings = settings("autoRescale");
+    let rescaleSettings = settings("autoRescale");
 
-      
-const validSettings = {
-        nodePosition: 1,
-        nodeSize: 1,
-        edgeSize: 1
-      };
+    const validSettings = {
+      nodePosition: 1,
+      nodeSize: 1,
+      edgeSize: 1
+    };
 
     /**
      * What elements should we rescale?
@@ -99,16 +76,14 @@ const validSettings = {
     for (i = 0, l = rescaleSettings.length; i < l; i++)
       if (!validSettings[rescaleSettings[i]])
         throw new Error(
-          `The rescale setting "${  rescaleSettings[i]  }" is not recognized.`
+          `The rescale setting "${rescaleSettings[i]}" is not recognized.`
         );
 
     const np = ~rescaleSettings.indexOf("nodePosition");
 
-      
-const ns = ~rescaleSettings.indexOf("nodeSize");
+    const ns = ~rescaleSettings.indexOf("nodeSize");
 
-      
-const es = ~rescaleSettings.indexOf("edgeSize");
+    const es = ~rescaleSettings.indexOf("edgeSize");
 
     /**
      * First, we compute the scaling ratio, without considering the sizes
@@ -168,59 +143,50 @@ const es = ~rescaleSettings.indexOf("edgeSize");
 
     // Rescale the nodes and edges:
     for (i = 0, l = e.length; i < l; i++)
-      e[i][`${writePrefix  }size`] =
-        e[i][`${readPrefix  }size`] * (es ? c : 1) + (es ? d : 0);
+      e[i][`${writePrefix}size`] =
+        e[i][`${readPrefix}size`] * (es ? c : 1) + (es ? d : 0);
 
     for (i = 0, l = n.length; i < l; i++) {
-      n[i][`${writePrefix  }size`] =
-        n[i][`${readPrefix  }size`] * (ns ? a : 1) + (ns ? b : 0);
-      n[i][`${writePrefix  }x`] =
-        (n[i][`${readPrefix  }x`] - (maxX + minX) / 2) * (np ? scale : 1);
-      n[i][`${writePrefix  }y`] =
-        (n[i][`${readPrefix  }y`] - (maxY + minY) / 2) * (np ? scale : 1);
+      n[i][`${writePrefix}size`] =
+        n[i][`${readPrefix}size`] * (ns ? a : 1) + (ns ? b : 0);
+      n[i][`${writePrefix}x`] =
+        (n[i][`${readPrefix}x`] - (maxX + minX) / 2) * (np ? scale : 1);
+      n[i][`${writePrefix}y`] =
+        (n[i][`${readPrefix}y`] - (maxY + minY) / 2) * (np ? scale : 1);
     }
   };
 
   sigma.utils.getBoundaries = function(graph, prefix, doEdges) {
     let i;
 
-      
-let l;
+    let l;
 
-      
-const e = graph.edges();
+    const e = graph.edges();
 
-      
-const n = graph.nodes();
+    const n = graph.nodes();
 
-      
-let weightMax = -Infinity;
+    let weightMax = -Infinity;
 
-      
-let sizeMax = -Infinity;
+    let sizeMax = -Infinity;
 
-      
-let minX = Infinity;
+    let minX = Infinity;
 
-      
-let minY = Infinity;
+    let minY = Infinity;
 
-      
-let maxX = -Infinity;
+    let maxX = -Infinity;
 
-      
-let maxY = -Infinity;
+    let maxY = -Infinity;
 
     if (doEdges)
       for (i = 0, l = e.length; i < l; i++)
-        weightMax = Math.max(e[i][`${prefix  }size`], weightMax);
+        weightMax = Math.max(e[i][`${prefix}size`], weightMax);
 
     for (i = 0, l = n.length; i < l; i++) {
-      sizeMax = Math.max(n[i][`${prefix  }size`], sizeMax);
-      maxX = Math.max(n[i][`${prefix  }x`], maxX);
-      minX = Math.min(n[i][`${prefix  }x`], minX);
-      maxY = Math.max(n[i][`${prefix  }y`], maxY);
-      minY = Math.min(n[i][`${prefix  }y`], minY);
+      sizeMax = Math.max(n[i][`${prefix}size`], sizeMax);
+      maxX = Math.max(n[i][`${prefix}x`], maxX);
+      minX = Math.min(n[i][`${prefix}x`], minX);
+      maxY = Math.max(n[i][`${prefix}y`], maxY);
+      minY = Math.min(n[i][`${prefix}y`], minY);
     }
 
     weightMax = weightMax || 1;

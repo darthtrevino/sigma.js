@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Initialize packages:
@@ -25,20 +23,15 @@
 
     let k;
 
-      
-let i;
+    let i;
 
-      
-let l;
+    let l;
 
-      
-let a;
+    let a;
 
-      
-let fn;
+    let fn;
 
-      
-const _self = this;
+    const _self = this;
 
     sigma.classes.dispatcher.extend(this);
 
@@ -131,32 +124,23 @@ const _self = this;
   sigma.renderers.webgl.prototype.process = function() {
     let a;
 
-      
-let i;
+    let i;
 
-      
-let l;
+    let l;
 
-      
-let k;
+    let k;
 
-      
-let type;
+    let type;
 
-      
-let renderer;
+    let renderer;
 
-      
-const graph = this.graph;
+    const graph = this.graph;
 
-      
-var options = sigma.utils.extend(options, this.options);
+    var options = sigma.utils.extend(options, this.options);
 
-      
-const defaultEdgeType = this.settings(options, "defaultEdgeType");
+    const defaultEdgeType = this.settings(options, "defaultEdgeType");
 
-      
-const defaultNodeType = this.settings(options, "defaultNodeType");
+    const defaultNodeType = this.settings(options, "defaultNodeType");
 
     // Empty float arrays:
     for (k in this.nodeFloatArrays) delete this.nodeFloatArrays[k];
@@ -269,50 +253,35 @@ const defaultNodeType = this.settings(options, "defaultNodeType");
   sigma.renderers.webgl.prototype.render = function(params) {
     let a;
 
-      
-let i;
+    let i;
 
-      
-let l;
+    let l;
 
-      
-let k;
+    let k;
 
-      
-let o;
+    let o;
 
-      
-let program;
+    let program;
 
-      
-let renderer;
+    let renderer;
 
-      
-const self = this;
+    const self = this;
 
-      
-const graph = this.graph;
+    const graph = this.graph;
 
-      
-const nodesGl = this.contexts.nodes;
+    const nodesGl = this.contexts.nodes;
 
-      
-const edgesGl = this.contexts.edges;
+    const edgesGl = this.contexts.edges;
 
-      
-let matrix = this.camera.getMatrix();
+    let matrix = this.camera.getMatrix();
 
-      
-const options = sigma.utils.extend(params, this.options);
+    const options = sigma.utils.extend(params, this.options);
 
-      
-const drawLabels = this.settings(options, "drawLabels");
+    const drawLabels = this.settings(options, "drawLabels");
 
-      
-let drawEdges = this.settings(options, "drawEdges");
+    let drawEdges = this.settings(options, "drawEdges");
 
-      
-const drawNodes = this.settings(options, "drawNodes");
+    const drawNodes = this.settings(options, "drawNodes");
 
     // Call the resize function:
     this.resize(false);
@@ -338,40 +307,29 @@ const drawNodes = this.settings(options, "drawNodes");
         (function() {
           let a;
 
-            
-let k;
+          let k;
 
-            
-let i;
+          let i;
 
-            
-let id;
+          let id;
 
-            
-let job;
+          let job;
 
-            
-let arr;
+          let arr;
 
-            
-let end;
+          let end;
 
-            
-let start;
+          let start;
 
-            
-let indices;
+          let indices;
 
-            
-let renderer;
+          let renderer;
 
-            
-let batchSize;
+          let batchSize;
 
-            
-let currentProgram;
+          let currentProgram;
 
-          id = `edges_${  this.conradId}`;
+          id = `edges_${this.conradId}`;
           batchSize = this.settings(options, "webglEdgesBatchSize");
           a = Object.keys(this.edgeFloatArrays);
 
@@ -544,14 +502,12 @@ let currentProgram;
   sigma.renderers.webgl.prototype.initDOM = function(tag, id, webgl) {
     let gl;
 
-      
-const dom = document.createElement(tag);
+    const dom = document.createElement(tag);
 
-      
-const self = this;
+    const self = this;
 
     dom.style.position = "absolute";
-    dom.setAttribute("class", `sigma-${  id}`);
+    dom.setAttribute("class", `sigma-${id}`);
 
     this.domElements[id] = dom;
     this.container.appendChild(dom);
@@ -593,14 +549,11 @@ const self = this;
   sigma.renderers.webgl.prototype.resize = function(w, h) {
     let k;
 
-      
-const oldWidth = this.width;
+    const oldWidth = this.width;
 
-      
-const oldHeight = this.height;
+    const oldHeight = this.height;
 
-      
-const pixelRatio = sigma.utils.getPixelRatio();
+    const pixelRatio = sigma.utils.getPixelRatio();
 
     if (w !== undefined && h !== undefined) {
       this.width = w;
@@ -615,25 +568,25 @@ const pixelRatio = sigma.utils.getPixelRatio();
 
     if (oldWidth !== this.width || oldHeight !== this.height) {
       for (k in this.domElements) {
-        this.domElements[k].style.width = `${w  }px`;
-        this.domElements[k].style.height = `${h  }px`;
+        this.domElements[k].style.width = `${w}px`;
+        this.domElements[k].style.height = `${h}px`;
 
         if (this.domElements[k].tagName.toLowerCase() === "canvas") {
           // If simple 2D canvas:
           if (this.contexts[k] && this.contexts[k].scale) {
-            this.domElements[k].setAttribute("width", `${w * pixelRatio  }px`);
-            this.domElements[k].setAttribute("height", `${h * pixelRatio  }px`);
+            this.domElements[k].setAttribute("width", `${w * pixelRatio}px`);
+            this.domElements[k].setAttribute("height", `${h * pixelRatio}px`);
 
             if (pixelRatio !== 1)
               this.contexts[k].scale(pixelRatio, pixelRatio);
           } else {
             this.domElements[k].setAttribute(
               "width",
-              `${w * this.settings("webglOversamplingRatio")  }px`
+              `${w * this.settings("webglOversamplingRatio")}px`
             );
             this.domElements[k].setAttribute(
               "height",
-              `${h * this.settings("webglOversamplingRatio")  }px`
+              `${h * this.settings("webglOversamplingRatio")}px`
             );
           }
         }
@@ -670,7 +623,8 @@ const pixelRatio = sigma.utils.getPixelRatio();
    * This method kills contexts and other attributes.
    */
   sigma.renderers.webgl.prototype.kill = function() {
-    let k; let captor;
+    let k;
+    let captor;
 
     // Kill captors:
     while ((captor = this.captors.pop())) captor.kill();

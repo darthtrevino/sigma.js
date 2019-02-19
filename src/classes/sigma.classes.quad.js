@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   /**
    * Sigma Quadtree Module
    * =====================
@@ -129,8 +127,7 @@
     rectangleCorners(r) {
       const llc = this.lowerLeftCoor(r);
 
-        
-const lrc = this.lowerRightCoor(r, llc);
+      const lrc = this.lowerRightCoor(r, llc);
 
       return [
         { x: r.x1, y: r.y1 },
@@ -220,14 +217,12 @@ const lrc = this.lowerRightCoor(r, llc);
     axisCollision(a, c1, c2) {
       const sc1 = [];
 
-        
-const sc2 = [];
+      const sc2 = [];
 
       for (let ci = 0; ci < 4; ci++) {
         const p1 = this.projection(c1[ci], a);
 
-          
-const p2 = this.projection(c2[ci], a);
+        const p2 = this.projection(c2[ci], a);
 
         sc1.push(p1.x * a.x + p1.y * a.y);
         sc2.push(p2.x * a.x + p2.y * a.y);
@@ -235,14 +230,11 @@ const p2 = this.projection(c2[ci], a);
 
       const maxc1 = Math.max(...sc1);
 
-        
-const maxc2 = Math.max(...sc2);
+      const maxc2 = Math.max(...sc2);
 
-        
-const minc1 = Math.min(...sc1);
+      const minc1 = Math.min(...sc1);
 
-        
-const minc2 = Math.min(...sc2);
+      const minc2 = Math.min(...sc2);
 
       return minc2 <= maxc1 && maxc2 >= minc1;
     },
@@ -258,8 +250,7 @@ const minc2 = Math.min(...sc2);
     collision(c1, c2) {
       const axis = this.axis(c1, c2);
 
-        
-let col = true;
+      let col = true;
 
       for (let i = 0; i < 4; i++)
         col = col && this.axisCollision(axis[i], c1, c2);
@@ -295,22 +286,18 @@ let col = true;
   function _quadIndex(point, quadBounds) {
     const xmp = quadBounds.x + quadBounds.width / 2;
 
-      
-const ymp = quadBounds.y + quadBounds.height / 2;
+    const ymp = quadBounds.y + quadBounds.height / 2;
 
-      
-const top = point.y < ymp;
+    const top = point.y < ymp;
 
-      
-const left = point.x < xmp;
+    const left = point.x < xmp;
 
     if (top) {
       if (left) return 0;
       return 1;
-    } 
-      if (left) return 2;
-      return 3;
-    
+    }
+    if (left) return 2;
+    return 3;
   }
 
   /**
@@ -368,23 +355,17 @@ const left = point.x < xmp;
   function _quadSubdivide(index, quad) {
     const next = quad.level + 1;
 
-      
-const subw = Math.round(quad.bounds.width / 2);
+    const subw = Math.round(quad.bounds.width / 2);
 
-      
-const subh = Math.round(quad.bounds.height / 2);
+    const subh = Math.round(quad.bounds.height / 2);
 
-      
-const qx = Math.round(quad.bounds.x);
+    const qx = Math.round(quad.bounds.x);
 
-      
-const qy = Math.round(quad.bounds.y);
+    const qy = Math.round(quad.bounds.y);
 
-      
-let x;
+    let x;
 
-      
-let y;
+    let y;
 
     switch (index) {
       case 0:
@@ -460,12 +441,10 @@ let y;
       // If node does not exist we return an empty list
       if (quad.nodes[index] !== undefined) {
         return _quadRetrievePoint(point, quad.nodes[index]);
-      } 
-        return [];
-      
-    } 
-      return quad.elements;
-    
+      }
+      return [];
+    }
+    return quad.elements;
   }
 
   /**
@@ -589,9 +568,9 @@ let y;
       _quadInsert(
         nodes[i],
         _geom.pointToSquare({
-          x: nodes[i][`${prefix  }x`],
-          y: nodes[i][`${prefix  }y`],
-          size: nodes[i][`${prefix  }size`]
+          x: nodes[i][`${prefix}x`],
+          y: nodes[i][`${prefix}y`],
+          size: nodes[i][`${prefix}size`]
         }),
         this._tree
       );
@@ -616,9 +595,7 @@ let y;
    * @return {array}  An array of nodes retrieved.
    */
   quad.prototype.point = function(x, y) {
-    return this._tree
-      ? _quadRetrievePoint({ x, y }, this._tree) || []
-      : [];
+    return this._tree ? _quadRetrievePoint({ x, y }, this._tree) || [] : [];
   };
 
   /**
@@ -633,11 +610,9 @@ let y;
   quad.prototype.area = function(rect) {
     const serialized = JSON.stringify(rect);
 
-      
-let collisionFunc;
+    let collisionFunc;
 
-      
-let rectData;
+    let rectData;
 
     // Returning cache?
     if (this._cache.query === serialized) return this._cache.result;

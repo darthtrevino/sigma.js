@@ -1,6 +1,4 @@
 (function(global) {
-  
-
   /**
    * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
    * http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
@@ -10,30 +8,26 @@
    */
   let x;
 
-    
-let lastTime = 0;
+  let lastTime = 0;
 
-    
-const vendors = ["ms", "moz", "webkit", "o"];
+  const vendors = ["ms", "moz", "webkit", "o"];
 
   for (x = 0; x < vendors.length && !global.requestAnimationFrame; x++) {
-    global.requestAnimationFrame = global[`${vendors[x]  }RequestAnimationFrame`];
+    global.requestAnimationFrame = global[`${vendors[x]}RequestAnimationFrame`];
     global.cancelAnimationFrame =
-      global[`${vendors[x]  }CancelAnimationFrame`] ||
-      global[`${vendors[x]  }CancelRequestAnimationFrame`];
+      global[`${vendors[x]}CancelAnimationFrame`] ||
+      global[`${vendors[x]}CancelRequestAnimationFrame`];
   }
 
   if (!global.requestAnimationFrame)
     global.requestAnimationFrame = function(callback, element) {
       const currTime = new Date().getTime();
 
-        
-const timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      const timeToCall = Math.max(0, 16 - (currTime - lastTime));
 
-        
-const id = global.setTimeout(function() {
-          callback(currTime + timeToCall);
-        }, timeToCall);
+      const id = global.setTimeout(function() {
+        callback(currTime + timeToCall);
+      }, timeToCall);
 
       lastTime = currTime + timeToCall;
       return id;
@@ -60,14 +54,11 @@ const id = global.setTimeout(function() {
 
       const aArgs = Array.prototype.slice.call(arguments, 1);
 
-        
-const fToBind = this;
+      const fToBind = this;
 
-        
-let fNOP;
+      let fNOP;
 
-        
-let fBound;
+      let fBound;
 
       fNOP = function() {};
       fBound = function() {

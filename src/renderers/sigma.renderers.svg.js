@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   if (typeof conrad === "undefined") throw "conrad is not declared";
@@ -27,17 +25,13 @@
 
     let i;
 
-      
-let l;
+    let l;
 
-      
-let a;
+    let a;
 
-      
-let fn;
+    let fn;
 
-      
-const self = this;
+    const self = this;
 
     sigma.classes.dispatcher.extend(this);
 
@@ -71,7 +65,7 @@ const self = this;
     this.edgesOnScreen = [];
 
     // Find the prefix:
-    this.options.prefix = `renderer${  sigma.utils.id()  }:`;
+    this.options.prefix = `renderer${sigma.utils.id()}:`;
 
     // Initialize the DOM elements
     this.initDOM("svg");
@@ -111,65 +105,46 @@ const self = this;
 
     let a;
 
-      
-let i;
+    let i;
 
-      
-let k;
+    let k;
 
-      
-let e;
+    let e;
 
-      
-let l;
+    let l;
 
-      
-let o;
+    let o;
 
-      
-let source;
+    let source;
 
-      
-let target;
+    let target;
 
-      
-let start;
+    let start;
 
-      
-let edges;
+    let edges;
 
-      
-let renderers;
+    let renderers;
 
-      
-let subrenderers;
+    let subrenderers;
 
-      
-const index = {};
+    const index = {};
 
-      
-const graph = this.graph;
+    const graph = this.graph;
 
-      
-const nodes = this.graph.nodes;
+    const nodes = this.graph.nodes;
 
-      
-const prefix = this.options.prefix || "";
+    const prefix = this.options.prefix || "";
 
-      
-let drawEdges = this.settings(options, "drawEdges");
+    let drawEdges = this.settings(options, "drawEdges");
 
-      
-const drawNodes = this.settings(options, "drawNodes");
+    const drawNodes = this.settings(options, "drawNodes");
 
-      
-const drawLabels = this.settings(options, "drawLabels");
+    const drawLabels = this.settings(options, "drawLabels");
 
-      
-const embedSettings = this.settings.embedObjects(options, {
-        prefix: this.options.prefix,
-        forceLabels: this.options.forceLabels
-      });
+    const embedSettings = this.settings.embedObjects(options, {
+      prefix: this.options.prefix,
+      forceLabels: this.options.forceLabels
+    });
 
     // Check the 'hideEdgesOnMove' setting:
     if (this.settings(options, "hideEdgesOnMove"))
@@ -310,20 +285,16 @@ const embedSettings = this.settings.embedObjects(options, {
   sigma.renderers.svg.prototype.initDOM = function(tag) {
     const dom = document.createElementNS(this.settings("xmlns"), tag);
 
-      
-const c = this.settings("classPrefix");
+    const c = this.settings("classPrefix");
 
-      
-let g;
+    let g;
 
-      
-let l;
+    let l;
 
-      
-let i;
+    let i;
 
     dom.style.position = "absolute";
-    dom.setAttribute("class", `${c  }-svg`);
+    dom.setAttribute("class", `${c}-svg`);
 
     // Setting SVG namespace
     dom.setAttribute("xmlns", this.settings("xmlns"));
@@ -332,7 +303,7 @@ let i;
 
     // Creating the measurement canvas
     const canvas = document.createElement("canvas");
-    canvas.setAttribute("class", `${c  }-measurement-canvas`);
+    canvas.setAttribute("class", `${c}-measurement-canvas`);
 
     // Appending elements
     this.domElements.graph = this.container.appendChild(dom);
@@ -342,8 +313,8 @@ let i;
     for (i = 0, l = groups.length; i < l; i++) {
       g = document.createElementNS(this.settings("xmlns"), "g");
 
-      g.setAttributeNS(null, "id", `${c  }-group-${  groups[i]}`);
-      g.setAttributeNS(null, "class", `${c  }-group`);
+      g.setAttributeNS(null, "id", `${c}-group-${groups[i]}`);
+      g.setAttributeNS(null, "class", `${c}-group`);
 
       this.domElements.groups[groups[i]] = this.domElements.graph.appendChild(
         g
@@ -363,7 +334,8 @@ let i;
    * @return {sigma.renderers.svg}              Returns the instance itself.
    */
   sigma.renderers.svg.prototype.hideDOMElements = function(elements) {
-    let o; let i;
+    let o;
+    let i;
 
     for (i in elements) {
       o = elements[i];
@@ -382,19 +354,16 @@ let i;
   sigma.renderers.svg.prototype.bindHovers = function(prefix) {
     const renderers = sigma.svg.hovers;
 
-      
-const self = this;
+    const self = this;
 
-      
-let hoveredNode;
+    let hoveredNode;
 
     function overNode(e) {
       const node = e.data.node;
 
-        
-const embedSettings = self.settings.embedObjects({
-          prefix
-        });
+      const embedSettings = self.settings.embedObjects({
+        prefix
+      });
 
       if (!embedSettings("enableHovering")) return;
 
@@ -415,10 +384,9 @@ const embedSettings = self.settings.embedObjects({
     function outNode(e) {
       const node = e.data.node;
 
-        
-const embedSettings = self.settings.embedObjects({
-          prefix
-        });
+      const embedSettings = self.settings.embedObjects({
+        prefix
+      });
 
       if (!embedSettings("enableHovering")) return;
 
@@ -481,11 +449,9 @@ const embedSettings = self.settings.embedObjects({
   sigma.renderers.svg.prototype.resize = function(w, h) {
     const oldWidth = this.width;
 
-      
-const oldHeight = this.height;
+    const oldHeight = this.height;
 
-      
-const pixelRatio = 1;
+    const pixelRatio = 1;
 
     if (w !== undefined && h !== undefined) {
       this.width = w;
@@ -499,8 +465,8 @@ const pixelRatio = 1;
     }
 
     if (oldWidth !== this.width || oldHeight !== this.height) {
-      this.domElements.graph.style.width = `${w  }px`;
-      this.domElements.graph.style.height = `${h  }px`;
+      this.domElements.graph.style.width = `${w}px`;
+      this.domElements.graph.style.height = `${h}px`;
 
       if (this.domElements.graph.tagName.toLowerCase() === "svg") {
         this.domElements.graph.setAttribute("width", w * pixelRatio);

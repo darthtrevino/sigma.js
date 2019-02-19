@@ -1,6 +1,4 @@
 (function() {
-  
-
   /**
    * Dispatcher constructor.
    *
@@ -22,7 +20,10 @@
    * @return {dispatcher}               Returns the instance itself.
    */
   dispatcher.prototype.bind = function(events, handler) {
-    let i; let l; let event; let eArray;
+    let i;
+    let l;
+    let event;
+    let eArray;
 
     if (arguments.length === 1 && typeof arguments[0] === "object")
       for (events in arguments[0]) this.bind(events, arguments[0][events]);
@@ -62,26 +63,19 @@
   dispatcher.prototype.unbind = function(events, handler) {
     let i;
 
-      
-let n;
+    let n;
 
-      
-let j;
+    let j;
 
-      
-let m;
+    let m;
 
-      
-let k;
+    let k;
 
-      
-let a;
+    let a;
 
-      
-let event;
+    let event;
 
-      
-const eArray = typeof events === "string" ? events.split(" ") : events;
+    const eArray = typeof events === "string" ? events.split(" ") : events;
 
     if (!arguments.length) {
       for (k in this._handlers) delete this._handlers[k];
@@ -121,29 +115,21 @@ const eArray = typeof events === "string" ? events.split(" ") : events;
   dispatcher.prototype.dispatchEvent = function(events, data) {
     let i;
 
-      
-let n;
+    let n;
 
-      
-let j;
+    let j;
 
-      
-let m;
+    let m;
 
-      
-let a;
+    let a;
 
-      
-let event;
+    let event;
 
-      
-let eventName;
+    let eventName;
 
-      
-const self = this;
+    const self = this;
 
-      
-const eArray = typeof events === "string" ? events.split(" ") : events;
+    const eArray = typeof events === "string" ? events.split(" ") : events;
 
     data = data === undefined ? {} : data;
 

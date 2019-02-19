@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   /**
    * Sigma Quadtree Module for edges
    * ===============================
@@ -111,14 +109,11 @@
       // curve:
       const minX = Math.min(e.x1, e.x2, pt.x);
 
-        
-const maxX = Math.max(e.x1, e.x2, pt.x);
+      const maxX = Math.max(e.x1, e.x2, pt.x);
 
-        
-const minY = Math.min(e.y1, e.y2, pt.y);
+      const minY = Math.min(e.y1, e.y2, pt.y);
 
-        
-const maxY = Math.max(e.y1, e.y2, pt.y);
+      const maxY = Math.max(e.y1, e.y2, pt.y);
 
       return {
         x1: minX - e.size,
@@ -143,14 +138,11 @@ const maxY = Math.max(e.y1, e.y2, pt.y);
       // Bounding box of the point and the two control points:
       const minX = Math.min(n.x, cp.x1, cp.x2);
 
-        
-const maxX = Math.max(n.x, cp.x1, cp.x2);
+      const maxX = Math.max(n.x, cp.x1, cp.x2);
 
-        
-const minY = Math.min(n.y, cp.y1, cp.y2);
+      const minY = Math.min(n.y, cp.y1, cp.y2);
 
-        
-const maxY = Math.max(n.y, cp.y1, cp.y2);
+      const maxY = Math.max(n.y, cp.y1, cp.y2);
 
       return {
         x1: minX - n.size,
@@ -256,8 +248,7 @@ const maxY = Math.max(n.y, cp.y1, cp.y2);
     rectangleCorners(r) {
       const llc = this.lowerLeftCoor(r);
 
-        
-const lrc = this.lowerRightCoor(r, llc);
+      const lrc = this.lowerRightCoor(r, llc);
 
       return [
         { x: r.x1, y: r.y1 },
@@ -347,14 +338,12 @@ const lrc = this.lowerRightCoor(r, llc);
     axisCollision(a, c1, c2) {
       const sc1 = [];
 
-        
-const sc2 = [];
+      const sc2 = [];
 
       for (let ci = 0; ci < 4; ci++) {
         const p1 = this.projection(c1[ci], a);
 
-          
-const p2 = this.projection(c2[ci], a);
+        const p2 = this.projection(c2[ci], a);
 
         sc1.push(p1.x * a.x + p1.y * a.y);
         sc2.push(p2.x * a.x + p2.y * a.y);
@@ -362,14 +351,11 @@ const p2 = this.projection(c2[ci], a);
 
       const maxc1 = Math.max(...sc1);
 
-        
-const maxc2 = Math.max(...sc2);
+      const maxc2 = Math.max(...sc2);
 
-        
-const minc1 = Math.min(...sc1);
+      const minc1 = Math.min(...sc1);
 
-        
-const minc2 = Math.min(...sc2);
+      const minc2 = Math.min(...sc2);
 
       return minc2 <= maxc1 && maxc2 >= minc1;
     },
@@ -385,8 +371,7 @@ const minc2 = Math.min(...sc2);
     collision(c1, c2) {
       const axis = this.axis(c1, c2);
 
-        
-let col = true;
+      let col = true;
 
       for (let i = 0; i < 4; i++)
         col = col && this.axisCollision(axis[i], c1, c2);
@@ -422,22 +407,18 @@ let col = true;
   function _quadIndex(point, quadBounds) {
     const xmp = quadBounds.x + quadBounds.width / 2;
 
-      
-const ymp = quadBounds.y + quadBounds.height / 2;
+    const ymp = quadBounds.y + quadBounds.height / 2;
 
-      
-const top = point.y < ymp;
+    const top = point.y < ymp;
 
-      
-const left = point.x < xmp;
+    const left = point.x < xmp;
 
     if (top) {
       if (left) return 0;
       return 1;
-    } 
-      if (left) return 2;
-      return 3;
-    
+    }
+    if (left) return 2;
+    return 3;
   }
 
   /**
@@ -495,23 +476,17 @@ const left = point.x < xmp;
   function _quadSubdivide(index, quad) {
     const next = quad.level + 1;
 
-      
-const subw = Math.round(quad.bounds.width / 2);
+    const subw = Math.round(quad.bounds.width / 2);
 
-      
-const subh = Math.round(quad.bounds.height / 2);
+    const subh = Math.round(quad.bounds.height / 2);
 
-      
-const qx = Math.round(quad.bounds.x);
+    const qx = Math.round(quad.bounds.x);
 
-      
-const qy = Math.round(quad.bounds.y);
+    const qy = Math.round(quad.bounds.y);
 
-      
-let x;
+    let x;
 
-      
-let y;
+    let y;
 
     switch (index) {
       case 0:
@@ -587,12 +562,10 @@ let y;
       // If node does not exist we return an empty list
       if (quad.nodes[index] !== undefined) {
         return _quadRetrievePoint(point, quad.nodes[index]);
-      } 
-        return [];
-      
-    } 
-      return quad.elements;
-    
+      }
+      return [];
+    }
+    return quad.elements;
   }
 
   /**
@@ -706,20 +679,15 @@ let y;
     // Prefix
     const prefix = params.prefix || "";
 
-      
-let cp;
+    let cp;
 
-      
-let source;
+    let source;
 
-      
-let target;
+    let target;
 
-      
-let n;
+    let n;
 
-      
-let e;
+    let e;
 
     // Building the tree
     this._tree = _quadTree(
@@ -736,20 +704,20 @@ let e;
       source = graph.nodes(edges[i].source);
       target = graph.nodes(edges[i].target);
       e = {
-        x1: source[`${prefix  }x`],
-        y1: source[`${prefix  }y`],
-        x2: target[`${prefix  }x`],
-        y2: target[`${prefix  }y`],
-        size: edges[i][`${prefix  }size`] || 0
+        x1: source[`${prefix}x`],
+        y1: source[`${prefix}y`],
+        x2: target[`${prefix}x`],
+        y2: target[`${prefix}y`],
+        size: edges[i][`${prefix}size`] || 0
       };
 
       // Inserting edge
       if (edges[i].type === "curve" || edges[i].type === "curvedArrow") {
         if (source.id === target.id) {
           n = {
-            x: source[`${prefix  }x`],
-            y: source[`${prefix  }y`],
-            size: source[`${prefix  }size`] || 0
+            x: source[`${prefix}x`],
+            y: source[`${prefix}y`],
+            size: source[`${prefix}size`] || 0
           };
           _quadInsert(edges[i], _geom.selfLoopToSquare(n), this._tree);
         } else {
@@ -786,9 +754,7 @@ let e;
   edgequad.prototype.point = function(x, y) {
     if (!this._enabled) return [];
 
-    return this._tree
-      ? _quadRetrievePoint({ x, y }, this._tree) || []
-      : [];
+    return this._tree ? _quadRetrievePoint({ x, y }, this._tree) || [] : [];
   };
 
   /**
@@ -805,11 +771,9 @@ let e;
 
     const serialized = JSON.stringify(rect);
 
-      
-let collisionFunc;
+    let collisionFunc;
 
-      
-let rectData;
+    let rectData;
 
     // Returning cache?
     if (this._cache.query === serialized) return this._cache.result;

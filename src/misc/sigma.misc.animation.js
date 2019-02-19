@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Initialize packages:
@@ -14,7 +12,7 @@
   const _getID = (function() {
     let id = 0;
     return function() {
-      return `${  ++id}`;
+      return `${++id}`;
     };
   })();
 
@@ -61,26 +59,19 @@
 
     let fn;
 
-      
-let id;
+    let id;
 
-      
-let anim;
+    let anim;
 
-      
-let easing;
+    let easing;
 
-      
-let duration;
+    let duration;
 
-      
-let initialVal;
+    let initialVal;
 
-      
-const o = options || {};
+    const o = options || {};
 
-      
-const start = sigma.utils.dateNow();
+    const start = sigma.utils.dateNow();
 
     // Store initial values:
     initialVal = {
@@ -99,8 +90,7 @@ const start = sigma.utils.dateNow();
     fn = function() {
       let coef;
 
-        
-const t = o.duration ? (sigma.utils.dateNow() - start) / o.duration : 1;
+      const t = o.duration ? (sigma.utils.dateNow() - start) / o.duration : 1;
 
       // If the animation is over:
       if (t >= 1) {
@@ -200,20 +190,15 @@ const t = o.duration ? (sigma.utils.dateNow() - start) / o.duration : 1;
   sigma.misc.animation.killAll = function(filter) {
     let o;
 
-      
-let id;
+    let id;
 
-      
-let count = 0;
+    let count = 0;
 
-      
-const type = typeof filter === "string" ? filter : null;
+    const type = typeof filter === "string" ? filter : null;
 
-      
-const target = typeof filter === "object" ? filter : null;
+    const target = typeof filter === "object" ? filter : null;
 
-      
-const running = sigma.misc.animation.running;
+    const running = sigma.misc.animation.running;
 
     for (id in running)
       if (
@@ -250,14 +235,11 @@ const running = sigma.misc.animation.running;
   sigma.misc.animation.has = function(filter) {
     let id;
 
-      
-const type = typeof filter === "string" ? filter : null;
+    const type = typeof filter === "string" ? filter : null;
 
-      
-const target = typeof filter === "object" ? filter : null;
+    const target = typeof filter === "object" ? filter : null;
 
-      
-const running = sigma.misc.animation.running;
+    const running = sigma.misc.animation.running;
 
     for (id in running)
       if (

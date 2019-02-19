@@ -1,6 +1,4 @@
 (function(global) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Initialize packages:
@@ -9,8 +7,7 @@
   // Check if WebGL is enabled:
   let canvas;
 
-    
-let webgl = !!global.WebGLRenderingContext;
+  let webgl = !!global.WebGLRenderingContext;
   if (webgl) {
     canvas = document.createElement("canvas");
     try {

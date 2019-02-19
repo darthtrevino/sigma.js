@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Initialize packages:
@@ -17,11 +15,9 @@
   sigma.misc.drawHovers = function(prefix) {
     const self = this;
 
-      
-const hoveredNodes = {};
+    const hoveredNodes = {};
 
-      
-const hoveredEdges = {};
+    const hoveredEdges = {};
 
     this.bind("overNode", function(event) {
       const node = event.data.node;
@@ -56,40 +52,29 @@ const hoveredEdges = {};
     function draw() {
       let k;
 
-        
-let source;
+      let source;
 
-        
-let target;
+      let target;
 
-        
-let hoveredNode;
+      let hoveredNode;
 
-        
-let hoveredEdge;
+      let hoveredEdge;
 
-        
-const c = self.contexts.hover.canvas;
+      const c = self.contexts.hover.canvas;
 
-        
-const defaultNodeType = self.settings("defaultNodeType");
+      const defaultNodeType = self.settings("defaultNodeType");
 
-        
-const defaultEdgeType = self.settings("defaultEdgeType");
+      const defaultEdgeType = self.settings("defaultEdgeType");
 
-        
-const nodeRenderers = sigma.canvas.hovers;
+      const nodeRenderers = sigma.canvas.hovers;
 
-        
-const edgeRenderers = sigma.canvas.edgehovers;
+      const edgeRenderers = sigma.canvas.edgehovers;
 
-        
-const extremitiesRenderers = sigma.canvas.extremities;
+      const extremitiesRenderers = sigma.canvas.extremities;
 
-        
-const embedSettings = self.settings.embedObjects({
-          prefix
-        });
+      const embedSettings = self.settings.embedObjects({
+        prefix
+      });
 
       // Clear self.contexts.hover:
       self.contexts.hover.clearRect(0, 0, c.width, c.height);

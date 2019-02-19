@@ -1,6 +1,4 @@
 (function(undefined) {
-  
-
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Initialize packages:
@@ -16,8 +14,7 @@
   sigma.misc.bindDOMEvents = function(container) {
     const self = this;
 
-      
-const graph = this.graph;
+    const graph = this.graph;
 
     // DOMElement abstraction
     function Element(domElement) {
@@ -33,15 +30,15 @@ const graph = this.graph;
 
       // Methods
       this.isNode = function() {
-        return !!~this.class.indexOf(`${self.settings("classPrefix")  }-node`);
+        return !!~this.class.indexOf(`${self.settings("classPrefix")}-node`);
       };
 
       this.isEdge = function() {
-        return !!~this.class.indexOf(`${self.settings("classPrefix")  }-edge`);
+        return !!~this.class.indexOf(`${self.settings("classPrefix")}-edge`);
       };
 
       this.isHover = function() {
-        return !!~this.class.indexOf(`${self.settings("classPrefix")  }-hover`);
+        return !!~this.class.indexOf(`${self.settings("classPrefix")}-hover`);
       };
     }
 

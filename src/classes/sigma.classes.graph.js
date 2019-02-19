@@ -1,30 +1,22 @@
 (function(undefined) {
-  
-
   const _methods = Object.create(null);
 
-    
-const _indexes = Object.create(null);
+  const _indexes = Object.create(null);
 
-    
-const _initBindings = Object.create(null);
+  const _initBindings = Object.create(null);
 
-    
-const _methodBindings = Object.create(null);
+  const _methodBindings = Object.create(null);
 
-    
-const _methodBeforeBindings = Object.create(null);
+  const _methodBeforeBindings = Object.create(null);
 
-    
-const _defaultSettings = {
-      immutable: true,
-      clone: true
-    };
+  const _defaultSettings = {
+    immutable: true,
+    clone: true
+  };
 
-    
-const _defaultSettingsFunction = function(key) {
-      return _defaultSettings[key];
-    };
+  const _defaultSettingsFunction = function(key) {
+    return _defaultSettings[key];
+  };
 
   /**
    * The graph constructor. It initializes the data and the indexes, and binds
@@ -45,7 +37,9 @@ const _defaultSettingsFunction = function(key) {
    * @return {graph}                  The new graph instance.
    */
   const graph = function(settings) {
-    let k; let fn; let data;
+    let k;
+    let fn;
+    let data;
 
     /**
      * DATA:
@@ -113,7 +107,8 @@ const _defaultSettingsFunction = function(key) {
    */
   function __bindGraphMethod(methodName, scope, fn) {
     const result = function() {
-      let k; let res;
+      let k;
+      let res;
 
       // Execute "before" bound functions:
       for (k in _methodBeforeBindings[methodName])
@@ -180,7 +175,7 @@ const _defaultSettingsFunction = function(key) {
       throw "addMethod: Wrong arguments.";
 
     if (_methods[methodName] || graph[methodName])
-      throw `The method "${  methodName  }" already exists.`;
+      throw `The method "${methodName}" already exists.`;
 
     _methods[methodName] = fn;
     _methodBindings[methodName] = Object.create(null);
@@ -263,24 +258,20 @@ const _defaultSettingsFunction = function(key) {
 
     if (methodName === "constructor") bindings = _initBindings;
     else if (before) {
-        if (!_methodBeforeBindings[methodName])
-          throw `The method "${  methodName  }" does not exist.`;
+      if (!_methodBeforeBindings[methodName])
+        throw `The method "${methodName}" does not exist.`;
 
-        bindings = _methodBeforeBindings[methodName];
-      } else {
-        if (!_methodBindings[methodName])
-          throw `The method "${  methodName  }" does not exist.`;
+      bindings = _methodBeforeBindings[methodName];
+    } else {
+      if (!_methodBindings[methodName])
+        throw `The method "${methodName}" does not exist.`;
 
-        bindings = _methodBindings[methodName];
-      }
+      bindings = _methodBindings[methodName];
+    }
 
     if (bindings[key])
-      throw `A function "${ 
-        key 
-        }" is already attached ` +
-        `to the method "${ 
-        methodName 
-        }".`;
+      throw `A function "${key}" is already attached ` +
+        `to the method "${methodName}".`;
 
     bindings[key] = fn;
 
@@ -337,7 +328,7 @@ const _defaultSettingsFunction = function(key) {
     )
       throw "addIndex: Wrong arguments.";
 
-    if (_indexes[name]) throw `The index "${  name  }" already exists.`;
+    if (_indexes[name]) throw `The index "${name}" already exists.`;
 
     let k;
 
@@ -373,16 +364,13 @@ const _defaultSettingsFunction = function(key) {
     if (typeof node.id !== "string" && typeof node.id !== "number")
       throw "The node must have a string or number id.";
 
-    if (this.nodesIndex[node.id])
-      throw `The node "${  node.id  }" already exists.`;
+    if (this.nodesIndex[node.id]) throw `The node "${node.id}" already exists.`;
 
     let k;
 
-      
-const id = node.id;
+    const id = node.id;
 
-      
-let validNode = Object.create(null);
+    let validNode = Object.create(null);
 
     // Check the "clone" option:
     if (this.settings("clone")) {
@@ -448,13 +436,11 @@ let validNode = Object.create(null);
     )
       throw "The edge target must have an existing node id.";
 
-    if (this.edgesIndex[edge.id])
-      throw `The edge "${  edge.id  }" already exists.`;
+    if (this.edgesIndex[edge.id]) throw `The edge "${edge.id}" already exists.`;
 
     let k;
 
-      
-let validEdge = Object.create(null);
+    let validEdge = Object.create(null);
 
     // Check the "clone" option:
     if (this.settings("clone")) {
@@ -548,9 +534,11 @@ let validEdge = Object.create(null);
     )
       throw "dropNode: Wrong arguments.";
 
-    if (!this.nodesIndex[id]) throw `The node "${  id  }" does not exist.`;
+    if (!this.nodesIndex[id]) throw `The node "${id}" does not exist.`;
 
-    let i; let k; let l;
+    let i;
+    let k;
+    let l;
 
     // Remove the node from indexes:
     delete this.nodesIndex[id];
@@ -598,9 +586,11 @@ let validEdge = Object.create(null);
     )
       throw "dropEdge: Wrong arguments.";
 
-    if (!this.edgesIndex[id]) throw `The edge "${  id  }" does not exist.`;
+    if (!this.edgesIndex[id]) throw `The edge "${id}" does not exist.`;
 
-    let i; let l; let edge;
+    let i;
+    let l;
+    let edge;
 
     // Remove the edge from indexes:
     edge = this.edgesIndex[id];
@@ -715,7 +705,9 @@ let validEdge = Object.create(null);
    * @return {object}   The graph instance.
    */
   graph.addMethod("read", function(g) {
-    let i; let a; let l;
+    let i;
+    let a;
+    let l;
 
     a = g.nodes || [];
     for (i = 0, l = a.length; i < l; i++) this.addNode(a[i]);
@@ -755,11 +747,9 @@ let validEdge = Object.create(null);
     ) {
       let i;
 
-        
-let l;
+      let l;
 
-        
-const a = [];
+      const a = [];
 
       for (i = 0, l = v.length; i < l; i++)
         if (typeof v[i] === "string" || typeof v[i] === "number")
@@ -797,11 +787,9 @@ const a = [];
     if (Object.prototype.toString.call(v) === "[object Array]") {
       let i;
 
-        
-let l;
+      let l;
 
-        
-const a = [];
+      const a = [];
 
       for (i = 0, l = v.length; i < l; i++)
         if (typeof v[i] === "string" || typeof v[i] === "number")
@@ -843,11 +831,9 @@ const a = [];
     ) {
       let i;
 
-        
-let l;
+      let l;
 
-        
-const a = [];
+      const a = [];
 
       for (i = 0, l = v.length; i < l; i++)
         if (typeof v[i] === "string" || typeof v[i] === "number")
