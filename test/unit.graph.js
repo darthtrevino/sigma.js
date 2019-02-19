@@ -1,3 +1,4 @@
+QUnit.module("sigma.classes.graph");
 const sigma = require("../build/sigma.require.js");
 
 QUnit.test("Basic manipulation", assert => {

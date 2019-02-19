@@ -1,3 +1,4 @@
+QUnit.module("sigma.core.js");
 const sigma = require("../build/sigma.require.js");
 
 QUnit.test("Constructor polymorphism", assert => {

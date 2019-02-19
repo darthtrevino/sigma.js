@@ -1,3 +1,5 @@
+QUnit.module("sigma.classes.edgequad");
+
 const sigma = require("../build/sigma.require.js");
 
 // Test Beginning

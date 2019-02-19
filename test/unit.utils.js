@@ -1,3 +1,4 @@
+QUnit.module("sigma.utils");
 const sigma = require("../build/sigma.require.js");
 
 QUnit.test("Float color", assert => {

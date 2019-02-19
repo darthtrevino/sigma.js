@@ -1,3 +1,4 @@
+QUnit.module("sigma.classes.dispatcher");
 const sigma = require("../build/sigma.require.js");
 
 QUnit.test("Basics", assert => {

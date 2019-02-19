@@ -1,3 +1,4 @@
+QUnit.module("sigma.misc.animation");
 const sigma = require("../build/sigma.require.js");
 
 QUnit.asyncTest("Camera animation", function() {

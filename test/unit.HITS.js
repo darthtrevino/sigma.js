@@ -1,3 +1,4 @@
+QUnit.module("sigma.statistics.HITS");
 const sigma = require("../build/sigma.require.js");
 
 // These tests are based on testing plan

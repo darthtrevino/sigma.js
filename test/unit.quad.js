@@ -1,3 +1,4 @@
+QUnit.module("sigma.classes.quad");
 const sigma = require("../build/sigma.require.js");
 
 // Test Beginning

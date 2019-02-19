@@ -1,3 +1,4 @@
+QUnit.module("sigma.plugins.filter");
 const sigma = require("../build/sigma.require.js");
 require("../build/plugins/sigma.plugins.filter.min.js");
 
