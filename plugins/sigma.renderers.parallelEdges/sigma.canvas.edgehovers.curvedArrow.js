@@ -1,5 +1,5 @@
 ;(function() {
-  'use strict';
+  
 
   sigma.utils.pkg('sigma.canvas.edgehovers');
 
@@ -14,25 +14,61 @@
    */
   sigma.canvas.edgehovers.curvedArrow =
     function(edge, source, target, context, settings) {
-    var color = edge.color,
-        prefix = settings('prefix') || '',
-        edgeColor = settings('edgeColor'),
-        defaultNodeColor = settings('defaultNodeColor'),
-        defaultEdgeColor = settings('defaultEdgeColor'),
-        cp = {},
-        size = settings('edgeHoverSizeRatio') * (edge[prefix + 'size'] || 1),
-        count = edge.count || 0,
-        tSize = target[prefix + 'size'],
-        sX = source[prefix + 'x'],
-        sY = source[prefix + 'y'],
-        tX = target[prefix + 'x'],
-        tY = target[prefix + 'y'],
-        d,
-        aSize,
-        aX,
-        aY,
-        vX,
-        vY;
+    let color = edge.color;
+
+        
+const prefix = settings('prefix') || '';
+
+        
+const edgeColor = settings('edgeColor');
+
+        
+const defaultNodeColor = settings('defaultNodeColor');
+
+        
+const defaultEdgeColor = settings('defaultEdgeColor');
+
+        
+let cp = {};
+
+        
+const size = settings('edgeHoverSizeRatio') * (edge[`${prefix  }size`] || 1);
+
+        
+const count = edge.count || 0;
+
+        
+const tSize = target[`${prefix  }size`];
+
+        
+const sX = source[`${prefix  }x`];
+
+        
+const sY = source[`${prefix  }y`];
+
+        
+const tX = target[`${prefix  }x`];
+
+        
+const tY = target[`${prefix  }y`];
+
+        
+let d;
+
+        
+let aSize;
+
+        
+let aX;
+
+        
+let aY;
+
+        
+let vX;
+
+        
+let vY;
 
     cp = (source.id === target.id) ?
       sigma.utils.getSelfLoopControlPoints(sX, sY, tSize, count) :

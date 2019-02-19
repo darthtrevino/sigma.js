@@ -1,7 +1,7 @@
 module('sigma.classes.edgequad');
 
 // Test Beginning
-//================
+//= ===============
 test('EdgeQuadTree', function() {
 
   // Helpers
@@ -11,24 +11,26 @@ test('EdgeQuadTree', function() {
   }
 
   function generateRandomGraph(N, E) {
-    var nodes = [],
-        edges = [];
+    const nodes = [];
+
+        
+const edges = [];
 
     for (var i = 0; i < N; i++) {
       nodes.push({
         x: getRandom(4, 95),
         y: getRandom(4, 95),
         size: getRandom(1, 2),
-        data: 'Node#'+i,
+        data: `Node#${i}`,
         id: i
       });
     }
 
     for (var i = 0; i < E; i++)
       edges.push({
-        id: 'e' + i,
-        source: 'n' + (Math.random() * N | 0),
-        target: 'n' + (Math.random() * N | 0),
+        id: `e${  i}`,
+        source: `n${  Math.random() * N | 0}`,
+        target: `n${  Math.random() * N | 0}`,
         size: getRandom(1, 2)
       });
 
@@ -41,12 +43,14 @@ test('EdgeQuadTree', function() {
 
   // Instanciation
   //---------------
-  var quad = new sigma.classes.edgequad(),
-      geom = quad._geom;
+  const quad = new sigma.classes.edgequad();
+
+      
+const geom = quad._geom;
 
   // Geometry
   //----------
-  var rectangles = [
+  const rectangles = [
     {x1: 1, y1: 2, x2: 2, y2: 1, height: Math.sqrt(2)},
     {x1: 3, y1: 4, x2: 4, y2: 3, height: Math.sqrt(2)},
     {x1: 2, y1: 2, x2: 4, y2: 2, height: 1},
@@ -54,12 +58,12 @@ test('EdgeQuadTree', function() {
     {x1: 2, y1: 6, x2: 6, y2: 6, height: 4}
   ];
 
-  var llc = geom.lowerLeftCoor(rectangles[0]);
+  const llc = geom.lowerLeftCoor(rectangles[0]);
 
   strictEqual(geom.isAxisAligned(rectangles[0]), false, 'Non Axis Aligned');
   strictEqual(geom.isAxisAligned(rectangles[2]), true, 'Axis Aligned');
 
-  var topCorners = {x1: 2, y1: 2, x2: 4, y2: 2, height: 2};
+  const topCorners = {x1: 2, y1: 2, x2: 4, y2: 2, height: 2};
   deepEqual(
     geom.axisAlignedTopPoints({x1: 2, y1: 2, x2: 4, y2: 2, height: 2}),
     topCorners,
@@ -96,14 +100,14 @@ test('EdgeQuadTree', function() {
     'Lower Right Corner'
   );
 
-  var projection = geom.projection({x: 2, y: 6}, {x: 3, y: 4});
+  const projection = geom.projection({x: 2, y: 6}, {x: 3, y: 4});
   deepEqual(
     {x: approx(projection.x), y: approx(projection.y)},
     {x: 3.6, y: 4.8},
     'Projection'
   );
 
-  var solutions = [
+  const solutions = [
     [
       {x: 1, y: 2},
       {x: 2, y: 1},
@@ -152,11 +156,11 @@ test('EdgeQuadTree', function() {
     deepEqual(
       geom.rectangleCorners(r),
       solutions[i],
-      'Rectangle Corners #'+i
+      `Rectangle Corners #${i}`
     );
   });
 
-  var cr = [
+  const cr = [
     geom.rectangleCorners({x1: 4, y1: 6, x2: 6, y2: 4, height: Math.sqrt(8)}),
     geom.rectangleCorners({x1: 4, y1: 8, x2: 6, y2: 6, height: Math.sqrt(8)}),
     geom.rectangleCorners({x1: 10, y1: 10, x2: 12, y2: 10, height: 2}),

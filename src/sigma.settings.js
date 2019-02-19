@@ -1,12 +1,12 @@
 (function(undefined) {
-  "use strict";
+  
 
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
   // Packages initialization:
   sigma.utils.pkg("sigma.settings");
 
-  var settings = {
+  const settings = {
     /**
      * GRAPH SETTINGS:
      * ***************

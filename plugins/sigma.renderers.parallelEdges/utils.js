@@ -1,10 +1,10 @@
 ;(function(undefined) {
-  'use strict';
+  
 
   if (typeof sigma === 'undefined')
     throw 'sigma is not declared';
 
-  var _root = this;
+  const _root = this;
 
   // Initialize packages:
   sigma.utils = sigma.utils || {};

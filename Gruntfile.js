@@ -1,7 +1,7 @@
-var fs = require('fs');
+const fs = require('fs');
 
 module.exports = function(grunt) {
-  var coreJsFiles = [
+  const coreJsFiles = [
     // Core:
     'src/sigma.core.js',
 
@@ -65,10 +65,10 @@ module.exports = function(grunt) {
     'src/misc/sigma.misc.drawHovers.js'
   ];
 
-  var npmJsFiles = coreJsFiles.slice(0);
+  const npmJsFiles = coreJsFiles.slice(0);
   npmJsFiles.splice(2, 0, 'src/sigma.export.js');
 
-  var plugins = [
+  const plugins = [
     'exporters.svg',
     'layout.forceAtlas2',
     'layout.noverlap',
@@ -90,18 +90,20 @@ module.exports = function(grunt) {
     'statistics.HITS'
   ];
 
-  var pluginFiles = [],
-      subGrunts = {};
+  const pluginFiles = [];
+
+      
+const subGrunts = {};
 
   plugins.forEach(function(p) {
-    var dir = 'plugins/sigma.' + p + '/';
+    const dir = `plugins/sigma.${  p  }/`;
 
-    if (fs.existsSync(dir + 'Gruntfile.js'))
+    if (fs.existsSync(`${dir  }Gruntfile.js`))
       subGrunts[p] = {
-        gruntfile: dir + 'Gruntfile.js'
+        gruntfile: `${dir  }Gruntfile.js`
       };
     else
-      pluginFiles.push(dir + '**/*.js');
+      pluginFiles.push(`${dir  }**/*.js`);
   });
 
   // Project configuration:
@@ -148,7 +150,7 @@ module.exports = function(grunt) {
       },
       plugins: {
         files: pluginFiles.reduce(function(res, path) {
-          var dest = 'build/' + path.replace(/\/\*\*\/\*\.js$/, '.min.js');
+          const dest = `build/${  path.replace(/\/\*\*\/\*\.js$/, '.min.js')}`;
           res[dest] = path;
           return res;
         }, {})
@@ -173,7 +175,7 @@ module.exports = function(grunt) {
         path: 'examples/',
         pattern: /<!-- START SIGMA IMPORTS -->[\s\S]*<!-- END SIGMA IMPORTS -->/g,
         replacement: ['<!-- START SIGMA IMPORTS -->'].concat(coreJsFiles.map(function(path) {
-          return '<script src="../' + path + '"></script>';
+          return `<script src="../${  path  }"></script>`;
         }).concat('<!-- END SIGMA IMPORTS -->')).join('\n')
       }
     },
@@ -185,7 +187,7 @@ module.exports = function(grunt) {
           'build/sigma.min.js',
           'build/plugins/*.min.js'
         ],
-        router: function(filepath) {
+        router(filepath) {
           return filepath.replace(/build\//, '');
         }
       }

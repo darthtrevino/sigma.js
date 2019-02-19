@@ -1,5 +1,5 @@
 (function(undefined) {
-  "use strict";
+  
 
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
@@ -17,36 +17,80 @@
    * @return {sigma.captor}          The fresh new captor instance.
    */
   sigma.captors.touch = function(target, camera, settings) {
-    var _self = this,
-      _target = target,
-      _camera = camera,
-      _settings = settings,
+    const _self = this;
+
+      
+const _target = target;
+
+      
+const _camera = camera;
+
+      
+const _settings = settings;
+
       // CAMERA MANAGEMENT:
       // ******************
       // The camera position when the user starts dragging:
-      _startCameraX,
-      _startCameraY,
-      _startCameraAngle,
-      _startCameraRatio,
+      
+let _startCameraX;
+
+      
+let _startCameraY;
+
+      
+let _startCameraAngle;
+
+      
+let _startCameraRatio;
+
       // The latest stage position:
-      _lastCameraX,
-      _lastCameraY,
-      _lastCameraAngle,
-      _lastCameraRatio,
+      
+let _lastCameraX;
+
+      
+let _lastCameraY;
+
+      
+let _lastCameraAngle;
+
+      
+let _lastCameraRatio;
+
       // TOUCH MANAGEMENT:
       // *****************
       // Touches that are down:
-      _downTouches = [],
-      _startTouchX0,
-      _startTouchY0,
-      _startTouchX1,
-      _startTouchY1,
-      _startTouchAngle,
-      _startTouchDistance,
-      _touchMode,
-      _isMoving,
-      _doubleTap,
-      _movingTimeoutId;
+      
+let _downTouches = [];
+
+      
+let _startTouchX0;
+
+      
+let _startTouchY0;
+
+      
+let _startTouchX1;
+
+      
+let _startTouchY1;
+
+      
+let _startTouchAngle;
+
+      
+let _startTouchDistance;
+
+      
+let _touchMode;
+
+      
+let _isMoving;
+
+      
+let _doubleTap;
+
+      
+let _movingTimeoutId;
 
     sigma.classes.dispatcher.extend(this);
 
@@ -58,7 +102,7 @@
     _target.addEventListener("touchmove", _handleMove, false);
 
     function position(e) {
-      var offset = sigma.utils.getOffset(_target);
+      const offset = sigma.utils.getOffset(_target);
 
       return {
         x: e.pageX - offset.left,
@@ -88,7 +132,7 @@
      */
     function _handleStart(e) {
       if (_settings("touchEnabled")) {
-        var x0, x1, y0, y1, pos0, pos1;
+        let x0; let x1; let y0; let y1; let pos0; let pos1;
 
         _downTouches = e.touches;
 
@@ -160,7 +204,7 @@
     function _handleLeave(e) {
       if (_settings("touchEnabled")) {
         _downTouches = e.touches;
-        var inertiaRatio = _settings("touchInertiaRatio");
+        const inertiaRatio = _settings("touchInertiaRatio");
 
         if (_movingTimeoutId) {
           _isMoving = false;
@@ -211,23 +255,55 @@
      */
     function _handleMove(e) {
       if (!_doubleTap && _settings("touchEnabled")) {
-        var x0,
-          x1,
-          y0,
-          y1,
-          cos,
-          sin,
-          end,
-          pos0,
-          pos1,
-          diff,
-          start,
-          dAngle,
-          dRatio,
-          newStageX,
-          newStageY,
-          newStageRatio,
-          newStageAngle;
+        let x0;
+
+          
+let x1;
+
+          
+let y0;
+
+          
+let y1;
+
+          
+let cos;
+
+          
+let sin;
+
+          
+let end;
+
+          
+let pos0;
+
+          
+let pos1;
+
+          
+let diff;
+
+          
+let start;
+
+          
+let dAngle;
+
+          
+let dRatio;
+
+          
+let newStageX;
+
+          
+let newStageY;
+
+          
+let newStageRatio;
+
+          
+let newStageAngle;
 
         _downTouches = e.touches;
         _isMoving = true;
@@ -300,8 +376,8 @@
 
             // Homothetic transformation:
             newStageRatio = _startCameraRatio / dRatio;
-            x0 = x0 * dRatio;
-            y0 = y0 * dRatio;
+            x0 *= dRatio;
+            y0 *= dRatio;
 
             // Rotation:
             newStageAngle = _startCameraAngle - dAngle;
@@ -352,7 +428,7 @@
      * @param {event} e A touch event.
      */
     function _doubleTapHandler(e) {
-      var pos, ratio, animation;
+      let pos; let ratio; let animation;
 
       if (e.touches && e.touches.length === 1 && _settings("touchEnabled")) {
         _doubleTap = true;
@@ -374,7 +450,7 @@
 
           animation = {
             duration: _settings("doubleClickZoomDuration"),
-            onComplete: function() {
+            onComplete() {
               _doubleTap = false;
             }
           };

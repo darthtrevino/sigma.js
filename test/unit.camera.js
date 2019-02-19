@@ -1,8 +1,10 @@
 module('sigma.classes.camera');
 
 test('Basic manipulation', function() {
-  var graph = new sigma.classes.graph(),
-      camera = new sigma.classes.camera('myCam', graph, sigma.classes.configurable(sigma.settings));
+  const graph = new sigma.classes.graph();
+
+      
+const camera = new sigma.classes.camera('myCam', graph, sigma.classes.configurable(sigma.settings));
 
   deepEqual(
     [camera.x, camera.y, camera.ratio, camera.angle],
@@ -57,8 +59,10 @@ test('Apply to a graph', function() {
     return Math.round(v * 10000) / 10000;
   }
 
-  var graph = new sigma.classes.graph(),
-      camera = new sigma.classes.camera('myCam', graph, sigma.classes.configurable(sigma.settings));
+  const graph = new sigma.classes.graph();
+
+      
+const camera = new sigma.classes.camera('myCam', graph, sigma.classes.configurable(sigma.settings));
 
   // Fill the graph:
   graph.addNode({
@@ -145,8 +149,10 @@ test('Position', function() {
     return Math.round(v * 10000) / 10000;
   }
 
-  var pos,
-      camera = new sigma.classes.camera('myCam', undefined, sigma.classes.configurable(sigma.settings));
+  let pos;
+
+      
+const camera = new sigma.classes.camera('myCam', undefined, sigma.classes.configurable(sigma.settings));
 
   camera.goTo({
     x: 2,

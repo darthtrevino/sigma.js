@@ -1,5 +1,5 @@
 ;(function(undefined) {
-  'use strict';
+  
 
   /**
    * Sigma ForceAtlas2.5 Webworker
@@ -10,8 +10,10 @@
    * Version: 1.0.3
    */
 
-  var _root = this,
-      inWebWorker = !('document' in _root);
+  const _root = this;
+
+      
+const inWebWorker = !('document' in _root);
 
   /**
    * Worker Function Wrapper
@@ -20,13 +22,13 @@
    * The worker has to be wrapped into a single stringified function
    * to be passed afterwards as a BLOB object to the supervisor.
    */
-  var Worker = function(undefined) {
-    'use strict';
+  const Worker = function(undefined) {
+    
 
     /**
      * Worker settings and properties
      */
-    var W = {
+    const W = {
 
       // Properties
       ppn: 10,
@@ -53,18 +55,28 @@
       }
     };
 
-    var NodeMatrix,
-        EdgeMatrix,
-        RegionMatrix;
+    let NodeMatrix;
+
+        
+let EdgeMatrix;
+
+        
+let RegionMatrix;
 
     /**
      * Helpers
      */
     function extend() {
-      var i,
-          k,
-          res = {},
-          l = arguments.length;
+      let i;
+
+          
+let k;
+
+          
+const res = {};
+
+          
+const l = arguments.length;
 
       for (i = l - 1; i >= 0; i--)
         for (k in arguments[i])
@@ -73,7 +85,7 @@
     }
 
     function __emptyObject(obj) {
-      var k;
+      let k;
 
       for (k in obj)
         if (!('hasOwnProperty' in obj) || obj.hasOwnProperty(k))
@@ -85,7 +97,7 @@
     /**
      * Matrices properties accessors
      */
-    var nodeProperties = {
+    const nodeProperties = {
       x: 0,
       y: 1,
       dx: 2,
@@ -98,13 +110,13 @@
       fixed: 9
     };
 
-    var edgeProperties = {
+    const edgeProperties = {
       source: 0,
       target: 1,
       weight: 2
     };
 
-    var regionProperties = {
+    const regionProperties = {
       node: 0,
       centerX: 1,
       centerY: 2,
@@ -120,45 +132,42 @@
 
       // DEBUG: safeguards
       if ((i % W.ppn) !== 0)
-        throw 'np: non correct (' + i + ').';
+        throw `np: non correct (${  i  }).`;
       if (i !== parseInt(i))
         throw 'np: non int.';
 
       if (p in nodeProperties)
         return i + nodeProperties[p];
-      else
-        throw 'ForceAtlas2.Worker - ' +
-              'Inexistant node property given (' + p + ').';
+      throw `${'ForceAtlas2.Worker - ' +
+              'Inexistant node property given ('}${  p  }).`;
     }
 
     function ep(i, p) {
 
       // DEBUG: safeguards
       if ((i % W.ppe) !== 0)
-        throw 'ep: non correct (' + i + ').';
+        throw `ep: non correct (${  i  }).`;
       if (i !== parseInt(i))
         throw 'ep: non int.';
 
       if (p in edgeProperties)
         return i + edgeProperties[p];
-      else
-        throw 'ForceAtlas2.Worker - ' +
-              'Inexistant edge property given (' + p + ').';
+      throw `${'ForceAtlas2.Worker - ' +
+              'Inexistant edge property given ('}${  p  }).`;
     }
 
     function rp(i, p) {
 
       // DEBUG: safeguards
       if ((i % W.ppr) !== 0)
-        throw 'rp: non correct (' + i + ').';
+        throw `rp: non correct (${  i  }).`;
       if (i !== parseInt(i))
         throw 'rp: non int.';
 
       if (p in regionProperties)
         return i + regionProperties[p];
-      else
-        throw 'ForceAtlas2.Worker - ' +
-              'Inexistant region property given (' + p + ').';
+      throw `${'ForceAtlas2.Worker - ' +
+              'Inexistant region property given ('}${  p  }).`;
     }
 
     // DEBUG
@@ -174,7 +183,7 @@
 
     function init(nodes, edges, config) {
       config = config || {};
-      var i, l;
+      let i; let l;
 
       // Matrices
       NodeMatrix = nodes;
@@ -198,17 +207,33 @@
 
     // MATH: get distances stuff and power 2 issues
     function pass() {
-      var a, i, j, l, r, n, n1, n2, e, w, g, k, m;
+      let a; let i; let j; let l; let r; let n; let n1; let n2; let e; let w; let g; let k; let m;
 
-      var outboundAttCompensation,
-          coefficient,
-          xDist,
-          yDist,
-          ewc,
-          mass,
-          distance,
-          size,
-          factor;
+      let outboundAttCompensation;
+
+          
+let coefficient;
+
+          
+let xDist;
+
+          
+let yDist;
+
+          
+let ewc;
+
+          
+let mass;
+
+          
+let distance;
+
+          
+let size;
+
+          
+let factor;
 
       // 1) Initializing layout data
       //-----------------------------
@@ -237,11 +262,19 @@
 
       if (W.settings.barnesHutOptimize) {
 
-        var minX = Infinity,
-            maxX = -Infinity,
-            minY = Infinity,
-            maxY = -Infinity,
-            q, q0, q1, q2, q3;
+        let minX = Infinity;
+
+            
+let maxX = -Infinity;
+
+            
+let minY = Infinity;
+
+            
+let maxY = -Infinity;
+
+            
+let q; let q0; let q1; let q2; let q3;
 
         // Setting up
         // RegionMatrix = new Float32Array(W.nodesLength / W.ppn * 4 * W.ppr);
@@ -299,8 +332,7 @@
                   q = RegionMatrix[rp(r, 'firstChild')] + W.ppr;
                 }
               }
-              else {
-                if (NodeMatrix[np(n, 'y')] < RegionMatrix[rp(r, 'centerY')]) {
+              else if (NodeMatrix[np(n, 'y')] < RegionMatrix[rp(r, 'centerY')]) {
 
                   // Top Right quarter
                   q = RegionMatrix[rp(r, 'firstChild')] + W.ppr * 2;
@@ -310,7 +342,6 @@
                   // Bottom Right quarter
                   q = RegionMatrix[rp(r, 'firstChild')] + W.ppr * 3;
                 }
-              }
 
               // Update center of mass and mass (we only do it for non-leave regions)
               RegionMatrix[rp(r, 'massCenterX')] =
@@ -425,8 +456,7 @@
                     q = RegionMatrix[rp(r, 'firstChild')] + W.ppr;
                   }
                 }
-                else {
-                  if (NodeMatrix[np(RegionMatrix[rp(r, 'node')], 'y')] < RegionMatrix[rp(r, 'centerY')]) {
+                else if (NodeMatrix[np(RegionMatrix[rp(r, 'node')], 'y')] < RegionMatrix[rp(r, 'centerY')]) {
 
                     // Top Right quarter
                     q = RegionMatrix[rp(r, 'firstChild')] + W.ppr * 2;
@@ -436,7 +466,6 @@
                     // Bottom Right quarter
                     q = RegionMatrix[rp(r, 'firstChild')] + W.ppr * 3;
                   }
-                }
 
                 // We remove r[0] from the region r, add its mass to r and record it in q
                 RegionMatrix[rp(r, 'mass')] = NodeMatrix[np(RegionMatrix[rp(r, 'node')], 'mass')];
@@ -458,8 +487,7 @@
                     q2 = RegionMatrix[rp(r, 'firstChild')] + W.ppr;
                   }
                 }
-                else {
-                  if(NodeMatrix[np(n, 'y')] < RegionMatrix[rp(r, 'centerY')]) {
+                else if(NodeMatrix[np(n, 'y')] < RegionMatrix[rp(r, 'centerY')]) {
 
                     // Top Right quarter
                     q2 = RegionMatrix[rp(r, 'firstChild')] + W.ppr * 2;
@@ -469,7 +497,6 @@
                     // Bottom Right quarter
                     q2 = RegionMatrix[rp(r, 'firstChild')] + W.ppr * 3;
                   }
-                }
 
                 if (q === q2) {
 
@@ -524,7 +551,7 @@
 
                 if (W.settings.adjustSizes) {
 
-                  //-- Linear Anti-collision Repulsion
+                  // -- Linear Anti-collision Repulsion
                   if (distance > 0) {
                     factor = coefficient * NodeMatrix[np(n, 'mass')] *
                       RegionMatrix[rp(r, 'mass')] / distance / distance;
@@ -542,7 +569,7 @@
                 }
                 else {
 
-                  //-- Linear Repulsion
+                  // -- Linear Repulsion
                   if (distance > 0) {
                     factor = coefficient * NodeMatrix[np(n, 'mass')] *
                       RegionMatrix[rp(r, 'mass')] / distance / distance;
@@ -580,7 +607,7 @@
 
                 if (W.settings.adjustSizes) {
 
-                  //-- Linear Anti-collision Repulsion
+                  // -- Linear Anti-collision Repulsion
                   if (distance > 0) {
                     factor = coefficient * NodeMatrix[np(n, 'mass')] *
                       NodeMatrix[np(RegionMatrix[rp(r, 'node')], 'mass')] / distance / distance;
@@ -598,7 +625,7 @@
                 }
                 else {
 
-                  //-- Linear Repulsion
+                  // -- Linear Repulsion
                   if (distance > 0) {
                     factor = coefficient * NodeMatrix[np(n, 'mass')] *
                       NodeMatrix[np(RegionMatrix[rp(r, 'node')], 'mass')] / distance / distance;
@@ -632,7 +659,7 @@
 
             if (W.settings.adjustSizes) {
 
-              //-- Anticollision Linear Repulsion
+              // -- Anticollision Linear Repulsion
               distance = Math.sqrt(xDist * xDist + yDist * yDist) -
                 NodeMatrix[np(n1, 'size')] -
                 NodeMatrix[np(n2, 'size')];
@@ -665,7 +692,7 @@
             }
             else {
 
-              //-- Linear Repulsion
+              // -- Linear Repulsion
               distance = Math.sqrt(xDist * xDist + yDist * yDist);
 
               if (distance > 0) {
@@ -703,13 +730,13 @@
 
         if (W.settings.strongGravityMode) {
 
-          //-- Strong gravity
+          // -- Strong gravity
           if (distance > 0)
             factor = coefficient * NodeMatrix[np(n, 'mass')] * g;
         }
         else {
 
-          //-- Linear Anti-collision Repulsion n
+          // -- Linear Anti-collision Repulsion n
           if (distance > 0)
             factor = coefficient * NodeMatrix[np(n, 'mass')] * g / distance;
         }
@@ -754,7 +781,7 @@
           if (W.settings.linLogMode) {
             if (W.settings.outboundAttractionDistribution) {
 
-              //-- LinLog Degree Distributed Anti-collision Attraction
+              // -- LinLog Degree Distributed Anti-collision Attraction
               if (distance > 0) {
                 factor = -coefficient * ewc * Math.log(1 + distance) /
                 distance /
@@ -763,28 +790,26 @@
             }
             else {
 
-              //-- LinLog Anti-collision Attraction
+              // -- LinLog Anti-collision Attraction
               if (distance > 0) {
                 factor = -coefficient * ewc * Math.log(1 + distance) / distance;
               }
             }
           }
-          else {
-            if (W.settings.outboundAttractionDistribution) {
+          else if (W.settings.outboundAttractionDistribution) {
 
-              //-- Linear Degree Distributed Anti-collision Attraction
+              // -- Linear Degree Distributed Anti-collision Attraction
               if (distance > 0) {
                 factor = -coefficient * ewc / NodeMatrix[np(n1, 'mass')];
               }
             }
             else {
 
-              //-- Linear Anti-collision Attraction
+              // -- Linear Anti-collision Attraction
               if (distance > 0) {
                 factor = -coefficient * ewc;
               }
             }
-          }
         }
         else {
 
@@ -795,7 +820,7 @@
           if (W.settings.linLogMode) {
             if (W.settings.outboundAttractionDistribution) {
 
-              //-- LinLog Degree Distributed Attraction
+              // -- LinLog Degree Distributed Attraction
               if (distance > 0) {
                 factor = -coefficient * ewc * Math.log(1 + distance) /
                   distance /
@@ -804,27 +829,25 @@
             }
             else {
 
-              //-- LinLog Attraction
+              // -- LinLog Attraction
               if (distance > 0)
                 factor = -coefficient * ewc * Math.log(1 + distance) / distance;
             }
           }
-          else {
-            if (W.settings.outboundAttractionDistribution) {
+          else if (W.settings.outboundAttractionDistribution) {
 
-              //-- Linear Attraction Mass Distributed
+              // -- Linear Attraction Mass Distributed
               // NOTE: Distance is set to 1 to override next condition
               distance = 1;
               factor = -coefficient * ewc / NodeMatrix[np(n1, 'mass')];
             }
             else {
 
-              //-- Linear Attraction
+              // -- Linear Attraction
               // NOTE: Distance is set to 1 to override next condition
               distance = 1;
               factor = -coefficient * ewc;
             }
-          }
         }
 
         // Updating nodes' dx and dy
@@ -843,10 +866,16 @@
 
       // 5) Apply Forces
       //-----------------
-      var force,
-          swinging,
-          traction,
-          nodespeed;
+      let force;
+
+          
+let swinging;
+
+          
+let traction;
+
+          
+let nodespeed;
 
       // MATH: sqrt and square distances
       if (W.settings.adjustSizes) {
@@ -945,13 +974,13 @@
      */
 
     // Sending data back to the supervisor
-    var sendNewCoords;
+    let sendNewCoords;
 
     if (typeof window !== 'undefined' && window.document) {
 
       // From same document as sigma
       sendNewCoords = function() {
-        var e;
+        let e;
 
         if (document.createEvent) {
           e = document.createEvent('Event');
@@ -984,7 +1013,7 @@
 
     // Algorithm run
     function run(n) {
-      for (var i = 0; i < n; i++)
+      for (let i = 0; i < n; i++)
         pass();
       sendNewCoords();
     }
@@ -1041,11 +1070,15 @@
    * the supervisor can call it.
    */
   function crush(fnString) {
-    var pattern,
-        i,
-        l;
+    let pattern;
 
-    var np = [
+        
+let i;
+
+        
+let l;
+
+    const np = [
       'x',
       'y',
       'dx',
@@ -1058,13 +1091,13 @@
       'fixed'
     ];
 
-    var ep = [
+    const ep = [
       'source',
       'target',
       'weight'
     ];
 
-    var rp = [
+    const rp = [
       'node',
       'centerX',
       'centerY',
@@ -1079,28 +1112,28 @@
     // rp
     // NOTE: Must go first
     for (i = 0, l = rp.length; i < l; i++) {
-      pattern = new RegExp('rp\\(([^,]*), \'' + rp[i] + '\'\\)', 'g');
+      pattern = new RegExp(`rp\\(([^,]*), '${  rp[i]  }'\\)`, 'g');
       fnString = fnString.replace(
         pattern,
-        (i === 0) ? '$1' : '$1 + ' + i
+        (i === 0) ? '$1' : `$1 + ${  i}`
       );
     }
 
     // np
     for (i = 0, l = np.length; i < l; i++) {
-      pattern = new RegExp('np\\(([^,]*), \'' + np[i] + '\'\\)', 'g');
+      pattern = new RegExp(`np\\(([^,]*), '${  np[i]  }'\\)`, 'g');
       fnString = fnString.replace(
         pattern,
-        (i === 0) ? '$1' : '$1 + ' + i
+        (i === 0) ? '$1' : `$1 + ${  i}`
       );
     }
 
     // ep
     for (i = 0, l = ep.length; i < l; i++) {
-      pattern = new RegExp('ep\\(([^,]*), \'' + ep[i] + '\'\\)', 'g');
+      pattern = new RegExp(`ep\\(([^,]*), '${  ep[i]  }'\\)`, 'g');
       fnString = fnString.replace(
         pattern,
-        (i === 0) ? '$1' : '$1 + ' + i
+        (i === 0) ? '$1' : `$1 + ${  i}`
       );
     }
 
@@ -1109,8 +1142,8 @@
 
   // Exporting
   function getWorkerFn() {
-    var fnString = crush ? crush(Worker.toString()) : Worker.toString();
-    return ';(' + fnString + ').call(this);';
+    const fnString = crush ? crush(Worker.toString()) : Worker.toString();
+    return `;(${  fnString  }).call(this);`;
   }
 
   if (inWebWorker) {

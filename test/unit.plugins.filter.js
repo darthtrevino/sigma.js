@@ -1,7 +1,7 @@
 module('sigma.plugins.filter');
 
 test('Custom graph methods', function() {
-  var myGraph = new sigma.classes.graph();
+  const myGraph = new sigma.classes.graph();
   myGraph.read({
     nodes: [
       {
@@ -61,11 +61,19 @@ test('Custom graph methods', function() {
 });
 
 test('API', function() {
-  var a,
-      k,
-      s = new sigma(),
-      filter,
-      graph = {
+  let a;
+
+      
+let k;
+
+      
+const s = new sigma();
+
+      
+let filter;
+
+      
+const graph = {
         nodes: [
           {
             id: 'n0',
@@ -298,7 +306,7 @@ test('API', function() {
 
 
   // Import a chain of filters
-  var chain = [
+  const chain = [
     {
       key: 'my-filter',
       predicate: degreePredicate,
@@ -326,7 +334,7 @@ test('API', function() {
 
 
   // export > import > export
-  var dumpedChain = filter.import(filter.export()).export();
+  const dumpedChain = filter.import(filter.export()).export();
 
   deepEqual(
     chain.map(function(o) {

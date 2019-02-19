@@ -1,5 +1,5 @@
 (function(global) {
-  "use strict";
+  
 
   if (typeof sigma === "undefined") throw "sigma is not declared";
 
@@ -7,8 +7,10 @@
   sigma.utils.pkg("sigma.renderers");
 
   // Check if WebGL is enabled:
-  var canvas,
-    webgl = !!global.WebGLRenderingContext;
+  let canvas;
+
+    
+let webgl = !!global.WebGLRenderingContext;
   if (webgl) {
     canvas = document.createElement("canvas");
     try {

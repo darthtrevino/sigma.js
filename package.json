@@ -14,7 +14,7 @@
     "start": "http-server -p 8000",
     "test": "grunt travis",
     "build": "grunt build",
-    "lint": "echo TODO: Lint",
+    "lint": "eslint .",
     "prepublish": "grunt npmPrePublish"
   },
   "devDependencies": {
@@ -49,10 +49,14 @@
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [
+      "eslint --fix",
       "prettier --write",
       "git add"
     ]
   },
+  "eslintIgnore": [
+    "examples/lib/**/*.js"
+  ],
   "eslintConfig": {
     "extends": [
       "airbnb",

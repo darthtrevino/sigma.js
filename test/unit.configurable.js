@@ -1,7 +1,7 @@
 module('sigma.classes.configurable');
 
 test('Basic manipulation', function() {
-  var settings = new sigma.classes.configurable();
+  let settings = new sigma.classes.configurable();
   settings('mySetting', 42);
   deepEqual(settings('mySetting'), 42, 'First attribution works. (single key)');
   settings('mySetting', 123);
@@ -17,10 +17,16 @@ test('Basic manipulation', function() {
 });
 
 test('Embed objects', function() {
-  var data = { key1: 'data', key2: 'data' },
-      object = { key1: 'object' },
-      settings = new sigma.classes.configurable(data),
-      embedSettings = settings.embedObjects(object);
+  const data = { key1: 'data', key2: 'data' };
+
+      
+const object = { key1: 'object' };
+
+      
+const settings = new sigma.classes.configurable(data);
+
+      
+const embedSettings = settings.embedObjects(object);
 
   deepEqual(embedSettings('key2'), 'data', 'Embedded overriding works 1.');
   deepEqual(embedSettings('key1'), 'object', 'Embedded overriding works 2.');
@@ -28,12 +34,22 @@ test('Embed objects', function() {
 });
 
 test('Deeply embed objects', function() {
-  var data = { key1: 'data', key2: 'data', key3: 'data' },
-      object1 = { key1: 'object1', key2: 'object1' },
-      object2 = { key1: 'object2' },
-      settings = new sigma.classes.configurable(data),
-      embedSettings1 = settings.embedObjects(object1),
-      embedSettings2 = embedSettings1.embedObjects(object2);
+  const data = { key1: 'data', key2: 'data', key3: 'data' };
+
+      
+const object1 = { key1: 'object1', key2: 'object1' };
+
+      
+const object2 = { key1: 'object2' };
+
+      
+const settings = new sigma.classes.configurable(data);
+
+      
+const embedSettings1 = settings.embedObjects(object1);
+
+      
+const embedSettings2 = embedSettings1.embedObjects(object2);
 
   deepEqual(embedSettings2('key3'), 'data', 'Deeply embedded overriding works 1.');
   deepEqual(embedSettings2('key2'), 'object1', 'Deeply embedded overriding works 2.');

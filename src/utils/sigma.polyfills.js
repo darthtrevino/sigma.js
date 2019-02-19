@@ -1,5 +1,5 @@
 (function(global) {
-  "use strict";
+  
 
   /**
    * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -8,22 +8,30 @@
    * fixes from Paul Irish and Tino Zijdel
    * MIT license
    */
-  var x,
-    lastTime = 0,
-    vendors = ["ms", "moz", "webkit", "o"];
+  let x;
+
+    
+let lastTime = 0;
+
+    
+const vendors = ["ms", "moz", "webkit", "o"];
 
   for (x = 0; x < vendors.length && !global.requestAnimationFrame; x++) {
-    global.requestAnimationFrame = global[vendors[x] + "RequestAnimationFrame"];
+    global.requestAnimationFrame = global[`${vendors[x]  }RequestAnimationFrame`];
     global.cancelAnimationFrame =
-      global[vendors[x] + "CancelAnimationFrame"] ||
-      global[vendors[x] + "CancelRequestAnimationFrame"];
+      global[`${vendors[x]  }CancelAnimationFrame`] ||
+      global[`${vendors[x]  }CancelRequestAnimationFrame`];
   }
 
   if (!global.requestAnimationFrame)
     global.requestAnimationFrame = function(callback, element) {
-      var currTime = new Date().getTime(),
-        timeToCall = Math.max(0, 16 - (currTime - lastTime)),
-        id = global.setTimeout(function() {
+      const currTime = new Date().getTime();
+
+        
+const timeToCall = Math.max(0, 16 - (currTime - lastTime));
+
+        
+const id = global.setTimeout(function() {
           callback(currTime + timeToCall);
         }, timeToCall);
 
@@ -50,10 +58,16 @@
           "Function.prototype.bind - what is trying to be bound is not callable"
         );
 
-      var aArgs = Array.prototype.slice.call(arguments, 1),
-        fToBind = this,
-        fNOP,
-        fBound;
+      const aArgs = Array.prototype.slice.call(arguments, 1);
+
+        
+const fToBind = this;
+
+        
+let fNOP;
+
+        
+let fBound;
 
       fNOP = function() {};
       fBound = function() {

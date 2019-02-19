@@ -1,5 +1,5 @@
 (function() {
-  'use strict';
+  
 
   if (typeof sigma === 'undefined') {
     throw 'sigma is not declared';
@@ -7,8 +7,8 @@
 
   // Default function to compute path length between two nodes:
   // the euclidian
-  var defaultPathLengthFunction = function(node1, node2, previousPathLength) {
-    var isEverythingDefined =
+  const defaultPathLengthFunction = function(node1, node2, previousPathLength) {
+    const isEverythingDefined =
       node1 != undefined &&
       node2 != undefined &&
       node1.x != undefined &&
@@ -27,7 +27,7 @@
   sigma.classes.graph.addMethod(
     'astar',
     function(srcId, destId, settings) {
-      var currentSettings = new sigma.classes.configurable(
+      const currentSettings = new sigma.classes.configurable(
         // Default settings
         {
           // Graph is directed, affects which edges are taken into account
@@ -40,30 +40,36 @@
         },
         settings || {});
 
-      var pathLengthFunction = currentSettings("pathLengthFunction"),
-          heuristicLengthFunction = currentSettings("heuristicLengthFunction") || pathLengthFunction;
+      const pathLengthFunction = currentSettings("pathLengthFunction");
 
-      var srcNode = this.nodes(srcId),
-          destNode = this.nodes(destId);
+          
+const heuristicLengthFunction = currentSettings("heuristicLengthFunction") || pathLengthFunction;
 
-      var closedList = {},
-          openList = [];
+      const srcNode = this.nodes(srcId);
 
-      var addToLists = function(node, previousNode, pathLength, heuristicLength) {
-        var nodeId = node.id;
-        var newItem = {
-          pathLength: pathLength,
-          heuristicLength: heuristicLength,
-          node: node,
-          nodeId: nodeId,
-          previousNode: previousNode
+          
+const destNode = this.nodes(destId);
+
+      const closedList = {};
+
+          
+const openList = [];
+
+      const addToLists = function(node, previousNode, pathLength, heuristicLength) {
+        const nodeId = node.id;
+        const newItem = {
+          pathLength,
+          heuristicLength,
+          node,
+          nodeId,
+          previousNode
         };
 
         if(closedList[nodeId] == undefined || closedList[nodeId].pathLength > pathLength) {
           closedList[nodeId] = newItem;
 
-          var item;
-          var i;
+          let item;
+          let i;
           for(i = 0; i < openList.length; i++) {
             item = openList[i];
             if(item.heuristicLength > heuristicLength) {
@@ -77,11 +83,11 @@
 
       addToLists(srcNode, null, 0, 0);
 
-      var pathFound = false;
+      let pathFound = false;
 
       // Depending of the type of graph (directed or not),
       // the neighbors are either the out neighbors or all.
-      var allNeighbors;
+      let allNeighbors;
       if(currentSettings("undirected")) {
         allNeighbors = this.allNeighborsIndex;
       }
@@ -90,12 +96,22 @@
       }
 
 
-      var inspectedItem,
-          neighbors,
-          neighbor,
-          pathLength,
-          heuristicLength,
-          i;
+      let inspectedItem;
+
+          
+let neighbors;
+
+          
+let neighbor;
+
+          
+let pathLength;
+
+          
+let heuristicLength;
+
+          
+let i;
       while(openList.length > 0) {
         inspectedItem = openList.shift();
 
@@ -116,8 +132,10 @@
 
       if(pathFound) {
         // Rebuilding path
-        var path = [],
-            currentNode = destNode;
+        const path = [];
+
+            
+let currentNode = destNode;
 
         while(currentNode) {
           path.unshift(currentNode);
@@ -126,9 +144,9 @@
 
         return path;
       }
-      else {
+      
         return undefined;
-      }
+      
     }
   );
 }).call(window);

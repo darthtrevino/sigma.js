@@ -1,6 +1,8 @@
 // Hardcoded export for the node.js version:
-var sigma = this.sigma,
-  conrad = this.conrad;
+const sigma = this.sigma;
+
+  
+const conrad = this.conrad;
 
 sigma.conrad = conrad;
 
@@ -9,7 +11,7 @@ if (typeof HTMLElement === "undefined") HTMLElement = function() {};
 
 if (typeof window === "undefined")
   window = {
-    addEventListener: function() {}
+    addEventListener() {}
   };
 
 if (typeof exports !== "undefined") {

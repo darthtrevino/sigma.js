@@ -1,5 +1,5 @@
 ;(function(undefined) {
-  'use strict';
+  
 
   if (typeof sigma === 'undefined')
     throw 'sigma is not declared';
@@ -19,8 +19,10 @@
       if (typeof id !== 'string')
         throw 'adjacentNodes: the node id must be a string.';
 
-      var target,
-          nodes = [];
+      let target;
+
+          
+const nodes = [];
       for(target in this.allNeighborsIndex[id]) {
         nodes.push(this.nodesIndex[target]);
       }
@@ -38,10 +40,16 @@
       if (typeof id !== 'string')
         throw 'adjacentEdges: the node id must be a string.';
 
-      var a = this.allNeighborsIndex[id],
-          eid,
-          target,
-          edges = [];
+      const a = this.allNeighborsIndex[id];
+
+          
+let eid;
+
+          
+let target;
+
+          
+const edges = [];
       for(target in a) {
         for(eid in a[target]) {
           edges.push(a[target][eid]);
@@ -58,11 +66,19 @@
    * @version 0.1
    */
 
-   var _g = undefined,
-       _s = undefined,
-       _chain = [], // chain of wrapped filters
-       _keysIndex = Object.create(null),
-       Processors = {};   // available predicate processors
+   let _g = undefined;
+
+       
+let _s = undefined;
+
+       
+let _chain = [];
+ // chain of wrapped filters
+       
+let _keysIndex = Object.create(null);
+
+       
+const Processors = {};   // available predicate processors
 
 
   /**
@@ -75,10 +91,16 @@
     * @param  {function} fn The predicate.
     */
   Processors.nodes = function nodes(fn) {
-    var n = _g.nodes(),
-        ln = n.length,
-        e = _g.edges(),
-        le = e.length;
+    const n = _g.nodes();
+
+        
+let ln = n.length;
+
+        
+const e = _g.edges();
+
+        
+let le = e.length;
 
     // hide node, or keep former value
     while(ln--)
@@ -94,8 +116,10 @@
     * @param  {function} fn The predicate.
     */
   Processors.edges = function edges(fn) {
-    var e = _g.edges(),
-        le = e.length;
+    const e = _g.edges();
+
+        
+let le = e.length;
 
     // hide edge, or keep former value
     while(le--)
@@ -107,13 +131,25 @@
     * @param  {string} id The center node.
     */
   Processors.neighbors = function neighbors(id) {
-    var n = _g.nodes(),
-        ln = n.length,
-        e = _g.edges(),
-        le = e.length,
-        neighbors = _g.adjacentNodes(id),
-        nn = neighbors.length,
-        no = {};
+    const n = _g.nodes();
+
+        
+let ln = n.length;
+
+        
+const e = _g.edges();
+
+        
+let le = e.length;
+
+        
+const neighbors = _g.adjacentNodes(id);
+
+        
+let nn = neighbors.length;
+
+        
+const no = {};
 
     while(nn--)
       no[neighbors[nn].id] = true;
@@ -137,19 +173,19 @@
    */
   function register(fn, p, key) {
     if (key != undefined && typeof key !== 'string')
-      throw 'The filter key "'+ key.toString() +'" must be a string.';
+      throw `The filter key "${ key.toString() }" must be a string.`;
 
     if (key != undefined && !key.length)
       throw 'The filter key must be a non-empty string.';
 
     if (typeof fn !== 'function')
-      throw 'The predicate of key "'+ key +'" must be a function.';
+      throw `The predicate of key "${ key }" must be a function.`;
 
-    if ('undo' === key)
+    if (key === 'undo')
       throw '"undo" is a reserved key.';
 
     if (_keysIndex[key])
-      throw 'The filter "' + key + '" already exists.';
+      throw `The filter "${  key  }" already exists.`;
 
     if (key)
       _keysIndex[key] = true;
@@ -171,7 +207,7 @@
       return !(a.key in o);
     });
 
-    for(var key in o)
+    for(const key in o)
       delete _keysIndex[key];
   };
 
@@ -256,7 +292,7 @@
    */
   Filter.prototype.neighborsOf = function(id, key) {
     if (typeof id !== 'string')
-      throw 'The node id "'+ id.toString() +'" must be a string.';
+      throw `The node id "${ id.toString() }" must be a string.`;
     if (!id.length)
       throw 'The node id must be a non-empty string.';
 
@@ -280,11 +316,11 @@
    * @return {sigma.plugins.filter}      Returns the instance.
    */
   Filter.prototype.apply = function() {
-    for (var i = 0, len = _chain.length; i < len; ++i) {
+    for (let i = 0, len = _chain.length; i < len; ++i) {
       _chain[i].processor(_chain[i].predicate);
     };
 
-    if (_chain[0] && 'undo' === _chain[0].key) {
+    if (_chain[0] && _chain[0].key === 'undo') {
       _chain.shift();
     }
 
@@ -322,8 +358,10 @@
    * @return {sigma.plugins.filter}       Returns the instance.
    */
   Filter.prototype.undo = function(v) {
-    var q = Object.create(null),
-        la = arguments.length;
+    const q = Object.create(null);
+
+        
+const la = arguments.length;
 
     // find removable filters
     if (la === 1) {
@@ -344,10 +382,16 @@
     unregister(q);
 
     function processor() {
-      var n = _g.nodes(),
-          ln = n.length,
-          e = _g.edges(),
-          le = e.length;
+      const n = _g.nodes();
+
+          
+let ln = n.length;
+
+          
+const e = _g.edges();
+
+          
+let le = e.length;
 
       while(ln--)
         n[ln].hidden = false;
@@ -366,15 +410,15 @@
 
   // fast deep copy function
   function deepCopy(o) {
-    var copy = Object.create(null);
-    for (var i in o) {
+    const copy = Object.create(null);
+    for (const i in o) {
       if (typeof o[i] === "object" && o[i] !== null) {
         copy[i] = deepCopy(o[i]);
       }
       else if (typeof o[i] === "function" && o[i] !== null) {
         // clone function:
-        eval(" copy[i] = " +  o[i].toString());
-        //copy[i] = o[i].bind(_g);
+        eval(` copy[i] = ${   o[i].toString()}`);
+        // copy[i] = o[i].bind(_g);
       }
 
       else
@@ -385,11 +429,11 @@
 
   function cloneChain(chain) {
     // Clone the array of filters:
-    var copy = chain.slice(0);
-    for (var i = 0, len = copy.length; i < len; i++) {
+    const copy = chain.slice(0);
+    for (let i = 0, len = copy.length; i < len; i++) {
       copy[i] = deepCopy(copy[i]);
       if (typeof copy[i].processor === "function")
-        copy[i].processor = 'filter.processors.' + copy[i].processor.name;
+        copy[i].processor = `filter.processors.${  copy[i].processor.name}`;
     };
     return copy;
   }
@@ -418,7 +462,7 @@
    * @return {object}   The cloned chain of filters.
    */
   Filter.prototype.export = function() {
-    var c = cloneChain(_chain);
+    const c = cloneChain(_chain);
     return c;
   };
 
@@ -445,20 +489,20 @@
     if (Object.prototype.toString.call(chain) !== '[object Array]')
       throw 'The chain" must be an array.';
 
-    var copy = cloneChain(chain);
+    const copy = cloneChain(chain);
 
-    for (var i = 0, len = copy.length; i < len; i++) {
+    for (let i = 0, len = copy.length; i < len; i++) {
       if (copy[i].predicate === undefined || copy[i].processor === undefined)
         throw 'Wrong arguments.';
 
       if (copy[i].key != undefined && typeof copy[i].key !== 'string')
-        throw 'The filter key "'+ copy[i].key.toString() +'" must be a string.';
+        throw `The filter key "${ copy[i].key.toString() }" must be a string.`;
 
       if (typeof copy[i].predicate !== 'function')
-        throw 'The predicate of key "'+ copy[i].key +'" must be a function.';
+        throw `The predicate of key "${ copy[i].key }" must be a function.`;
 
       if (typeof copy[i].processor !== 'string')
-        throw 'The processor of key "'+ copy[i].key +'" must be a string.';
+        throw `The processor of key "${ copy[i].key }" must be a string.`;
 
       // Replace the processor name by the corresponding function:
       switch(copy[i].processor) {
@@ -472,7 +516,7 @@
           copy[i].processor = Processors.neighbors;
           break;
         default:
-          throw 'Unknown processor ' + copy[i].processor;
+          throw `Unknown processor ${  copy[i].processor}`;
       }
     };
 
@@ -488,7 +532,7 @@
    *
    * > var filter = new sigma.plugins.filter(s);
    */
-  var filter = null;
+  let filter = null;
 
   /**
    * @param  {sigma} s The related sigma instance.

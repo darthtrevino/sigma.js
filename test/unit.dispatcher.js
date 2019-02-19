@@ -2,9 +2,13 @@ module('sigma.classes.dispatcher');
 
 test('Basics', function() {
   // 1. Basics
-  var dispatched = 0,
-      instance = new sigma.classes.dispatcher(),
-      listener = function() { dispatched++; };
+  let dispatched = 0;
+
+      
+const instance = new sigma.classes.dispatcher();
+
+      
+const listener = function() { dispatched++; };
 
   instance.dispatchEvent('myEvent');
   strictEqual(dispatched, 0, 'Dispatching an event with no listener does nothing.');
@@ -20,9 +24,13 @@ test('Basics', function() {
 
 test('API', function() {
   // 1. "unbind" polymorphism
-  var dispatched = 0,
-      instance = new sigma.classes.dispatcher(),
-      listener = function() { dispatched++; };
+  let dispatched = 0;
+
+      
+var instance = new sigma.classes.dispatcher();
+
+      
+const listener = function() { dispatched++; };
 
   instance.bind('myEvent', listener);
   instance.unbind('myEvent', listener);
@@ -55,11 +63,19 @@ test('API', function() {
   strictEqual(dispatched, 0, 'unbind() works.');
 
   // 2. "bind" polymorphism
-  var dispatched1 = 0,
-      dispatched2 = 0,
-      instance = new sigma.classes.dispatcher(),
-      listener1 = function() { dispatched1++; },
-      listener2 = function() { dispatched2++; };
+  let dispatched1 = 0;
+
+      
+let dispatched2 = 0;
+
+      
+var instance = new sigma.classes.dispatcher();
+
+      
+const listener1 = function() { dispatched1++; };
+
+      
+const listener2 = function() { dispatched2++; };
 
   instance.bind('myEvent1', listener1);
   instance.dispatchEvent('myEvent1');

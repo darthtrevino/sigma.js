@@ -1,11 +1,19 @@
 module('sigma.classes.graph');
 
 test('Basic manipulation', function() {
-  var a,
-      k,
-      opts = {},
-      settings = new sigma.classes.configurable(opts),
-      graph = {
+  let a;
+
+      
+let k;
+
+      
+const opts = {};
+
+      
+const settings = new sigma.classes.configurable(opts);
+
+      
+const graph = {
         nodes: [
           {
             id: 'n0',
@@ -56,7 +64,7 @@ test('Basic manipulation', function() {
       };
 
   // Initialize the graph:
-  var myGraph = new sigma.classes.graph(settings);
+  let myGraph = new sigma.classes.graph(settings);
 
   opts.immutable = opts.clone = true;
   myGraph.addNode(graph.nodes[0]);
@@ -100,7 +108,7 @@ test('Basic manipulation', function() {
     'With {immutable: true}, node ids in the graph are not writable.'
   );
 
-  var node = myGraph.nodes(graph.nodes[1].id);
+  const node = myGraph.nodes(graph.nodes[1].id);
   node.id = 'new_n0';
   strictEqual(
     'new_n0',
@@ -197,7 +205,7 @@ test('Basic manipulation', function() {
     'With {immutable: true}, edge sources, targets and ids in the graph are not writable.'
   );
 
-  var edge = myGraph.edges(graph.edges[1].id);
+  const edge = myGraph.edges(graph.edges[1].id);
   edge.id = 'new_e0';
   edge.source = 'undefined_node';
   edge.target = 'undefined_node';
@@ -327,9 +335,13 @@ test('Basic manipulation', function() {
 });
 
 test('Methods and attached functions', function() {
-  var counter,
-      colorPalette = { Person: '#C3CBE1', Place: '#9BDEBD' },
-      myGraph;
+  let counter;
+
+      
+const colorPalette = { Person: '#C3CBE1', Place: '#9BDEBD' };
+
+      
+let myGraph;
 
   counter = 0;
   sigma.classes.graph.attach('addNode', 'counterInc', function() {
@@ -422,7 +434,7 @@ test('Methods and attached functions', function() {
 });
 
 test('Builtin indexes', function() {
-  var graph = {
+  const graph = {
         nodes: [
           {
             id: 'n0',
@@ -464,13 +476,13 @@ test('Builtin indexes', function() {
     }
   });
 
-  var g = new sigma.classes.graph();
+  const g = new sigma.classes.graph();
   g.read(graph);
 
-  var index = g.retrieveIndexes();
+  const index = g.retrieveIndexes();
 
   deepEqual(
-    index['inIndex'],
+    index.inIndex,
     {
       n0: {},
       n1: {
@@ -497,7 +509,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['inCount'],
+    index.inCount,
     {
       n0: 0,
       n1: 1,
@@ -507,7 +519,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['outIndex'],
+    index.outIndex,
     {
       n0: {
         n1: {
@@ -534,7 +546,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['outCount'],
+    index.outCount,
     {
       n0: 1,
       n1: 1,
@@ -544,7 +556,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['allIndex'],
+    index.allIndex,
     {
       n0: {
         n1: {
@@ -587,7 +599,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['allCount'],
+    index.allCount,
     {
       n0: 1,
       n1: 2,
@@ -599,7 +611,7 @@ test('Builtin indexes', function() {
   g.dropNode('n2');
 
   deepEqual(
-    index['inIndex'],
+    index.inIndex,
     {
       n0: {},
       n1: {
@@ -617,7 +629,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['inCount'],
+    index.inCount,
     {
       n0: 0,
       n1: 1
@@ -626,7 +638,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['outIndex'],
+    index.outIndex,
     {
       n0: {
         n1: {
@@ -644,7 +656,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['outCount'],
+    index.outCount,
     {
       n0: 1,
       n1: 0
@@ -653,7 +665,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['allIndex'],
+    index.allIndex,
     {
       n0: {
         n1: {
@@ -680,7 +692,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['allCount'],
+    index.allCount,
     {
       n0: 1,
       n1: 1
@@ -691,7 +703,7 @@ test('Builtin indexes', function() {
   g.dropEdge('e0');
 
   deepEqual(
-    index['inIndex'],
+    index.inIndex,
     {
       n0: {},
       n1: {}
@@ -700,7 +712,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['inCount'],
+    index.inCount,
     {
       n0: 0,
       n1: 0
@@ -709,7 +721,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['outIndex'],
+    index.outIndex,
     {
       n0: {},
       n1: {}
@@ -718,7 +730,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['outCount'],
+    index.outCount,
     {
       n0: 0,
       n1: 0
@@ -727,7 +739,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['allIndex'],
+    index.allIndex,
     {
       n0: {},
       n1: {}
@@ -736,7 +748,7 @@ test('Builtin indexes', function() {
   );
 
   deepEqual(
-    index['allCount'],
+    index.allCount,
     {
       n0: 0,
       n1: 0
@@ -746,19 +758,19 @@ test('Builtin indexes', function() {
 });
 
 test('Custom indexes', function() {
-  var myGraph;
+  let myGraph;
 
   sigma.classes.graph.addIndex('nodesCount', {
-    constructor: function() {
+    constructor() {
       this.nodesCount = 0;
     },
-    addNode: function() {
+    addNode() {
       this.nodesCount++;
     },
-    dropNode: function() {
+    dropNode() {
       this.nodesCount--;
     },
-    clear: function() {
+    clear() {
       this.nodesCount = 0;
     }
   });

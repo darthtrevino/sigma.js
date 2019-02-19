@@ -1,8 +1,8 @@
 module('sigma.utils');
 test('Float color', function() {
-  var floatColor = sigma.utils.floatColor;
+  const floatColor = sigma.utils.floatColor;
 
-  var inputs = [
+  const inputs = [
     '#FF0',
     '#D1D1D1',
     '#d1d1d1',
@@ -11,7 +11,7 @@ test('Float color', function() {
     'rgba(234, 245, 298, .1)'
   ];
 
-  var outputs = [
+  const outputs = [
     16776960,
     13750737,
     13750737,

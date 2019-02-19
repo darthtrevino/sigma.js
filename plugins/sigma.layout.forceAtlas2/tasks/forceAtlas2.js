@@ -3,7 +3,7 @@
  *
  * This task crush and minify Force Atlas 2 code.
  */
-var uglify = require('uglify-js');
+const uglify = require('uglify-js');
 
 // Shorteners
 function minify(string) {
@@ -12,11 +12,15 @@ function minify(string) {
 
 // Crushing function
 function crush(fnString) {
-  var pattern,
-      i,
-      l;
+  let pattern;
 
-  var np = [
+      
+let i;
+
+      
+let l;
+
+  const np = [
     'x',
     'y',
     'dx',
@@ -29,13 +33,13 @@ function crush(fnString) {
     'fixed'
   ];
 
-  var ep = [
+  const ep = [
     'source',
     'target',
     'weight'
   ];
 
-  var rp = [
+  const rp = [
     'node',
     'centerX',
     'centerY',
@@ -49,26 +53,26 @@ function crush(fnString) {
 
   // Replacing matrix accessors by incremented indexes
   for (i = 0, l = rp.length; i < l; i++) {
-    pattern = new RegExp('rp\\(([^,]*), \'' + rp[i] + '\'\\)', 'g');
+    pattern = new RegExp(`rp\\(([^,]*), '${  rp[i]  }'\\)`, 'g');
     fnString = fnString.replace(
       pattern,
-      (i === 0) ? '$1' : '$1 + ' + i
+      (i === 0) ? '$1' : `$1 + ${  i}`
     );
   }
 
   for (i = 0, l = np.length; i < l; i++) {
-    pattern = new RegExp('np\\(([^,]*), \'' + np[i] + '\'\\)', 'g');
+    pattern = new RegExp(`np\\(([^,]*), '${  np[i]  }'\\)`, 'g');
     fnString = fnString.replace(
       pattern,
-      (i === 0) ? '$1' : '$1 + ' + i
+      (i === 0) ? '$1' : `$1 + ${  i}`
     );
   }
 
   for (i = 0, l = ep.length; i < l; i++) {
-    pattern = new RegExp('ep\\(([^,]*), \'' + ep[i] + '\'\\)', 'g');
+    pattern = new RegExp(`ep\\(([^,]*), '${  ep[i]  }'\\)`, 'g');
     fnString = fnString.replace(
       pattern,
-      (i === 0) ? '$1' : '$1 + ' + i
+      (i === 0) ? '$1' : `$1 + ${  i}`
     );
   }
 
@@ -89,19 +93,19 @@ module.exports = function(grunt) {
   function multitask() {
 
     // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({});
+    const options = this.options({});
 
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
       // Concat specified files.
-      var src = f.src.filter(function(filepath) {
+      let src = f.src.filter(function(filepath) {
         // Warn on and remove invalid source files (if nonull was set).
         if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
+          grunt.log.warn(`Source file "${  filepath  }" not found.`);
           return false;
-        } else {
+        } 
           return true;
-        }
+        
       }).map(function(filepath) {
         // Read file source.
         return grunt.file.read(filepath);
@@ -114,7 +118,7 @@ module.exports = function(grunt) {
       grunt.file.write(f.dest, src);
 
       // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
+      grunt.log.writeln(`File "${  f.dest  }" created.`);
     });
   }
 

@@ -5,9 +5,13 @@ asyncTest('Camera animation', function() {
     return Math.round(v * 10000) / 10000;
   }
 
-  var hasTestedFrame,
-      graph = new sigma.classes.graph(),
-      camera = new sigma.classes.camera('myCam', graph, sigma.classes.configurable(sigma.settings));
+  let hasTestedFrame;
+
+      
+const graph = new sigma.classes.graph();
+
+      
+const camera = new sigma.classes.camera('myCam', graph, sigma.classes.configurable(sigma.settings));
 
   // Fill the graph:
   graph.addNode({
@@ -43,10 +47,10 @@ asyncTest('Camera animation', function() {
     angle: Math.PI / 2
   }, {
     duration: 50,
-    easing: function(k) {
+    easing(k) {
       return (k === 1) ? k : 0.5;
     },
-    onNewFrame: function() {
+    onNewFrame() {
       camera.applyView('', 'display:');
 
       if (!hasTestedFrame) {
@@ -82,7 +86,7 @@ asyncTest('Camera animation', function() {
         hasTestedFrame = true;
       }
     },
-    onComplete: function() {
+    onComplete() {
       camera.applyView('', 'display:');
       start();
       deepEqual(

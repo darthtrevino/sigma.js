@@ -1,8 +1,12 @@
 module('sigma.core.js');
 test('Constructor polymorphism', function() {
-  var s,
-      tmp = sigma.renderers.def,
-      dom = document.createElement('DIV');
+  let s;
+
+      
+const tmp = sigma.renderers.def;
+
+      
+const dom = document.createElement('DIV');
 
   // Let's add a temporary container:
   dom.id = 'abc';
@@ -74,8 +78,10 @@ test('Constructor polymorphism', function() {
 });
 
 test('Public methods', function() {
-  var s = new sigma(),
-      dom = document.createElement('DIV');
+  const s = new sigma();
+
+      
+const dom = document.createElement('DIV');
 
   // Let's add a temporary container:
   dom.id = 'abc';
@@ -88,11 +94,19 @@ test('Public methods', function() {
   );
 
   // Adding and killing cameras and renderers:
-  var c1 = s.addCamera('0'),
-      c2 = s.addCamera('1'),
-      r1 = s.addRenderer({ container: dom, camera: c1, id: '0' }),
-      r2 = s.addRenderer({ container: dom, camera: c2, id: '1' }),
-      r3 = s.addRenderer({ container: dom, camera: c2, id: '2' });
+  const c1 = s.addCamera('0');
+
+      
+const c2 = s.addCamera('1');
+
+      
+const r1 = s.addRenderer({ container: dom, camera: c1, id: '0' });
+
+      
+const r2 = s.addRenderer({ container: dom, camera: c2, id: '1' });
+
+      
+const r3 = s.addRenderer({ container: dom, camera: c2, id: '2' });
   deepEqual(
     [Object.keys(s.renderers), Object.keys(s.cameras)],
     [['0', '1', '2'], ['0', '1']],
@@ -124,8 +138,10 @@ test('Public methods', function() {
   s.killCamera('0');
 
   // Checking a bit more deeply adding methods:
-  var c = s.addCamera('myCamera'),
-      r = s.addRenderer({ camera: c, container: dom, id: 'myRenderer' });
+  var c = s.addCamera('myCamera');
+
+      
+const r = s.addRenderer({ camera: c, container: dom, id: 'myRenderer' });
   deepEqual(
     [Object.keys(s.renderers), Object.keys(s.cameras)],
     [['myRenderer'], ['myCamera']],
@@ -141,8 +157,10 @@ test('Public methods', function() {
   }, /The renderer "myRenderer" already exists./, 'Adding a renderer with an already existing ID throws an error.');
 
   // And check also some crazy side cases:
-  var c = s.addCamera(),
-      id = c.id;
+  var c = s.addCamera();
+
+      
+const id = c.id;
 
   s.killCamera(id);
 

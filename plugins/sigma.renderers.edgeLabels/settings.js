@@ -1,5 +1,5 @@
 ;(function(undefined) {
-  'use strict';
+  
 
   if (typeof sigma === 'undefined')
     throw 'sigma is not declared';
@@ -10,7 +10,7 @@
   /**
   * Extended sigma settings for sigma.renderers.edgeLabels.
   */
-  var settings = {
+  const settings = {
     /**
      * RENDERERS SETTINGS:
      * *******************

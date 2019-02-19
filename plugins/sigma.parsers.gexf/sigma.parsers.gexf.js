@@ -1,5 +1,5 @@
 ;(function(undefined) {
-  'use strict';
+  
 
   if (typeof sigma === 'undefined')
     throw 'sigma is not declared';
@@ -8,9 +8,9 @@
   sigma.utils.pkg('sigma.parsers');
 
   // Just a basic ID generator:
-  var _id = 0;
+  let _id = 0;
   function edgeId() {
-    return 'e' + (_id++);
+    return `e${  _id++}`;
   }
 
   /**
@@ -30,10 +30,16 @@
    *                                      instance as parameter.
    */
   sigma.parsers.gexf = function(target, sig, callback) {
-    var i,
-        l,
-        arr,
-        obj;
+    let i;
+
+        
+let l;
+
+        
+let arr;
+
+        
+let obj;
 
     function parse(graph) {
       // Adapt the graph:
@@ -59,8 +65,8 @@
         obj = arr[i];
 
         obj.id = typeof obj.id === 'string' ? obj.id : edgeId();
-        obj.source = '' + obj.source;
-        obj.target = '' + obj.target;
+        obj.source = `${  obj.source}`;
+        obj.target = `${  obj.target}`;
 
         if (obj.viz && typeof obj.viz === 'object') {
           obj.color = obj.viz.color;
@@ -101,7 +107,7 @@
       // Call the callback if specified:
       if (callback) {
         callback(sig || graph);
-        return;
+        
       } else
         return graph;
     }

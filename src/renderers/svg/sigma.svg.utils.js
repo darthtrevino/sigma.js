@@ -1,5 +1,5 @@
 (function() {
-  "use strict";
+  
 
   sigma.utils.pkg("sigma.svg.utils");
 
@@ -12,7 +12,7 @@
      *
      * @param  {DOMElement}               element   The DOM element to show.
      */
-    show: function(element) {
+    show(element) {
       element.style.display = "";
       return this;
     },
@@ -22,7 +22,7 @@
      *
      * @param  {DOMElement}               element   The DOM element to hide.
      */
-    hide: function(element) {
+    hide(element) {
       element.style.display = "none";
       return this;
     }
