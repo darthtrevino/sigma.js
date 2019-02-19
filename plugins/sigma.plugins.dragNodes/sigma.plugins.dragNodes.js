@@ -4,13 +4,9 @@
  * examples/api-candy.html code samples to know more.
  */
 (function() {
-  
+  if (typeof sigma === "undefined") throw "sigma is not declared";
 
-  if (typeof sigma === 'undefined')
-    throw 'sigma is not declared';
-
-  sigma.utils.pkg('sigma.plugins');
-
+  sigma.utils.pkg("sigma.plugins");
 
   /**
    * This function will add `mousedown`, `mouseup` & `mousemove` events to the
@@ -49,44 +45,32 @@
     // Init variables:
     const _self = this;
 
-      
-const _s = s;
+    const _s = s;
 
-      
-const _body = document.body;
+    const _body = document.body;
 
-      
-const _renderer = renderer;
+    const _renderer = renderer;
 
-      
-let _mouse = renderer.container.lastChild;
+    let _mouse = renderer.container.lastChild;
 
-      
-const _camera = renderer.camera;
+    const _camera = renderer.camera;
 
-      
-let _node = null;
+    let _node = null;
 
-      
-let _prefix = '';
+    let _prefix = "";
 
-      
-const _hoverStack = [];
+    const _hoverStack = [];
 
-      
-const _hoverIndex = {};
+    const _hoverIndex = {};
 
-      
-let _isMouseDown = false;
+    let _isMouseDown = false;
 
-      
-const _isMouseOverCanvas = false;
+    const _isMouseOverCanvas = false;
 
-      
-let _drag = false;
+    let _drag = false;
 
     if (renderer instanceof sigma.renderers.svg) {
-        _mouse = renderer.container.firstChild;
+      _mouse = renderer.container.firstChild;
     }
 
     // It removes the initial substring ('read_') if it's a WegGL renderer.
@@ -96,11 +80,11 @@ let _drag = false;
       _prefix = renderer.options.prefix;
     }
 
-    renderer.bind('overNode', nodeMouseOver);
-    renderer.bind('outNode', treatOutNode);
-    renderer.bind('click', click);
+    renderer.bind("overNode", nodeMouseOver);
+    renderer.bind("outNode", treatOutNode);
+    renderer.bind("click", click);
 
-    _s.bind('kill', function() {
+    _s.bind("kill", function() {
       _self.unbindAll();
     });
 
@@ -108,36 +92,37 @@ let _drag = false;
      * Unbind all event listeners.
      */
     this.unbindAll = function() {
-      _mouse.removeEventListener('mousedown', nodeMouseDown);
-      _body.removeEventListener('mousemove', nodeMouseMove);
-      _body.removeEventListener('mouseup', nodeMouseUp);
-      _renderer.unbind('overNode', nodeMouseOver);
-      _renderer.unbind('outNode', treatOutNode);
-    }
+      _mouse.removeEventListener("mousedown", nodeMouseDown);
+      _body.removeEventListener("mousemove", nodeMouseMove);
+      _body.removeEventListener("mouseup", nodeMouseUp);
+      _renderer.unbind("overNode", nodeMouseOver);
+      _renderer.unbind("outNode", treatOutNode);
+    };
 
     // Calculates the global offset of the given element more accurately than
     // element.offsetTop and element.offsetLeft.
     function calculateOffset(element) {
       const style = window.getComputedStyle(element);
       const getCssProperty = function(prop) {
-        return parseInt(style.getPropertyValue(prop).replace('px', '')) || 0;
+        return parseInt(style.getPropertyValue(prop).replace("px", "")) || 0;
       };
       return {
-        left: element.getBoundingClientRect().left + getCssProperty('padding-left'),
-        top: element.getBoundingClientRect().top + getCssProperty('padding-top')
+        left:
+          element.getBoundingClientRect().left + getCssProperty("padding-left"),
+        top: element.getBoundingClientRect().top + getCssProperty("padding-top")
       };
-    };
+    }
 
     function click(event) {
       // event triggered at the end of the click
       _isMouseDown = false;
-      _body.removeEventListener('mousemove', nodeMouseMove);
-      _body.removeEventListener('mouseup', nodeMouseUp);
+      _body.removeEventListener("mousemove", nodeMouseMove);
+      _body.removeEventListener("mouseup", nodeMouseUp);
 
       if (!_hoverStack.length) {
         _node = null;
       }
-    };
+    }
 
     function nodeMouseOver(event) {
       // Don't treat the node if it is already registered
@@ -149,26 +134,30 @@ let _drag = false;
       _hoverStack.push(event.data.node);
       _hoverIndex[event.data.node.id] = true;
 
-      if(_hoverStack.length && ! _isMouseDown) {
+      if (_hoverStack.length && !_isMouseDown) {
         // Set the current node to be the last one in the array
         _node = _hoverStack[_hoverStack.length - 1];
-        _mouse.addEventListener('mousedown', nodeMouseDown);
+        _mouse.addEventListener("mousedown", nodeMouseDown);
       }
-    };
+    }
 
     function treatOutNode(event) {
       // Remove the node from the array
-      const indexCheck = _hoverStack.map(function(e) { return e; }).indexOf(event.data.node);
+      const indexCheck = _hoverStack
+        .map(function(e) {
+          return e;
+        })
+        .indexOf(event.data.node);
       _hoverStack.splice(indexCheck, 1);
       delete _hoverIndex[event.data.node.id];
 
-      if(_hoverStack.length && ! _isMouseDown) {
+      if (_hoverStack.length && !_isMouseDown) {
         // On out, set the current node to be the next stated in array
         _node = _hoverStack[_hoverStack.length - 1];
       } else {
-        _mouse.removeEventListener('mousedown', nodeMouseDown);
+        _mouse.removeEventListener("mousedown", nodeMouseDown);
       }
-    };
+    }
 
     function nodeMouseDown(event) {
       _isMouseDown = true;
@@ -178,15 +167,14 @@ let _drag = false;
       // linear interpolation. So treat it as if a user is dragging
       // the graph
       if (_node && size > 1) {
-        _mouse.removeEventListener('mousedown', nodeMouseDown);
-        _body.addEventListener('mousemove', nodeMouseMove);
-        _body.addEventListener('mouseup', nodeMouseUp);
+        _mouse.removeEventListener("mousedown", nodeMouseDown);
+        _body.addEventListener("mousemove", nodeMouseMove);
+        _body.addEventListener("mouseup", nodeMouseUp);
 
         // Do not refresh edgequadtree during drag:
         let k;
 
-            
-let c;
+        let c;
         for (k in _s.cameras) {
           c = _s.cameras[k];
           if (c.edgequadtree !== undefined) {
@@ -195,28 +183,27 @@ let c;
         }
 
         // Deactivate drag graph.
-        _renderer.settings({mouseEnabled: false, enableHovering: false});
+        _renderer.settings({ mouseEnabled: false, enableHovering: false });
         _s.refresh();
 
-        _self.dispatchEvent('startdrag', {
+        _self.dispatchEvent("startdrag", {
           node: _node,
           captor: event,
           renderer: _renderer
         });
       }
-    };
+    }
 
     function nodeMouseUp(event) {
       _isMouseDown = false;
-      _mouse.addEventListener('mousedown', nodeMouseDown);
-      _body.removeEventListener('mousemove', nodeMouseMove);
-      _body.removeEventListener('mouseup', nodeMouseUp);
+      _mouse.addEventListener("mousedown", nodeMouseDown);
+      _body.removeEventListener("mousemove", nodeMouseMove);
+      _body.removeEventListener("mouseup", nodeMouseUp);
 
       // Allow to refresh edgequadtree:
       let k;
 
-          
-let c;
+      let c;
       for (k in _s.cameras) {
         c = _s.cameras[k];
         if (c.edgequadtree !== undefined) {
@@ -225,17 +212,17 @@ let c;
       }
 
       // Activate drag graph.
-      _renderer.settings({mouseEnabled: true, enableHovering: true});
+      _renderer.settings({ mouseEnabled: true, enableHovering: true });
       _s.refresh();
 
       if (_drag) {
-        _self.dispatchEvent('drop', {
+        _self.dispatchEvent("drop", {
           node: _node,
           captor: event,
           renderer: _renderer
         });
       }
-      _self.dispatchEvent('dragend', {
+      _self.dispatchEvent("dragend", {
         node: _node,
         captor: event,
         renderer: _renderer
@@ -243,10 +230,10 @@ let c;
 
       _drag = false;
       _node = null;
-    };
+    }
 
     function nodeMouseMove(event) {
-      if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+      if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
         clearTimeout(timeOut);
         var timeOut = setTimeout(executeNodeMouseMove, 0);
       } else {
@@ -256,23 +243,17 @@ let c;
       function executeNodeMouseMove() {
         const offset = calculateOffset(_renderer.container);
 
-            
-let x = event.clientX - offset.left;
+        let x = event.clientX - offset.left;
 
-            
-let y = event.clientY - offset.top;
+        let y = event.clientY - offset.top;
 
-            
-const cos = Math.cos(_camera.angle);
+        const cos = Math.cos(_camera.angle);
 
-            
-const sin = Math.sin(_camera.angle);
+        const sin = Math.sin(_camera.angle);
 
-            
-const nodes = _s.graph.nodes();
+        const nodes = _s.graph.nodes();
 
-            
-const ref = [];
+        const ref = [];
 
         // Getting and derotating the reference coordinates.
         for (let i = 0; i < 2; i++) {
@@ -280,8 +261,8 @@ const ref = [];
           const aux = {
             x: n.x * cos + n.y * sin,
             y: n.y * cos - n.x * sin,
-            renX: n[`${_prefix  }x`],
-            renY: n[`${_prefix  }y`],
+            renX: n[`${_prefix}x`],
+            renY: n[`${_prefix}y`]
           };
           ref.push(aux);
         }
@@ -289,8 +270,8 @@ const ref = [];
         // Applying linear interpolation.
         // if the nodes are on top of each other, we use the camera ratio to interpolate
         if (ref[0].x === ref[1].x && ref[0].y === ref[1].y) {
-          var xRatio = (ref[0].renX === 0) ? 1 : ref[0].renX;
-          var yRatio = (ref[0].renY === 0) ? 1 : ref[0].renY;
+          var xRatio = ref[0].renX === 0 ? 1 : ref[0].renX;
+          var yRatio = ref[0].renY === 0 ? 1 : ref[0].renY;
           x = (ref[0].x / xRatio) * (x - ref[0].renX) + ref[0].x;
           y = (ref[0].y / yRatio) * (y - ref[0].renY) + ref[0].y;
         } else {
@@ -317,14 +298,14 @@ const ref = [];
         _s.refresh();
 
         _drag = true;
-        _self.dispatchEvent('drag', {
+        _self.dispatchEvent("drag", {
           node: _node,
           captor: event,
           renderer: _renderer
         });
       }
-    };
-  };
+    }
+  }
 
   /**
    * Interface
@@ -344,7 +325,7 @@ const ref = [];
       _instance[s.id] = new DragNodes(s, renderer);
     }
 
-    s.bind('kill', function() {
+    s.bind("kill", function() {
       sigma.plugins.killDragNodes(s);
     });
 
@@ -362,5 +343,4 @@ const ref = [];
       delete _instance[s.id];
     }
   };
-
-}).call(window);
+}.call(window));

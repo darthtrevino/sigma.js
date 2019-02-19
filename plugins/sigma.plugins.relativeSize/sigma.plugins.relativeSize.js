@@ -1,15 +1,11 @@
 (function() {
-  
+  if (typeof sigma === "undefined") throw "sigma is not declared";
 
-  if (typeof sigma === 'undefined')
-    throw 'sigma is not declared';
-
-  sigma.utils.pkg('sigma.plugins');
+  sigma.utils.pkg("sigma.plugins");
 
   const _id = 0;
 
-      
-const _cache = {};
+  const _cache = {};
 
   /**
    * This function will change size for all nodes depending to their degree
@@ -21,10 +17,10 @@ const _cache = {};
     const nodes = s.graph.nodes();
 
     // second create size for every node
-    for(let i = 0; i < nodes.length; i++) {
+    for (let i = 0; i < nodes.length; i++) {
       const degree = s.graph.degree(nodes[i].id);
       nodes[i].size = initialSize * Math.sqrt(degree);
     }
     s.refresh();
   };
-}).call(window);
+}.call(window));

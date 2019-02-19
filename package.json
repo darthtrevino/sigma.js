@@ -17,7 +17,7 @@
     "lint": "echo todo",
     "_lint": "eslint .",
     "unit_test": "qunit 'test/unit.*.js'",
-    "prettify_all": "prettier src/**/*.js --write"
+    "prettify_all": "prettier {src,test,plugins}/**/*.js --write"
   },
   "devDependencies": {
     "eslint": "5.3.0",

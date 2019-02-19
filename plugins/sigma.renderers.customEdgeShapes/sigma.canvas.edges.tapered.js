@@ -1,7 +1,5 @@
-;(function() {
-  
-
-  sigma.utils.pkg('sigma.canvas.edges');
+(function() {
+  sigma.utils.pkg("sigma.canvas.edges");
 
   /**
    * This method renders the edge as a tapered line.
@@ -15,53 +13,48 @@
    * @param  {CanvasRenderingContext2D} context      The canvas context.
    * @param  {configurable}             settings     The settings function.
    */
-  sigma.canvas.edges.tapered = function(edge, source, target, context, settings) {
+  sigma.canvas.edges.tapered = function(
+    edge,
+    source,
+    target,
+    context,
+    settings
+  ) {
     // The goal is to draw a triangle where the target node is a point of
     // the triangle, and the two other points are the intersection of the
     // source circle and the circle (target, distance(source, target)).
-    let color = edge.active ?
-          edge.active_color || settings('defaultEdgeActiveColor') :
-          edge.color;
+    let color = edge.active
+      ? edge.active_color || settings("defaultEdgeActiveColor")
+      : edge.color;
 
-        
-var prefix = settings('prefix') || '';
+    var prefix = settings("prefix") || "";
 
-        
-const size = edge[`${prefix  }size`] || 1;
+    const size = edge[`${prefix}size`] || 1;
 
-        
-const edgeColor = settings('edgeColor');
+    const edgeColor = settings("edgeColor");
 
-        
-var prefix = settings('prefix') || '';
+    var prefix = settings("prefix") || "";
 
-        
-const defaultNodeColor = settings('defaultNodeColor');
+    const defaultNodeColor = settings("defaultNodeColor");
 
-        
-const defaultEdgeColor = settings('defaultEdgeColor');
+    const defaultEdgeColor = settings("defaultEdgeColor");
 
-        
-const sX = source[`${prefix  }x`];
+    const sX = source[`${prefix}x`];
 
-        
-const sY = source[`${prefix  }y`];
+    const sY = source[`${prefix}y`];
 
-        
-const tX = target[`${prefix  }x`];
+    const tX = target[`${prefix}x`];
 
-        
-const tY = target[`${prefix  }y`];
+    const tY = target[`${prefix}y`];
 
-        
-const dist = sigma.utils.getDistance(sX, sY, tX, tY);
+    const dist = sigma.utils.getDistance(sX, sY, tX, tY);
 
     if (!color)
       switch (edgeColor) {
-        case 'source':
+        case "source":
           color = source.color || defaultNodeColor;
           break;
-        case 'target':
+        case "target":
           color = target.color || defaultNodeColor;
           break;
         default:
@@ -75,11 +68,11 @@ const dist = sigma.utils.getDistance(sX, sY, tX, tY);
     context.save();
 
     if (edge.active) {
-      context.fillStyle = settings('edgeActiveColor') === 'edge' ?
-        (color || defaultEdgeColor) :
-        settings('defaultEdgeActiveColor');
-    }
-    else {
+      context.fillStyle =
+        settings("edgeActiveColor") === "edge"
+          ? color || defaultEdgeColor
+          : settings("defaultEdgeActiveColor");
+    } else {
       context.fillStyle = color;
     }
 

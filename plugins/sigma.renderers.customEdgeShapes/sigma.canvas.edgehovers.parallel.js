@@ -1,7 +1,5 @@
-;(function() {
-  
-
-  sigma.utils.pkg('sigma.canvas.edgehovers');
+(function() {
+  sigma.utils.pkg("sigma.canvas.edgehovers");
 
   /**
    * This hover renderer will display the edge with a different color or size.
@@ -12,54 +10,47 @@
    * @param  {CanvasRenderingContext2D} context      The canvas context.
    * @param  {configurable}             settings     The settings function.
    */
-  sigma.canvas.edgehovers.parallel =
-    function(edge, source, target, context, settings) {
-    let color = edge.active ?
-          edge.active_color || settings('defaultEdgeActiveColor') :
-          edge.color;
+  sigma.canvas.edgehovers.parallel = function(
+    edge,
+    source,
+    target,
+    context,
+    settings
+  ) {
+    let color = edge.active
+      ? edge.active_color || settings("defaultEdgeActiveColor")
+      : edge.color;
 
-        
-const prefix = settings('prefix') || '';
+    const prefix = settings("prefix") || "";
 
-        
-let size = edge[`${prefix  }size`] || 1;
+    let size = edge[`${prefix}size`] || 1;
 
-        
-const edgeColor = settings('edgeColor');
+    const edgeColor = settings("edgeColor");
 
-        
-const defaultNodeColor = settings('defaultNodeColor');
+    const defaultNodeColor = settings("defaultNodeColor");
 
-        
-const defaultEdgeColor = settings('defaultEdgeColor');
+    const defaultEdgeColor = settings("defaultEdgeColor");
 
-        
-const sX = source[`${prefix  }x`];
+    const sX = source[`${prefix}x`];
 
-        
-const sY = source[`${prefix  }y`];
+    const sY = source[`${prefix}y`];
 
-        
-const tX = target[`${prefix  }x`];
+    const tX = target[`${prefix}x`];
 
-        
-const tY = target[`${prefix  }y`];
+    const tY = target[`${prefix}y`];
 
-        
-let c;
+    let c;
 
-        
-let d;
+    let d;
 
-        
-const dist = sigma.utils.getDistance(sX, sY, tX, tY);
+    const dist = sigma.utils.getDistance(sX, sY, tX, tY);
 
     if (!color)
       switch (edgeColor) {
-        case 'source':
+        case "source":
           color = source.color || defaultNodeColor;
           break;
-        case 'target':
+        case "target":
           color = target.color || defaultNodeColor;
           break;
         default:
@@ -67,12 +58,12 @@ const dist = sigma.utils.getDistance(sX, sY, tX, tY);
           break;
       }
 
-    if (settings('edgeHoverColor') === 'edge') {
+    if (settings("edgeHoverColor") === "edge") {
       color = edge.hover_color || color;
     } else {
-      color = edge.hover_color || settings('defaultEdgeHoverColor') || color;
+      color = edge.hover_color || settings("defaultEdgeHoverColor") || color;
     }
-    size *= settings('edgeHoverSizeRatio');
+    size *= settings("edgeHoverSizeRatio");
 
     // Intersection points of the source node circle:
     c = sigma.utils.getCircleIntersection(sX, sY, size, tX, tY, dist);

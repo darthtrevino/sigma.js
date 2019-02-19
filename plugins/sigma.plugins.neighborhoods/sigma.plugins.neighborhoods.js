@@ -21,10 +21,7 @@
  *  > });
  */
 (function() {
-  
-
-  if (typeof sigma === 'undefined')
-    throw 'sigma is not declared';
+  if (typeof sigma === "undefined") throw "sigma is not declared";
 
   /**
    * This method takes the ID of node as argument and returns the graph of the
@@ -36,87 +33,73 @@
    * @return {object}          The graph, as a simple descriptive object, in
    *                           the format required by the "read" graph method.
    */
-  sigma.classes.graph.addMethod(
-    'neighborhood',
-    function(centerId) {
-      let k1;
+  sigma.classes.graph.addMethod("neighborhood", function(centerId) {
+    let k1;
 
-          
-let k2;
+    let k2;
 
-          
-let k3;
+    let k3;
 
-          
-let node;
+    let node;
 
-          
-let center;
+    let center;
 
-          // Those two local indexes are here just to avoid duplicates:
-          
-const localNodesIndex = {};
+    // Those two local indexes are here just to avoid duplicates:
 
-          
-const localEdgesIndex = {};
+    const localNodesIndex = {};
 
-          // And here is the resulted graph, empty at the moment:
-          
-const graph = {
-            nodes: [],
-            edges: []
-          };
+    const localEdgesIndex = {};
 
-      // Check that the exists:
-      if (!this.nodes(centerId))
-        return graph;
+    // And here is the resulted graph, empty at the moment:
 
-      // Add center. It has to be cloned to add it the "center" attribute
-      // without altering the current graph:
-      node = this.nodes(centerId);
-      center = {};
-      center.center = true;
-      for (k1 in node)
-        center[k1] = node[k1];
+    const graph = {
+      nodes: [],
+      edges: []
+    };
 
-      localNodesIndex[centerId] = true;
-      graph.nodes.push(center);
+    // Check that the exists:
+    if (!this.nodes(centerId)) return graph;
 
-      // Add neighbors and edges between the center and the neighbors:
-      for (k1 in this.allNeighborsIndex[centerId]) {
-        if (!localNodesIndex[k1]) {
-          localNodesIndex[k1] = true;
-          graph.nodes.push(this.nodesIndex[k1]);
-        }
+    // Add center. It has to be cloned to add it the "center" attribute
+    // without altering the current graph:
+    node = this.nodes(centerId);
+    center = {};
+    center.center = true;
+    for (k1 in node) center[k1] = node[k1];
 
-        for (k2 in this.allNeighborsIndex[centerId][k1])
-          if (!localEdgesIndex[k2]) {
-            localEdgesIndex[k2] = true;
-            graph.edges.push(this.edgesIndex[k2]);
-          }
+    localNodesIndex[centerId] = true;
+    graph.nodes.push(center);
+
+    // Add neighbors and edges between the center and the neighbors:
+    for (k1 in this.allNeighborsIndex[centerId]) {
+      if (!localNodesIndex[k1]) {
+        localNodesIndex[k1] = true;
+        graph.nodes.push(this.nodesIndex[k1]);
       }
 
-      // Add edges connecting two neighbors:
-      for (k1 in localNodesIndex)
-        if (k1 !== centerId)
-          for (k2 in localNodesIndex)
-            if (
-              k2 !== centerId &&
-              k1 !== k2 &&
-              this.allNeighborsIndex[k1][k2]
-            )
-              for (k3 in this.allNeighborsIndex[k1][k2])
-                if (!localEdgesIndex[k3]) {
-                  localEdgesIndex[k3] = true;
-                  graph.edges.push(this.edgesIndex[k3]);
-                }
-
-      // Finally, let's return the final graph:
-      return graph;
+      for (k2 in this.allNeighborsIndex[centerId][k1])
+        if (!localEdgesIndex[k2]) {
+          localEdgesIndex[k2] = true;
+          graph.edges.push(this.edgesIndex[k2]);
+        }
     }
-  );
 
-  sigma.utils.pkg('sigma.plugins');
+    // Add edges connecting two neighbors:
+    for (k1 in localNodesIndex)
+      if (k1 !== centerId)
+        for (k2 in localNodesIndex)
+          if (k2 !== centerId && k1 !== k2 && this.allNeighborsIndex[k1][k2])
+            for (k3 in this.allNeighborsIndex[k1][k2])
+              if (!localEdgesIndex[k3]) {
+                localEdgesIndex[k3] = true;
+                graph.edges.push(this.edgesIndex[k3]);
+              }
+
+    // Finally, let's return the final graph:
+    return graph;
+  });
+
+  sigma.utils.pkg("sigma.plugins");
 
   /**
    * sigma.plugins.neighborhoods constructor.
@@ -124,11 +107,9 @@ const graph = {
   sigma.plugins.neighborhoods = function() {
     const ready = false;
 
-        
-const readyCallbacks = [];
+    const readyCallbacks = [];
 
-        
-const graph = new sigma.classes.graph();
+    const graph = new sigma.classes.graph();
 
     /**
      * This method just returns the neighborhood of a node.
@@ -150,20 +131,18 @@ const graph = new sigma.classes.graph();
     this.load = function(path, callback) {
       // Quick XHR polyfill:
       const xhr = (function() {
-        if (window.XMLHttpRequest)
-          return new XMLHttpRequest();
+        if (window.XMLHttpRequest) return new XMLHttpRequest();
 
         let names;
 
-            
-let i;
+        let i;
 
         if (window.ActiveXObject) {
           names = [
-            'Msxml2.XMLHTTP.6.0',
-            'Msxml2.XMLHTTP.3.0',
-            'Msxml2.XMLHTTP',
-            'Microsoft.XMLHTTP'
+            "Msxml2.XMLHTTP.6.0",
+            "Msxml2.XMLHTTP.3.0",
+            "Msxml2.XMLHTTP",
+            "Microsoft.XMLHTTP"
           ];
 
           for (i in names)
@@ -175,16 +154,14 @@ let i;
         return null;
       })();
 
-      if (!xhr)
-        throw 'XMLHttpRequest not supported, cannot load the data.';
+      if (!xhr) throw "XMLHttpRequest not supported, cannot load the data.";
 
-      xhr.open('GET', path, true);
+      xhr.open("GET", path, true);
       xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
           graph.clear().read(JSON.parse(xhr.responseText));
 
-          if (callback)
-            callback();
+          if (callback) callback();
         }
       };
 
@@ -203,4 +180,4 @@ let i;
       graph.clear().read(g);
     };
   };
-}).call(window);
+}.call(window));

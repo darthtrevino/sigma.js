@@ -1,7 +1,5 @@
-;(function() {
-  
-
-  sigma.utils.pkg('sigma.canvas.edges');
+(function() {
+  sigma.utils.pkg("sigma.canvas.edges");
 
   /**
    * This method renders the edge as two parallel lines.
@@ -12,53 +10,47 @@
    * @param  {CanvasRenderingContext2D} context      The canvas context.
    * @param  {configurable}             settings     The settings function.
    */
-  sigma.canvas.edges.parallel = function(edge, source, target, context, settings) {
-    let color = edge.active ?
-          edge.active_color || settings('defaultEdgeActiveColor') :
-          edge.color;
+  sigma.canvas.edges.parallel = function(
+    edge,
+    source,
+    target,
+    context,
+    settings
+  ) {
+    let color = edge.active
+      ? edge.active_color || settings("defaultEdgeActiveColor")
+      : edge.color;
 
-        
-const prefix = settings('prefix') || '';
+    const prefix = settings("prefix") || "";
 
-        
-const size = edge[`${prefix  }size`] || 1;
+    const size = edge[`${prefix}size`] || 1;
 
-        
-const edgeColor = settings('edgeColor');
+    const edgeColor = settings("edgeColor");
 
-        
-const defaultNodeColor = settings('defaultNodeColor');
+    const defaultNodeColor = settings("defaultNodeColor");
 
-        
-const defaultEdgeColor = settings('defaultEdgeColor');
+    const defaultEdgeColor = settings("defaultEdgeColor");
 
-        
-const sX = source[`${prefix  }x`];
+    const sX = source[`${prefix}x`];
 
-        
-const sY = source[`${prefix  }y`];
+    const sY = source[`${prefix}y`];
 
-        
-const tX = target[`${prefix  }x`];
+    const tX = target[`${prefix}x`];
 
-        
-const tY = target[`${prefix  }y`];
+    const tY = target[`${prefix}y`];
 
-        
-let c;
+    let c;
 
-        
-let d;
+    let d;
 
-        
-const dist = sigma.utils.getDistance(sX, sY, tX, tY);
+    const dist = sigma.utils.getDistance(sX, sY, tX, tY);
 
     if (!color)
       switch (edgeColor) {
-        case 'source':
+        case "source":
           color = source.color || defaultNodeColor;
           break;
-        case 'target':
+        case "target":
           color = target.color || defaultNodeColor;
           break;
         default:
@@ -75,11 +67,11 @@ const dist = sigma.utils.getDistance(sX, sY, tX, tY);
     context.save();
 
     if (edge.active) {
-      context.strokeStyle = settings('edgeActiveColor') === 'edge' ?
-        (color || defaultEdgeColor) :
-        settings('defaultEdgeActiveColor');
-    }
-    else {
+      context.strokeStyle =
+        settings("edgeActiveColor") === "edge"
+          ? color || defaultEdgeColor
+          : settings("defaultEdgeActiveColor");
+    } else {
       context.strokeStyle = color;
     }
 

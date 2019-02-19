@@ -1,8 +1,5 @@
-;(function(undefined) {
-  
-
-  if (typeof sigma === 'undefined')
-    throw 'sigma is not declared';
+(function(undefined) {
+  if (typeof sigma === "undefined") throw "sigma is not declared";
 
   /**
    * Sigma ForceAtlas2.5 Supervisor
@@ -17,7 +14,7 @@
    * Feature detection
    * ------------------
    */
-  const webWorkers = 'Worker' in _root;
+  const webWorkers = "Worker" in _root;
 
   /**
    * Supervisor Object
@@ -26,9 +23,8 @@
   function Supervisor(sigInst, options) {
     const _this = this;
 
-        
-const workerFn = sigInst.getForceAtlas2Worker &&
-          sigInst.getForceAtlas2Worker();
+    const workerFn =
+      sigInst.getForceAtlas2Worker && sigInst.getForceAtlas2Worker();
 
     options = options || {};
 
@@ -54,30 +50,25 @@ const workerFn = sigInst.getForceAtlas2Worker &&
       if (!this.workerUrl) {
         const blob = this.makeBlob(workerFn);
         this.worker = new Worker(URL.createObjectURL(blob));
-      }
-      else {
+      } else {
         this.worker = new Worker(this.workerUrl);
       }
 
       // Post Message Polyfill
       this.worker.postMessage =
         this.worker.webkitPostMessage || this.worker.postMessage;
-    }
-    else {
-
+    } else {
       eval(workerFn);
     }
 
     // Worker message receiver
-    this.msgName = (this.worker) ? 'message' : 'newCoords';
+    this.msgName = this.worker ? "message" : "newCoords";
     this.listener = function(e) {
-
       // Retrieving data
       _this.nodesByteArray = new Float32Array(e.data.nodes);
 
       // If ForceAtlas2 is running, we act accordingly
       if (_this.running) {
-
         // Applying layout
         _this.applyLayoutChanges();
 
@@ -95,7 +86,7 @@ const workerFn = sigInst.getForceAtlas2Worker &&
     this.graphToByteArrays();
 
     // Binding on kill to properly terminate layout when parent is killed
-    sigInst.bind('kill', function() {
+    sigInst.bind("kill", function() {
       sigInst.killForceAtlas2();
     });
   }
@@ -104,12 +95,10 @@ const workerFn = sigInst.getForceAtlas2Worker &&
     let blob;
 
     try {
-      blob = new Blob([workerFn], {type: 'application/javascript'});
-    }
-    catch (e) {
-      _root.BlobBuilder = _root.BlobBuilder ||
-                          _root.WebKitBlobBuilder ||
-                          _root.MozBlobBuilder;
+      blob = new Blob([workerFn], { type: "application/javascript" });
+    } catch (e) {
+      _root.BlobBuilder =
+        _root.BlobBuilder || _root.WebKitBlobBuilder || _root.MozBlobBuilder;
 
       blob = new BlobBuilder();
       blob.append(workerFn);
@@ -122,26 +111,19 @@ const workerFn = sigInst.getForceAtlas2Worker &&
   Supervisor.prototype.graphToByteArrays = function() {
     const nodes = this.graph.nodes();
 
-        
-const edges = this.graph.edges();
+    const edges = this.graph.edges();
 
-        
-const nbytes = nodes.length * this.ppn;
+    const nbytes = nodes.length * this.ppn;
 
-        
-const ebytes = edges.length * this.ppe;
+    const ebytes = edges.length * this.ppe;
 
-        
-const nIndex = {};
+    const nIndex = {};
 
-        
-let i;
+    let i;
 
-        
-let j;
+    let j;
 
-        
-let l;
+    let l;
 
     // Allocating Byte arrays with correct nb of bytes
     this.nodesByteArray = new Float32Array(nbytes);
@@ -149,7 +131,6 @@ let l;
 
     // Iterate through nodes
     for (i = j = 0, l = nodes.length; i < l; i++) {
-
       // Populating index
       nIndex[nodes[i].id] = j;
 
@@ -180,11 +161,9 @@ let l;
   Supervisor.prototype.applyLayoutChanges = function() {
     const nodes = this.graph.nodes();
 
-        
-let j = 0;
+    let j = 0;
 
-        
-let realIndex;
+    let realIndex;
 
     // Moving nodes
     for (let i = 0, l = this.nodesByteArray.length; i < l; i += this.ppn) {
@@ -196,75 +175,63 @@ let realIndex;
 
   Supervisor.prototype.sendByteArrayToWorker = function(action) {
     const content = {
-      action: action || 'loop',
+      action: action || "loop",
       nodes: this.nodesByteArray.buffer
     };
 
     const buffers = [this.nodesByteArray.buffer];
 
-    if (action === 'start') {
+    if (action === "start") {
       content.config = this.config || {};
       content.edges = this.edgesByteArray.buffer;
       buffers.push(this.edgesByteArray.buffer);
     }
 
-    if (this.shouldUseWorker)
-      this.worker.postMessage(content, buffers);
-    else
-      _root.postMessage(content, '*');
+    if (this.shouldUseWorker) this.worker.postMessage(content, buffers);
+    else _root.postMessage(content, "*");
   };
 
   Supervisor.prototype.start = function() {
-    if (this.running)
-      return;
+    if (this.running) return;
 
     this.running = true;
 
     // Do not refresh edgequadtree during layout:
     let k;
 
-        
-let c;
+    let c;
     for (k in this.sigInst.cameras) {
       c = this.sigInst.cameras[k];
       c.edgequadtree._enabled = false;
     }
 
     if (!this.started) {
-
       // Sending init message to worker
-      this.sendByteArrayToWorker('start');
+      this.sendByteArrayToWorker("start");
       this.started = true;
-    }
-    else {
+    } else {
       this.sendByteArrayToWorker();
     }
   };
 
   Supervisor.prototype.stop = function() {
-    if (!this.running)
-      return;
+    if (!this.running) return;
 
     // Allow to refresh edgequadtree:
     let k;
 
-        
-let c;
+    let c;
 
-        
-let bounds;
+    let bounds;
     for (k in this.sigInst.cameras) {
       c = this.sigInst.cameras[k];
       c.edgequadtree._enabled = true;
 
       // Find graph boundaries:
-      bounds = sigma.utils.getBoundaries(
-        this.graph,
-        c.readPrefix
-      );
+      bounds = sigma.utils.getBoundaries(this.graph, c.readPrefix);
 
       // Refresh edgequadtree:
-      if (c.settings('drawEdges') && c.settings('enableEdgeHovering'))
+      if (c.settings("drawEdges") && c.settings("enableEdgeHovering"))
         c.edgequadtree.index(this.sigInst.graph, {
           prefix: c.readPrefix,
           bounds: {
@@ -282,27 +249,22 @@ let bounds;
   Supervisor.prototype.killWorker = function() {
     if (this.worker) {
       this.worker.terminate();
-    }
-    else {
-      _root.postMessage({action: 'kill'}, '*');
+    } else {
+      _root.postMessage({ action: "kill" }, "*");
       document.removeEventListener(this.msgName, this.listener);
     }
   };
 
   Supervisor.prototype.configure = function(config) {
-
     // Setting configuration
     this.config = config;
 
-    if (!this.started)
-      return;
+    if (!this.started) return;
 
-    const data = {action: 'config', config: this.config};
+    const data = { action: "config", config: this.config };
 
-    if (this.shouldUseWorker)
-      this.worker.postMessage(data);
-    else
-      _root.postMessage(data, '*');
+    if (this.shouldUseWorker) this.worker.postMessage(data);
+    else _root.postMessage(data, "*");
   };
 
   /**
@@ -310,14 +272,11 @@ let bounds;
    * ----------
    */
   sigma.prototype.startForceAtlas2 = function(config) {
-
     // Create supervisor if undefined
-    if (!this.supervisor)
-      this.supervisor = new Supervisor(this, config);
+    if (!this.supervisor) this.supervisor = new Supervisor(this, config);
 
     // Configuration provided?
-    if (config)
-      this.supervisor.configure(config);
+    if (config) this.supervisor.configure(config);
 
     // Start algorithm
     this.supervisor.start();
@@ -326,8 +285,7 @@ let bounds;
   };
 
   sigma.prototype.stopForceAtlas2 = function() {
-    if (!this.supervisor)
-      return this;
+    if (!this.supervisor) return this;
 
     // Pause algorithm
     this.supervisor.stop();
@@ -336,8 +294,7 @@ let bounds;
   };
 
   sigma.prototype.killForceAtlas2 = function() {
-    if (!this.supervisor)
-      return this;
+    if (!this.supervisor) return this;
 
     // Stop Algorithm
     this.supervisor.stop();
@@ -352,8 +309,7 @@ let bounds;
   };
 
   sigma.prototype.configForceAtlas2 = function(config) {
-    if (!this.supervisor)
-      this.supervisor = new Supervisor(this, config);
+    if (!this.supervisor) this.supervisor = new Supervisor(this, config);
 
     this.supervisor.configure(config);
 
@@ -363,4 +319,4 @@ let bounds;
   sigma.prototype.isForceAtlas2Running = function(config) {
     return !!this.supervisor && this.supervisor.running;
   };
-}).call(this);
+}.call(this));

@@ -1,7 +1,5 @@
-;(function() {
-  
-
-  sigma.utils.pkg('sigma.canvas.edgehovers');
+(function() {
+  sigma.utils.pkg("sigma.canvas.edgehovers");
 
   /**
    * This hover renderer will display the edge with a different color or size.
@@ -12,56 +10,50 @@
    * @param  {CanvasRenderingContext2D} context      The canvas context.
    * @param  {configurable}             settings     The settings function.
    */
-  sigma.canvas.edgehovers.curve =
-    function(edge, source, target, context, settings) {
+  sigma.canvas.edgehovers.curve = function(
+    edge,
+    source,
+    target,
+    context,
+    settings
+  ) {
     let color = edge.color;
 
-        
-const prefix = settings('prefix') || '';
+    const prefix = settings("prefix") || "";
 
-        
-const size = settings('edgeHoverSizeRatio') * (edge[`${prefix  }size`] || 1);
+    const size = settings("edgeHoverSizeRatio") * (edge[`${prefix}size`] || 1);
 
-        
-const count = edge.count || 0;
+    const count = edge.count || 0;
 
-        
-const edgeColor = settings('edgeColor');
+    const edgeColor = settings("edgeColor");
 
-        
-const defaultNodeColor = settings('defaultNodeColor');
+    const defaultNodeColor = settings("defaultNodeColor");
 
-        
-const defaultEdgeColor = settings('defaultEdgeColor');
+    const defaultEdgeColor = settings("defaultEdgeColor");
 
-        
-let cp = {};
+    let cp = {};
 
-        
-const sSize = source[`${prefix  }size`];
+    const sSize = source[`${prefix}size`];
 
-        
-const sX = source[`${prefix  }x`];
+    const sX = source[`${prefix}x`];
 
-        
-const sY = source[`${prefix  }y`];
+    const sY = source[`${prefix}y`];
 
-        
-const tX = target[`${prefix  }x`];
+    const tX = target[`${prefix}x`];
 
-        
-const tY = target[`${prefix  }y`];
+    const tY = target[`${prefix}y`];
 
-    cp = (source.id === target.id) ?
-      sigma.utils.getSelfLoopControlPoints(sX, sY, sSize, count) :
-      sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY, count);
+    cp =
+      source.id === target.id
+        ? sigma.utils.getSelfLoopControlPoints(sX, sY, sSize, count)
+        : sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY, count);
 
     if (!color)
       switch (edgeColor) {
-        case 'source':
+        case "source":
           color = source.color || defaultNodeColor;
           break;
-        case 'target':
+        case "target":
           color = target.color || defaultNodeColor;
           break;
         default:
@@ -69,10 +61,10 @@ const tY = target[`${prefix  }y`];
           break;
       }
 
-    if (settings('edgeHoverColor') === 'edge') {
+    if (settings("edgeHoverColor") === "edge") {
       color = edge.hover_color || color;
     } else {
-      color = edge.hover_color || settings('defaultEdgeHoverColor') || color;
+      color = edge.hover_color || settings("defaultEdgeHoverColor") || color;
     }
 
     context.strokeStyle = color;
