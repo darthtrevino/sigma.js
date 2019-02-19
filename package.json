@@ -15,6 +15,7 @@
     "test": "grunt travis",
     "build": "grunt build",
     "lint": "eslint .",
+    "unit_test": "qunit 'test/unit.*.js'",
     "prettify_all": "prettier src/**/*.js --write"
   },
   "devDependencies": {
