@@ -1,7 +1,7 @@
 const fs = require("fs");
 const loadGruntTasks = require("load-grunt-tasks");
 
-module.exports = function(grunt) {
+module.exports = grunt => {
   const coreJsFiles = [
     // Core:
     "src/sigma.core.js",
@@ -95,7 +95,7 @@ module.exports = function(grunt) {
 
   const subGrunts = {};
 
-  plugins.forEach(function(p) {
+  plugins.forEach(p => {
     const dir = `plugins/sigma.${p}/`;
 
     if (fs.existsSync(`${dir}Gruntfile.js`))
@@ -128,24 +128,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    uglify: {
-      prod: {
-        files: {
-          "build/sigma.min.js": coreJsFiles
-        },
-        options: {
-          banner:
-            "/* sigma.js - <%= pkg.description %> - Version: <%= pkg.version %> - Author: Alexis Jacomy, Sciences-Po Médialab - License: MIT */\n"
-        }
-      },
-      plugins: {
-        files: pluginFiles.reduce(function(res, path) {
-          const dest = `build/${path.replace(/\/\*\*\/\*\.js$/, ".min.js")}`;
-          res[dest] = path;
-          return res;
-        }, {})
-      }
-    },
     concat: {
       options: {
         separator: "\n"
@@ -167,9 +149,7 @@ module.exports = function(grunt) {
         replacement: ["<!-- START SIGMA IMPORTS -->"]
           .concat(
             coreJsFiles
-              .map(function(path) {
-                return `<script src="../${path}"></script>`;
-              })
+              .map(path => `<script src="../${path}"></script>`)
               .concat("<!-- END SIGMA IMPORTS -->")
           )
           .join("\n")
@@ -189,27 +169,16 @@ module.exports = function(grunt) {
   loadGruntTasks(grunt);
 
   // By default, will check lint, hint, test and minify:
-  grunt.registerTask("default", [
-    "closureLint",
-    "qunit",
-    "sed",
-    "grunt",
-    "uglify"
-  ]);
+  grunt.registerTask("default", ["closureLint", "qunit", "sed", "grunt"]);
   grunt.registerTask("release", [
     "closureLint",
     "qunit",
     "sed",
     "grunt",
-    "uglify",
     "zip"
   ]);
-  grunt.registerTask("npmPrePublish", [
-    "uglify:plugins",
-    "grunt",
-    "concat:require"
-  ]);
-  grunt.registerTask("build", ["uglify", "grunt", "concat:require"]);
+  grunt.registerTask("npmPrePublish", ["grunt", "concat:require"]);
+  grunt.registerTask("build", ["grunt", "concat:require"]);
   grunt.registerTask("test", ["qunit"]);
 
   // For travis-ci.org, only launch tests:
