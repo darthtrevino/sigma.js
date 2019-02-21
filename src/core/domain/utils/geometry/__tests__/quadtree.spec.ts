@@ -25,37 +25,31 @@ describe("QuadTree Geometry Utilities", () => {
     ];
 
     const llc = lowerLeftCoor(rectangles[0]);
-    expect(isAxisAligned(rectangles[0])).toEqual(false, "Non Axis Aligned");
-    expect(isAxisAligned(rectangles[2])).toEqual(true, "Axis Aligned");
+    expect(isAxisAligned(rectangles[0])).toBeFalsy();
+    expect(isAxisAligned(rectangles[2])).toBeTruthy();
 
     const topCorners = { x1: 2, y1: 2, x2: 4, y2: 2, height: 2 };
     expect(
       axisAlignedTopPoints({ x1: 2, y1: 2, x2: 4, y2: 2, height: 2 })
-    ).toEqual(topCorners, "Non-rotated top points");
+    ).toEqual(topCorners);
 
     expect(
       axisAlignedTopPoints({ x1: 4, y1: 2, x2: 4, y2: 4, height: 2 })
-    ).toEqual(topCorners, "Right shift top points");
+    ).toEqual(topCorners);
 
     expect(
       axisAlignedTopPoints({ x1: 2, y1: 4, x2: 2, y2: 2, height: 2 })
-    ).toEqual(topCorners, "Left shift top points");
+    ).toEqual(topCorners);
 
     expect(
       axisAlignedTopPoints({ x1: 4, y1: 4, x2: 2, y2: 4, height: 2 })
-    ).toEqual(topCorners, "Bottom's up top points");
+    ).toEqual(topCorners);
 
-    expect(llc).toEqual({ x: 2, y: 3 }, "Lower Left Corner");
-    expect(lowerRightCoor(rectangles[0], llc)).toEqual(
-      { x: 3, y: 2 },
-      "Lower Right Corner"
-    );
+    expect(llc).toEqual({ x: 2, y: 3 });
+    expect(lowerRightCoor(rectangles[0], llc)).toEqual({ x: 3, y: 2 });
 
     const p = projection({ x: 2, y: 6 }, { x: 3, y: 4 });
-    expect({ x: approx(p.x), y: approx(p.y) }).toEqual(
-      { x: 3.6, y: 4.8 },
-      "Projection"
-    );
+    expect({ x: approx(p.x), y: approx(p.y) }).toEqual({ x: 3.6, y: 4.8 });
 
     const solutions = [
       [{ x: 1, y: 2 }, { x: 2, y: 1 }, { x: 2, y: 3 }, { x: 3, y: 2 }],
@@ -66,16 +60,16 @@ describe("QuadTree Geometry Utilities", () => {
       [{ x: 2, y: 2 }, { x: 6, y: 2 }, { x: 2, y: 6 }, { x: 6, y: 6 }]
     ];
 
-    expect(pointToSquare({ x: 4, y: 4, size: 2 })).toEqual(
-      { x1: 2, y1: 2, x2: 6, y2: 2, height: 4 },
-      "Point to Square"
-    );
+    expect(pointToSquare({ x: 4, y: 4, size: 2 })).toEqual({
+      x1: 2,
+      y1: 2,
+      x2: 6,
+      y2: 2,
+      height: 4
+    });
 
     rectangles.forEach((r, i) => {
-      expect(rectangleCorners(r)).toEqual(
-        solutions[i],
-        `Rectangle Corners #${i}`
-      );
+      expect(rectangleCorners(r)).toEqual(solutions[i]);
     });
 
     const cr = [
@@ -98,34 +92,21 @@ describe("QuadTree Geometry Utilities", () => {
       rectangleCorners({ x1: 200, y1: 200, x2: 400, y2: 400, height: 200 })
     ];
 
-    expect(collision(cr[0], cr[1])).toEqual(true, "Collision");
-    expect(collision(cr[0], cr[2])).toEqual(false, "Non-Collision");
-    expect(collision(cr[0], cr[3])).toEqual(true, "Containing Collision");
-    expect(collision(cr[0], cr[4])).toEqual(false, "Outbounding Collision");
+    expect(collision(cr[0], cr[1])).toBeTruthy();
+    expect(collision(cr[0], cr[2])).toBeFalsy();
+    expect(collision(cr[0], cr[3])).toBeTruthy();
+    expect(collision(cr[0], cr[4])).toBeFalsy();
 
-    expect(splitSquare({ x: 0, y: 0, width: 100, height: 100 })).toEqual(
+    expect(splitSquare({ x: 0, y: 0, width: 100, height: 100 })).toEqual([
+      [{ x: 0, y: 0 }, { x: 50, y: 0 }, { x: 0, y: 50 }, { x: 50, y: 50 }],
+      [{ x: 50, y: 0 }, { x: 100, y: 0 }, { x: 50, y: 50 }, { x: 100, y: 50 }],
+      [{ x: 0, y: 50 }, { x: 50, y: 50 }, { x: 0, y: 100 }, { x: 50, y: 100 }],
       [
-        [{ x: 0, y: 0 }, { x: 50, y: 0 }, { x: 0, y: 50 }, { x: 50, y: 50 }],
-        [
-          { x: 50, y: 0 },
-          { x: 100, y: 0 },
-          { x: 50, y: 50 },
-          { x: 100, y: 50 }
-        ],
-        [
-          { x: 0, y: 50 },
-          { x: 50, y: 50 },
-          { x: 0, y: 100 },
-          { x: 50, y: 100 }
-        ],
-        [
-          { x: 50, y: 50 },
-          { x: 100, y: 50 },
-          { x: 50, y: 100 },
-          { x: 100, y: 100 }
-        ]
-      ],
-      "Split Square"
-    );
+        { x: 50, y: 50 },
+        { x: 100, y: 50 },
+        { x: 50, y: 100 },
+        { x: 100, y: 100 }
+      ]
+    ]);
   });
 });
