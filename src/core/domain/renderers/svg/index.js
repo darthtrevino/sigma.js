@@ -14,12 +14,21 @@ import Dispatcher from "../../classes/Dispatcher";
 export default sigma => {
   function SvgRenderer(graph, camera, settings, options) {
     if (typeof options !== "object")
-      throw new Error("SvgRenderer: Wrong arguments.");
+      throw new Error("SvgRenderer: Wrong options arguments.");
 
     if (!(options.container instanceof HTMLElement))
       throw new Error("Container not found.");
 
+    let i;
+
+    let l;
+
+    let a;
+
+    let fn;
+
     const self = this;
+
     Dispatcher.extend(this);
 
     // Initialize main attributes:
@@ -52,29 +61,23 @@ export default sigma => {
     this.edgesOnScreen = [];
 
     // Find the prefix:
-    this.options.prefix = `renderer${id()}:`;
+    this.options.prefix = `renderer${sigma.utils.id()}:`;
 
     // Initialize the DOM elements
     this.initDOM("svg");
 
     // Initialize captors:
     this.captors = [];
-    const captors = this.options.captors || [
-      sigma.captors.mouse,
-      sigma.captors.touch
-    ];
-    captors.forEach(captor => {
-      const Captor =
-        typeof captor === "function" ? captor : sigma.captors[captor];
+    a = this.options.captors || [sigma.captors.mouse, sigma.captors.touch];
+    for (i = 0, l = a.length; i < l; i++) {
+      fn = typeof a[i] === "function" ? a[i] : sigma.captors[a[i]];
       this.captors.push(
-        new Captor(this.domElements.graph, this.camera, this.settings)
+        new fn(this.domElements.graph, this.camera, this.settings)
       );
-    });
+    }
 
     // Bind resize:
-    window.addEventListener("resize", function handleResize() {
-      self.resize();
-    });
+    window.addEventListener("resize", () => self.resize());
 
     // Deal with sigma events:
     // TODO: keep an option to override the DOM events?
@@ -93,18 +96,26 @@ export default sigma => {
    */
   SvgRenderer.prototype.render = function render(options) {
     options = options || {};
+
     let a;
     let i;
+    let k;
     let e;
     let l;
     let o;
     let source;
     let target;
+    let start;
+    let edges;
+    let renderers;
+    let subrenderers;
     const index = {};
-    const { graph } = this;
-    const { nodes } = graph;
+    const graph = this.graph;
+    const nodes = this.graph.nodes;
+    const prefix = this.options.prefix || "";
     let drawEdges = this.settings(options, "drawEdges");
     const drawNodes = this.settings(options, "drawNodes");
+    const drawLabels = this.settings(options, "drawLabels");
     const embedSettings = this.settings.embedObjects(options, {
       prefix: this.options.prefix,
       forceLabels: this.options.forceLabels
@@ -148,8 +159,8 @@ export default sigma => {
 
     // Display nodes
     //---------------
-    let renderers = sigma.svg.nodes;
-    const subrenderers = sigma.svg.labels;
+    renderers = sigma.svg.nodes;
+    subrenderers = sigma.svg.labels;
 
     // -- First we create the nodes which are not already created
     if (drawNodes)
@@ -177,23 +188,23 @@ export default sigma => {
 
     // -- Second we update the nodes
     if (drawNodes)
-      this.nodesOnScreen
-        .filter(n => !n.hidden)
-        .forEach(node => {
-          // Node
-          (renderers[a[i].type] || renderers.def).update(
-            a[i],
-            this.domElements.nodes[node.id],
-            embedSettings
-          );
+      for (a = this.nodesOnScreen, i = 0, l = a.length; i < l; i++) {
+        if (a[i].hidden) continue;
 
-          // Label
-          (subrenderers[a[i].type] || subrenderers.def).update(
-            a[i],
-            this.domElements.labels[node.id],
-            embedSettings
-          );
-        });
+        // Node
+        (renderers[a[i].type] || renderers.def).update(
+          a[i],
+          this.domElements.nodes[a[i].id],
+          embedSettings
+        );
+
+        // Label
+        (subrenderers[a[i].type] || subrenderers.def).update(
+          a[i],
+          this.domElements.labels[a[i].id],
+          embedSettings
+        );
+      }
 
     // Display edges
     //---------------
@@ -298,10 +309,14 @@ export default sigma => {
    * @return {SvgRenderer}              Returns the instance itself.
    */
   SvgRenderer.prototype.hideDOMElements = function hideDOMElements(elements) {
-    Object.keys(elements).forEach(i => {
-      const o = elements[i];
+    let o;
+    let i;
+
+    for (i in elements) {
+      o = elements[i];
       sigma.svg.utils.hide(o);
-    });
+    }
+
     return this;
   };
 
@@ -313,12 +328,17 @@ export default sigma => {
   // TODO: add option about whether to display hovers or not
   SvgRenderer.prototype.bindHovers = function bindHovers(prefix) {
     const renderers = sigma.svg.hovers;
+
     const self = this;
+
     let hoveredNode;
 
     function overNode(e) {
-      const { node } = e.data;
-      const embedSettings = self.settings.embedObjects({ prefix });
+      const node = e.data.node;
+
+      const embedSettings = self.settings.embedObjects({
+        prefix
+      });
 
       if (!embedSettings("enableHovering")) return;
 
@@ -337,7 +357,8 @@ export default sigma => {
     }
 
     function outNode(e) {
-      const { node } = e.data;
+      const node = e.data.node;
+
       const embedSettings = self.settings.embedObjects({
         prefix
       });
@@ -402,9 +423,7 @@ export default sigma => {
    */
   SvgRenderer.prototype.resize = function resize(w, h) {
     const oldWidth = this.width;
-
     const oldHeight = this.height;
-
     const pixelRatio = 1;
 
     if (w !== undefined && h !== undefined) {
@@ -421,7 +440,6 @@ export default sigma => {
     if (oldWidth !== this.width || oldHeight !== this.height) {
       this.domElements.graph.style.width = `${w}px`;
       this.domElements.graph.style.height = `${h}px`;
-
       if (this.domElements.graph.tagName.toLowerCase() === "svg") {
         this.domElements.graph.setAttribute("width", w * pixelRatio);
         this.domElements.graph.setAttribute("height", h * pixelRatio);
@@ -430,5 +448,6 @@ export default sigma => {
 
     return this;
   };
+
   return SvgRenderer;
 };

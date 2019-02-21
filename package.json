@@ -12,16 +12,20 @@
   "main": "build/sigma.require.js",
   "scripts": {
     "start": "http-server -p 8000",
-    "build": "rollup -c",
+    "build:development": "rollup -c",
+    "build:production": "env NODE_ENV=production rollup -c",
     "lint": "eslint .",
     "prettify_all": "prettier {src,test,plugins}/**/*.js --write",
-    "rollup_dev": "rollup -c -w",
+    "rollup_watch": "rollup -c -w",
+    "test_watch": "jest --watch",
+    "develop": "run-p rollup_watch test_watch",
     "unit_tests": "jest --coverage",
     "plugin_tests": "grunt test",
     "test": "run-s unit_tests plugin_tests"
   },
   "dependencies": {
-    "conrad": "^0.1.0"
+    "conrad": "^0.1.0",
+    "node-env": "^0.1.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

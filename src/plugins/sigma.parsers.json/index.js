@@ -19,7 +19,7 @@ export default function extend(sigma) {
         "Microsoft.XMLHTTP"
       ];
 
-      for (let i in names)
+      for (const i in names)
         try {
           return new ActiveXObject(names[i]);
         } catch (e) {}

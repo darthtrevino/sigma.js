@@ -20,7 +20,6 @@ export default function extend(sigma, global = window) {
    */
   function Supervisor(sigInst, options) {
     const _this = this;
-
     const workerFn =
       sigInst.getForceAtlas2Worker && sigInst.getForceAtlas2Worker();
 
@@ -187,7 +186,7 @@ export default function extend(sigma, global = window) {
     this.running = true;
 
     // Do not refresh edgequadtree during layout:
-    Object.keys(this.sigInst.camera).forEach(k => {
+    Object.keys(this.sigInst.cameras).forEach(k => {
       const camera = this.sigInst.cameras[k];
       camera.edgequadtree._enabled = false;
     });
