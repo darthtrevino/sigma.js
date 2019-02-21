@@ -1,3 +1,6 @@
+/* global self: true */
+/* eslint-disable no-continue, no-restricted-globals, no-constant-condition */
+
 /**
  * Worker Function Wrapper
  * ------------------------
@@ -129,13 +132,6 @@ export default function Worker() {
     throw new Error(
       `ForceAtlas2.Worker - Inexistant region property given (${p}).`
     );
-  }
-
-  // DEBUG
-  function nan(v) {
-    if (Number.isNaN(v)) {
-      throw new Error("NaN alert!");
-    }
   }
 
   function configure(o) {
@@ -291,162 +287,153 @@ export default function Worker() {
             // Iterate on the right quadrant
             r = q;
             continue;
-          } else {
+          } else if (RegionMatrix[rp(r, "node")] < 0) {
             // There are no sub-regions: we are in a "leave"
 
             // Is there a node in this leave?
-            if (RegionMatrix[rp(r, "node")] < 0) {
-              // There is no node in region:
-              // we record node n and go on
-              RegionMatrix[rp(r, "node")] = n;
-              break;
-            } else {
-              // There is a node in this region
 
-              // We will need to create sub-regions, stick the two
-              // nodes (the old one r[0] and the new one n) in two
-              // subregions. If they fall in the same quadrant,
-              // we will iterate.
+            // There is no node in region:
+            // we record node n and go on
+            RegionMatrix[rp(r, "node")] = n;
+            break;
+          } else {
+            // There is a node in this region
 
-              // Create sub-regions
-              RegionMatrix[rp(r, "firstChild")] = l * W.ppr;
-              w = RegionMatrix[rp(r, "size")] / 2; // new size (half)
+            // We will need to create sub-regions, stick the two
+            // nodes (the old one r[0] and the new one n) in two
+            // subregions. If they fall in the same quadrant,
+            // we will iterate.
 
-              // NOTE: we use screen coordinates
-              // from Top Left to Bottom Right
+            // Create sub-regions
+            RegionMatrix[rp(r, "firstChild")] = l * W.ppr;
+            w = RegionMatrix[rp(r, "size")] / 2; // new size (half)
 
-              // Top Left sub-region
-              g = RegionMatrix[rp(r, "firstChild")];
+            // NOTE: we use screen coordinates
+            // from Top Left to Bottom Right
 
-              RegionMatrix[rp(g, "node")] = -1;
-              RegionMatrix[rp(g, "centerX")] =
-                RegionMatrix[rp(r, "centerX")] - w;
-              RegionMatrix[rp(g, "centerY")] =
-                RegionMatrix[rp(r, "centerY")] - w;
-              RegionMatrix[rp(g, "size")] = w;
-              RegionMatrix[rp(g, "nextSibling")] = g + W.ppr;
-              RegionMatrix[rp(g, "firstChild")] = -1;
-              RegionMatrix[rp(g, "mass")] = 0;
-              RegionMatrix[rp(g, "massCenterX")] = 0;
-              RegionMatrix[rp(g, "massCenterY")] = 0;
+            // Top Left sub-region
+            g = RegionMatrix[rp(r, "firstChild")];
 
-              // Bottom Left sub-region
-              g += W.ppr;
-              RegionMatrix[rp(g, "node")] = -1;
-              RegionMatrix[rp(g, "centerX")] =
-                RegionMatrix[rp(r, "centerX")] - w;
-              RegionMatrix[rp(g, "centerY")] =
-                RegionMatrix[rp(r, "centerY")] + w;
-              RegionMatrix[rp(g, "size")] = w;
-              RegionMatrix[rp(g, "nextSibling")] = g + W.ppr;
-              RegionMatrix[rp(g, "firstChild")] = -1;
-              RegionMatrix[rp(g, "mass")] = 0;
-              RegionMatrix[rp(g, "massCenterX")] = 0;
-              RegionMatrix[rp(g, "massCenterY")] = 0;
+            RegionMatrix[rp(g, "node")] = -1;
+            RegionMatrix[rp(g, "centerX")] = RegionMatrix[rp(r, "centerX")] - w;
+            RegionMatrix[rp(g, "centerY")] = RegionMatrix[rp(r, "centerY")] - w;
+            RegionMatrix[rp(g, "size")] = w;
+            RegionMatrix[rp(g, "nextSibling")] = g + W.ppr;
+            RegionMatrix[rp(g, "firstChild")] = -1;
+            RegionMatrix[rp(g, "mass")] = 0;
+            RegionMatrix[rp(g, "massCenterX")] = 0;
+            RegionMatrix[rp(g, "massCenterY")] = 0;
 
-              // Top Right sub-region
-              g += W.ppr;
-              RegionMatrix[rp(g, "node")] = -1;
-              RegionMatrix[rp(g, "centerX")] =
-                RegionMatrix[rp(r, "centerX")] + w;
-              RegionMatrix[rp(g, "centerY")] =
-                RegionMatrix[rp(r, "centerY")] - w;
-              RegionMatrix[rp(g, "size")] = w;
-              RegionMatrix[rp(g, "nextSibling")] = g + W.ppr;
-              RegionMatrix[rp(g, "firstChild")] = -1;
-              RegionMatrix[rp(g, "mass")] = 0;
-              RegionMatrix[rp(g, "massCenterX")] = 0;
-              RegionMatrix[rp(g, "massCenterY")] = 0;
+            // Bottom Left sub-region
+            g += W.ppr;
+            RegionMatrix[rp(g, "node")] = -1;
+            RegionMatrix[rp(g, "centerX")] = RegionMatrix[rp(r, "centerX")] - w;
+            RegionMatrix[rp(g, "centerY")] = RegionMatrix[rp(r, "centerY")] + w;
+            RegionMatrix[rp(g, "size")] = w;
+            RegionMatrix[rp(g, "nextSibling")] = g + W.ppr;
+            RegionMatrix[rp(g, "firstChild")] = -1;
+            RegionMatrix[rp(g, "mass")] = 0;
+            RegionMatrix[rp(g, "massCenterX")] = 0;
+            RegionMatrix[rp(g, "massCenterY")] = 0;
 
-              // Bottom Right sub-region
-              g += W.ppr;
-              RegionMatrix[rp(g, "node")] = -1;
-              RegionMatrix[rp(g, "centerX")] =
-                RegionMatrix[rp(r, "centerX")] + w;
-              RegionMatrix[rp(g, "centerY")] =
-                RegionMatrix[rp(r, "centerY")] + w;
-              RegionMatrix[rp(g, "size")] = w;
-              RegionMatrix[rp(g, "nextSibling")] =
-                RegionMatrix[rp(r, "nextSibling")];
-              RegionMatrix[rp(g, "firstChild")] = -1;
-              RegionMatrix[rp(g, "mass")] = 0;
-              RegionMatrix[rp(g, "massCenterX")] = 0;
-              RegionMatrix[rp(g, "massCenterY")] = 0;
+            // Top Right sub-region
+            g += W.ppr;
+            RegionMatrix[rp(g, "node")] = -1;
+            RegionMatrix[rp(g, "centerX")] = RegionMatrix[rp(r, "centerX")] + w;
+            RegionMatrix[rp(g, "centerY")] = RegionMatrix[rp(r, "centerY")] - w;
+            RegionMatrix[rp(g, "size")] = w;
+            RegionMatrix[rp(g, "nextSibling")] = g + W.ppr;
+            RegionMatrix[rp(g, "firstChild")] = -1;
+            RegionMatrix[rp(g, "mass")] = 0;
+            RegionMatrix[rp(g, "massCenterX")] = 0;
+            RegionMatrix[rp(g, "massCenterY")] = 0;
 
-              l += 4;
+            // Bottom Right sub-region
+            g += W.ppr;
+            RegionMatrix[rp(g, "node")] = -1;
+            RegionMatrix[rp(g, "centerX")] = RegionMatrix[rp(r, "centerX")] + w;
+            RegionMatrix[rp(g, "centerY")] = RegionMatrix[rp(r, "centerY")] + w;
+            RegionMatrix[rp(g, "size")] = w;
+            RegionMatrix[rp(g, "nextSibling")] =
+              RegionMatrix[rp(r, "nextSibling")];
+            RegionMatrix[rp(g, "firstChild")] = -1;
+            RegionMatrix[rp(g, "mass")] = 0;
+            RegionMatrix[rp(g, "massCenterX")] = 0;
+            RegionMatrix[rp(g, "massCenterY")] = 0;
 
-              // Now the goal is to find two different sub-regions
-              // for the two nodes: the one previously recorded (r[0])
-              // and the one we want to add (n)
+            l += 4;
 
-              // Find the quadrant of the old node
+            // Now the goal is to find two different sub-regions
+            // for the two nodes: the one previously recorded (r[0])
+            // and the one we want to add (n)
+
+            // Find the quadrant of the old node
+            if (
+              NodeMatrix[np(RegionMatrix[rp(r, "node")], "x")] <
+              RegionMatrix[rp(r, "centerX")]
+            ) {
               if (
-                NodeMatrix[np(RegionMatrix[rp(r, "node")], "x")] <
-                RegionMatrix[rp(r, "centerX")]
-              ) {
-                if (
-                  NodeMatrix[np(RegionMatrix[rp(r, "node")], "y")] <
-                  RegionMatrix[rp(r, "centerY")]
-                ) {
-                  // Top Left quarter
-                  q = RegionMatrix[rp(r, "firstChild")];
-                } else {
-                  // Bottom Left quarter
-                  q = RegionMatrix[rp(r, "firstChild")] + W.ppr;
-                }
-              } else if (
                 NodeMatrix[np(RegionMatrix[rp(r, "node")], "y")] <
                 RegionMatrix[rp(r, "centerY")]
               ) {
-                // Top Right quarter
-                q = RegionMatrix[rp(r, "firstChild")] + W.ppr * 2;
+                // Top Left quarter
+                q = RegionMatrix[rp(r, "firstChild")];
               } else {
-                // Bottom Right quarter
-                q = RegionMatrix[rp(r, "firstChild")] + W.ppr * 3;
+                // Bottom Left quarter
+                q = RegionMatrix[rp(r, "firstChild")] + W.ppr;
               }
-
-              // We remove r[0] from the region r, add its mass to r and record it in q
-              RegionMatrix[rp(r, "mass")] =
-                NodeMatrix[np(RegionMatrix[rp(r, "node")], "mass")];
-              RegionMatrix[rp(r, "massCenterX")] =
-                NodeMatrix[np(RegionMatrix[rp(r, "node")], "x")];
-              RegionMatrix[rp(r, "massCenterY")] =
-                NodeMatrix[np(RegionMatrix[rp(r, "node")], "y")];
-
-              RegionMatrix[rp(q, "node")] = RegionMatrix[rp(r, "node")];
-              RegionMatrix[rp(r, "node")] = -1;
-
-              // Find the quadrant of n
-              if (NodeMatrix[np(n, "x")] < RegionMatrix[rp(r, "centerX")]) {
-                if (NodeMatrix[np(n, "y")] < RegionMatrix[rp(r, "centerY")]) {
-                  // Top Left quarter
-                  q2 = RegionMatrix[rp(r, "firstChild")];
-                } else {
-                  // Bottom Left quarter
-                  q2 = RegionMatrix[rp(r, "firstChild")] + W.ppr;
-                }
-              } else if (
-                NodeMatrix[np(n, "y")] < RegionMatrix[rp(r, "centerY")]
-              ) {
-                // Top Right quarter
-                q2 = RegionMatrix[rp(r, "firstChild")] + W.ppr * 2;
-              } else {
-                // Bottom Right quarter
-                q2 = RegionMatrix[rp(r, "firstChild")] + W.ppr * 3;
-              }
-
-              if (q === q2) {
-                // If both nodes are in the same quadrant,
-                // we have to try it again on this quadrant
-                r = q;
-                continue;
-              }
-
-              // If both quadrants are different, we record n
-              // in its quadrant
-              RegionMatrix[rp(q2, "node")] = n;
-              break;
+            } else if (
+              NodeMatrix[np(RegionMatrix[rp(r, "node")], "y")] <
+              RegionMatrix[rp(r, "centerY")]
+            ) {
+              // Top Right quarter
+              q = RegionMatrix[rp(r, "firstChild")] + W.ppr * 2;
+            } else {
+              // Bottom Right quarter
+              q = RegionMatrix[rp(r, "firstChild")] + W.ppr * 3;
             }
+
+            // We remove r[0] from the region r, add its mass to r and record it in q
+            RegionMatrix[rp(r, "mass")] =
+              NodeMatrix[np(RegionMatrix[rp(r, "node")], "mass")];
+            RegionMatrix[rp(r, "massCenterX")] =
+              NodeMatrix[np(RegionMatrix[rp(r, "node")], "x")];
+            RegionMatrix[rp(r, "massCenterY")] =
+              NodeMatrix[np(RegionMatrix[rp(r, "node")], "y")];
+
+            RegionMatrix[rp(q, "node")] = RegionMatrix[rp(r, "node")];
+            RegionMatrix[rp(r, "node")] = -1;
+
+            // Find the quadrant of n
+            if (NodeMatrix[np(n, "x")] < RegionMatrix[rp(r, "centerX")]) {
+              if (NodeMatrix[np(n, "y")] < RegionMatrix[rp(r, "centerY")]) {
+                // Top Left quarter
+                q2 = RegionMatrix[rp(r, "firstChild")];
+              } else {
+                // Bottom Left quarter
+                q2 = RegionMatrix[rp(r, "firstChild")] + W.ppr;
+              }
+            } else if (
+              NodeMatrix[np(n, "y")] < RegionMatrix[rp(r, "centerY")]
+            ) {
+              // Top Right quarter
+              q2 = RegionMatrix[rp(r, "firstChild")] + W.ppr * 2;
+            } else {
+              // Bottom Right quarter
+              q2 = RegionMatrix[rp(r, "firstChild")] + W.ppr * 3;
+            }
+
+            if (q === q2) {
+              // If both nodes are in the same quadrant,
+              // we have to try it again on this quadrant
+              r = q;
+              continue;
+            }
+
+            // If both quadrants are different, we record n
+            // in its quadrant
+            RegionMatrix[rp(q2, "node")] = n;
+            break;
           }
         }
       }
@@ -509,19 +496,18 @@ export default function Worker() {
                   NodeMatrix[np(n, "dx")] += xDist * factor;
                   NodeMatrix[np(n, "dy")] += yDist * factor;
                 }
-              } else {
-                // -- Linear Repulsion
-                if (distance > 0) {
-                  factor =
-                    (coefficient *
-                      NodeMatrix[np(n, "mass")] *
-                      RegionMatrix[rp(r, "mass")]) /
-                    distance /
-                    distance;
+              }
+              // -- Linear Repulsion
+              else if (distance > 0) {
+                factor =
+                  (coefficient *
+                    NodeMatrix[np(n, "mass")] *
+                    RegionMatrix[rp(r, "mass")]) /
+                  distance /
+                  distance;
 
-                  NodeMatrix[np(n, "dx")] += xDist * factor;
-                  NodeMatrix[np(n, "dy")] += yDist * factor;
-                }
+                NodeMatrix[np(n, "dx")] += xDist * factor;
+                NodeMatrix[np(n, "dy")] += yDist * factor;
               }
 
               // When this is done, we iterate. We have to look at the next sibling.
@@ -572,19 +558,17 @@ export default function Worker() {
                   NodeMatrix[np(n, "dx")] += xDist * factor;
                   NodeMatrix[np(n, "dy")] += yDist * factor;
                 }
-              } else {
+              } else if (distance > 0) {
                 // -- Linear Repulsion
-                if (distance > 0) {
-                  factor =
-                    (coefficient *
-                      NodeMatrix[np(n, "mass")] *
-                      NodeMatrix[np(RegionMatrix[rp(r, "node")], "mass")]) /
-                    distance /
-                    distance;
+                factor =
+                  (coefficient *
+                    NodeMatrix[np(n, "mass")] *
+                    NodeMatrix[np(RegionMatrix[rp(r, "node")], "mass")]) /
+                  distance /
+                  distance;
 
-                  NodeMatrix[np(n, "dx")] += xDist * factor;
-                  NodeMatrix[np(n, "dy")] += yDist * factor;
-                }
+                NodeMatrix[np(n, "dx")] += xDist * factor;
+                NodeMatrix[np(n, "dy")] += yDist * factor;
               }
             }
 
@@ -674,16 +658,15 @@ export default function Worker() {
       // Common to both methods
       xDist = NodeMatrix[np(n, "x")];
       yDist = NodeMatrix[np(n, "y")];
-      distance = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+      distance = Math.sqrt(xDist ** 2 + yDist ** 2);
 
       if (W.settings.strongGravityMode) {
         // -- Strong gravity
         if (distance > 0) factor = coefficient * NodeMatrix[np(n, "mass")] * g;
-      } else {
-        // -- Linear Anti-collision Repulsion n
-        if (distance > 0)
-          factor = (coefficient * NodeMatrix[np(n, "mass")] * g) / distance;
       }
+      // -- Linear Anti-collision Repulsion n
+      else if (distance > 0)
+        factor = (coefficient * NodeMatrix[np(n, "mass")] * g) / distance;
 
       // Updating node's dx and dy
       NodeMatrix[np(n, "dx")] -= xDist * factor;
@@ -704,7 +687,7 @@ export default function Worker() {
       w = EdgeMatrix[ep(e, "weight")];
 
       // Edge weight influence
-      ewc = Math.pow(w, W.settings.edgeWeightInfluence);
+      ewc = w ** W.settings.edgeWeightInfluence;
 
       // Common measures
       xDist = NodeMatrix[np(n1, "x")] - NodeMatrix[np(n2, "x")];
@@ -713,8 +696,8 @@ export default function Worker() {
       // Applying attraction to nodes
       if (W.settings.adjustSizes) {
         distance = Math.sqrt(
-          Math.pow(xDist, 2) +
-            Math.pow(yDist, 2) -
+          xDist ** 2 +
+            yDist ** 2 -
             NodeMatrix[np(n1, "size")] -
             NodeMatrix[np(n2, "size")]
         );
@@ -728,25 +711,23 @@ export default function Worker() {
                 distance /
                 NodeMatrix[np(n1, "mass")];
             }
-          } else {
-            // -- LinLog Anti-collision Attraction
-            if (distance > 0) {
-              factor = (-coefficient * ewc * Math.log(1 + distance)) / distance;
-            }
+          }
+          // -- LinLog Anti-collision Attraction
+          else if (distance > 0) {
+            factor = (-coefficient * ewc * Math.log(1 + distance)) / distance;
           }
         } else if (W.settings.outboundAttractionDistribution) {
           // -- Linear Degree Distributed Anti-collision Attraction
           if (distance > 0) {
             factor = (-coefficient * ewc) / NodeMatrix[np(n1, "mass")];
           }
-        } else {
-          // -- Linear Anti-collision Attraction
-          if (distance > 0) {
-            factor = -coefficient * ewc;
-          }
+        }
+        // -- Linear Anti-collision Attraction
+        else if (distance > 0) {
+          factor = -coefficient * ewc;
         }
       } else {
-        distance = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        distance = Math.sqrt(xDist ** 2 + yDist ** 2);
 
         if (W.settings.linLogMode) {
           if (W.settings.outboundAttractionDistribution) {
@@ -757,11 +738,10 @@ export default function Worker() {
                 distance /
                 NodeMatrix[np(n1, "mass")];
             }
-          } else {
-            // -- LinLog Attraction
-            if (distance > 0)
-              factor = (-coefficient * ewc * Math.log(1 + distance)) / distance;
           }
+          // -- LinLog Attraction
+          else if (distance > 0)
+            factor = (-coefficient * ewc * Math.log(1 + distance)) / distance;
         } else if (W.settings.outboundAttractionDistribution) {
           // -- Linear Attraction Mass Distributed
           // NOTE: Distance is set to 1 to override next condition
@@ -799,8 +779,7 @@ export default function Worker() {
       for (n = 0; n < W.nodesLength; n += W.ppn) {
         if (!NodeMatrix[np(n, "fixed")]) {
           force = Math.sqrt(
-            Math.pow(NodeMatrix[np(n, "dx")], 2) +
-              Math.pow(NodeMatrix[np(n, "dy")], 2)
+            NodeMatrix[np(n, "dx")] ** 2 + NodeMatrix[np(n, "dy")] ** 2
           );
 
           if (force > W.maxForce) {
@@ -868,8 +847,7 @@ export default function Worker() {
             1,
             Math.sqrt(
               (nodespeed *
-                (Math.pow(NodeMatrix[np(n, "dx")], 2) +
-                  Math.pow(NodeMatrix[np(n, "dy")], 2))) /
+                (NodeMatrix[np(n, "dx")] ** 2 + NodeMatrix[np(n, "dy")] ** 2)) /
                 (1 + Math.sqrt(swinging))
             )
           );
@@ -929,7 +907,7 @@ export default function Worker() {
   }
 
   // On supervisor message
-  var listener = function(e) {
+  function listener(e) {
     switch (e.data.action) {
       case "start":
         init(
@@ -964,7 +942,7 @@ export default function Worker() {
       default:
         self.console.log("Unhandled Message", e);
     }
-  };
+  }
 
   // Adding event listener
   self.addEventListener("message", listener);
