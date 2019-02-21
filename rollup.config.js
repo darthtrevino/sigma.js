@@ -5,6 +5,7 @@ import { terser } from "rollup-plugin-terser";
 
 const { NODE_ENV: environment } = process.env;
 const isProd = environment === "production";
+const qualifier = isProd ? ".min." : ".";
 
 if (!fs.existsSync("build/temp")) {
   fs.mkdirSync("build/temp");
@@ -16,7 +17,7 @@ const umdPlugins = isProd
 const cjsPlugins = isProd ? [terser()] : undefined;
 
 function library(ns) {
-  const rootFileName = `build/temp/${ns}.js`;
+  const rootFileName = `build/temp/${ns}${qualifier}js`;
   fs.writeFileSync(
     rootFileName,
     `
@@ -32,7 +33,7 @@ function library(ns) {
   return {
     input: rootFileName,
     output: {
-      file: `build/plugins/${ns}.js`,
+      file: `build/plugins/${ns}${qualifier}js`,
       format: "umd",
       globals: {
         sigma: "sigma"
@@ -48,7 +49,7 @@ export default [
     input: "src/core/index.js",
     output: {
       name: "sigma",
-      file: "build/sigma.umd.js",
+      file: `build/sigma.umd${qualifier}js`,
       format: "umd"
     },
     plugins: umdPlugins
@@ -63,8 +64,8 @@ export default [
     input: "src/core/index.js",
     external: ["ms"],
     output: [
-      { file: "build/sigma.cjs.js", format: "cjs" },
-      { file: "build/sigma.esm.js", format: "es" }
+      { file: `build/sigma.cjs${qualifier}js`, format: "cjs" },
+      { file: `build/sigma.esm${qualifier}js`, format: "es" }
     ],
     plugins: cjsPlugins
   },
