@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition, no-loop-func */
 /**
  * This plugin computes HITS statistics (Authority and Hub measures) for each node of the graph.
  * It adds to the graph model a method called "HITS".
@@ -48,86 +49,78 @@ export default function extend(sigma) {
 
     if (!isUndirected) isUndirected = false;
 
-    for (var i in nodes) {
+    nodes.forEach(node => {
       if (isUndirected) {
-        hubList.push(nodes[i]);
-        authList.push(nodes[i]);
+        hubList.push(node);
+        authList.push(node);
       } else {
-        if (this.degree(nodes[i].id, "out") > 0) hubList.push(nodes[i]);
+        if (this.degree(node.id, "out") > 0) hubList.push(node);
 
-        if (this.degree(nodes[i].id, "in") > 0) authList.push(nodes[i]);
+        if (this.degree(node.id, "in") > 0) authList.push(node);
       }
 
-      res[nodes[i].id] = { authority: 1, hub: 1 };
-    }
+      res[node.id] = { authority: 1, hub: 1 };
+    });
 
     let done;
 
     while (true) {
       done = true;
       let authSum = 0;
-
       let hubSum = 0;
 
-      for (var i in authList) {
-        tempRes[authList[i].id] = { authority: 1, hub: 0 };
+      authList.forEach(auth => {
+        tempRes[auth.id] = { authority: 1, hub: 0 };
 
-        var connectedNodes = [];
+        const connectedNodes = isUndirected
+          ? this.allNeighborsIndex[auth.id]
+          : this.inNeighborsIndex[auth.id];
 
-        if (isUndirected)
-          connectedNodes = this.allNeighborsIndex[authList[i].id];
-        else connectedNodes = this.inNeighborsIndex[authList[i].id];
+        Object.keys(connectedNodes)
+          .filter(j => j !== auth.id)
+          .forEach(j => {
+            tempRes[auth.id].authority += res[j].hub;
+          });
 
-        for (var j in connectedNodes) {
-          if (j != authList[i].id)
-            tempRes[authList[i].id].authority += res[j].hub;
-        }
+        authSum += tempRes[auth.id].authority;
+      });
 
-        authSum += tempRes[authList[i].id].authority;
-      }
+      hubList.forEach(hub => {
+        if (tempRes[hub.id]) tempRes[hub.id].hub = 1;
+        else tempRes[hub.id] = { authority: 0, hub: 1 };
 
-      for (var i in hubList) {
-        if (tempRes[hubList[i].id]) tempRes[hubList[i].id].hub = 1;
-        else tempRes[hubList[i].id] = { authority: 0, hub: 1 };
+        const connectedNodes = isUndirected
+          ? this.allNeighborsIndex[hub.id]
+          : this.outNeighborsIndex[hub.id];
 
-        var connectedNodes = [];
+        Object.keys(connectedNodes)
+          .filter(j => j !== hub.id)
+          .forEach(j => {
+            tempRes[hub.id].hub += res[j].authority;
+          });
 
-        if (isUndirected)
-          connectedNodes = this.allNeighborsIndex[hubList[i].id];
-        else connectedNodes = this.outNeighborsIndex[hubList[i].id];
+        hubSum += tempRes[hub.id].hub;
+      });
 
-        for (var j in connectedNodes) {
-          if (j != hubList[i].id)
-            tempRes[hubList[i].id].hub += res[j].authority;
-        }
-
-        hubSum += tempRes[hubList[i].id].hub;
-      }
-
-      for (var i in authList) {
-        tempRes[authList[i].id].authority /= authSum;
-
+      authList.forEach(auth => {
+        tempRes[auth.id].authority /= authSum;
         if (
           Math.abs(
-            (tempRes[authList[i].id].authority -
-              res[authList[i].id].authority) /
-              res[authList[i].id].authority
+            (tempRes[auth.id].authority - res[auth.id].authority) /
+              res[auth.id].authority
           ) >= epsilon
         )
           done = false;
-      }
+      });
 
-      for (var i in hubList) {
-        tempRes[hubList[i].id].hub /= hubSum;
-
+      hubList.forEach(hub => {
+        tempRes[hub.id].hub /= hubSum;
         if (
-          Math.abs(
-            (tempRes[hubList[i].id].hub - res[hubList[i].id].hub) /
-              res[hubList[i].id].hub
-          ) >= epsilon
+          Math.abs((tempRes[hub.id].hub - res[hub.id].hub) / res[hub.id].hub) >=
+          epsilon
         )
           done = false;
-      }
+      });
       res = tempRes;
 
       tempRes = {};
