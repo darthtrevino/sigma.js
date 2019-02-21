@@ -39,7 +39,7 @@ export default sigma => {
     cp =
       source.id === target.id
         ? sigma.utils.getSelfLoopControlPoints(sX, sY, tSize, count)
-        : sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY, count);
+        : sigma.utils.geom.getQuadraticControlPoint(sX, sY, tX, tY, count);
 
     if (source.id === target.id) {
       d = Math.sqrt((tX - cp.x1) ** 2 + (tY - cp.y1) ** 2);

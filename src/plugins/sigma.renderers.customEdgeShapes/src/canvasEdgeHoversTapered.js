@@ -1,6 +1,4 @@
 export default function extend(sigma) {
-  sigma.utils.pkg("sigma.canvas.edgehovers");
-
   /**
    * This hover renderer will display the edge with a different color or size.
    *
@@ -10,40 +8,25 @@ export default function extend(sigma) {
    * @param  {CanvasRenderingContext2D} context      The canvas context.
    * @param  {configurable}             settings     The settings function.
    */
-  sigma.canvas.edgehovers.parallel = function(
-    edge,
-    source,
-    target,
-    context,
-    settings
-  ) {
+  return function tapered(edge, source, target, context, settings) {
+    // The goal is to draw a triangle where the target node is a point of
+    // the triangle, and the two other points are the intersection of the
+    // source circle and the circle (target, distance(source, target)).
     let color = edge.active
       ? edge.active_color || settings("defaultEdgeActiveColor")
       : edge.color;
 
-    const prefix = settings("prefix") || "";
-
+    let prefix = settings("prefix") || "";
     let size = edge[`${prefix}size`] || 1;
-
     const edgeColor = settings("edgeColor");
-
+    prefix = settings("prefix") || "";
     const defaultNodeColor = settings("defaultNodeColor");
-
     const defaultEdgeColor = settings("defaultEdgeColor");
-
     const sX = source[`${prefix}x`];
-
     const sY = source[`${prefix}y`];
-
     const tX = target[`${prefix}x`];
-
     const tY = target[`${prefix}y`];
-
-    let c;
-
-    let d;
-
-    const dist = sigma.utils.getDistance(sX, sY, tX, tY);
+    const dist = sigma.utils.geom.getDistance(sX, sY, tX, tY);
 
     if (!color)
       switch (edgeColor) {
@@ -65,27 +48,28 @@ export default function extend(sigma) {
     }
     size *= settings("edgeHoverSizeRatio");
 
-    // Intersection points of the source node circle:
-    c = sigma.utils.getCircleIntersection(sX, sY, size, tX, tY, dist);
-
-    // Intersection points of the target node circle:
-    d = sigma.utils.getCircleIntersection(tX, tY, size, sX, sY, dist);
-
+    // Intersection points:
+    const c = sigma.utils.geom.getCircleIntersection(
+      sX,
+      sY,
+      size,
+      tX,
+      tY,
+      dist
+    );
     context.save();
 
-    context.strokeStyle = color;
-    context.lineWidth = size;
-    context.beginPath();
-    context.moveTo(c.xi, c.yi);
-    context.lineTo(d.xi_prime, d.yi_prime);
-    context.closePath();
-    context.stroke();
+    // Turn transparency on:
+    context.globalAlpha = 0.65;
 
+    // Draw the triangle:
+    context.fillStyle = color;
     context.beginPath();
-    context.moveTo(c.xi_prime, c.yi_prime);
-    context.lineTo(d.xi, d.yi);
+    context.moveTo(tX, tY);
+    context.lineTo(c.xi, c.yi);
+    context.lineTo(c.xi_prime, c.yi_prime);
     context.closePath();
-    context.stroke();
+    context.fill();
 
     context.restore();
   };

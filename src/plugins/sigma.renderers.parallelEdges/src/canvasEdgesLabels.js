@@ -38,7 +38,7 @@ export default sigma => {
 
     if (source.id === target.id) {
       cp = sigma.utils.getSelfLoopControlPoints(sX, sY, sSize, count);
-      c = sigma.utils.getPointOnBezierCurve(
+      c = sigma.utils.geom.getPointOnBezierCurve(
         t,
         sX,
         sY,
@@ -51,8 +51,16 @@ export default sigma => {
       );
       angle = Math.atan2(1, 1); // 45°
     } else {
-      cp = sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY, count);
-      c = sigma.utils.getPointOnQuadraticCurve(t, sX, sY, tX, tY, cp.x, cp.y);
+      cp = sigma.utils.geom.getQuadraticControlPoint(sX, sY, tX, tY, count);
+      c = sigma.utils.geom.getPointOnQuadraticCurve(
+        t,
+        sX,
+        sY,
+        tX,
+        tY,
+        cp.x,
+        cp.y
+      );
       angle = Math.atan2(dY * sign, dX * sign);
     }
 

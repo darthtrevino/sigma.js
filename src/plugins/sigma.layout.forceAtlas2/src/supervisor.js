@@ -211,7 +211,7 @@ export default function extend(sigma, global = window) {
       camera.edgequadtree._enabled = true;
 
       // Find graph boundaries:
-      bounds = sigma.utils.getBoundaries(this.graph, camera.readPrefix);
+      bounds = sigma.utils.geom.getBoundaries(this.graph, camera.readPrefix);
 
       // Refresh edgequadtree:
       if (camera.settings("drawEdges") && camera.settings("enableEdgeHovering"))

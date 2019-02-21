@@ -1,19 +1,22 @@
-import canvasEdgeHoversDashed from "./sigma.canvas.edgehovers.dashed";
-import canvasEdgeHoversDotted from "./sigma.canvas.edgehovers.dotted";
-import canvasEdgeHoversParallel from "./sigma.canvas.edgehovers.parallel";
-import canvasEdgeHoversTapered from "./sigma.canvas.edgehovers.tapered";
-import canvasEdgesDashed from "./sigma.canvas.edges.dashed";
-import canvasEdgesDotted from "./sigma.canvas.edges.dotted";
-import canvasEdgesParallel from "./sigma.canvas.edges.parallel";
-import canvasEdgesTapered from "./sigma.canvas.edges.tapered";
+import canvasEdgeHoversDashed from "./src/canvasEdgeHoversDashed";
+import canvasEdgeHoversDotted from "./src/canvasEdgeHoversDotted";
+import canvasEdgeHoversParallel from "./src/canvasEdgeHoversParallel";
+import canvasEdgeHoversTapered from "./src/canvasEdgeHoversTapered";
+import canvasEdgesDashed from "./src/canvasEdgesDashed";
+import canvasEdgesDotted from "./src/canvasEdgesDotted";
+import canvasEdgesParallel from "./src/canvasEdgesParallel";
+import canvasEdgesTapered from "./src/sigmaCanvasEdgesTapered";
 
 export default function extend(sigma) {
-  canvasEdgeHoversDashed(sigma);
-  canvasEdgeHoversDotted(sigma);
-  canvasEdgeHoversParallel(sigma);
-  canvasEdgeHoversTapered(sigma);
-  canvasEdgesDashed(sigma);
-  canvasEdgesDotted(sigma);
-  canvasEdgesParallel(sigma);
-  canvasEdgesTapered(sigma);
+  sigma.register("sigma.canvas.edgehovers.dashed", canvasEdgeHoversDashed);
+  sigma.register("sigma.canvas.edgehovers.dotted", canvasEdgeHoversDotted);
+  sigma.register("sigma.canvas.edgehovers.parallel", canvasEdgeHoversParallel);
+  sigma.register(
+    "sigma.canvas.edgehovers.tapered",
+    canvasEdgeHoversTapered(sigma)
+  );
+  sigma.register("sigma.canvas.edges.dashed", canvasEdgesDashed);
+  sigma.register("sigma.canvas.edges.dotted", canvasEdgesDotted);
+  sigma.register("sigma.canvas.edges.parallel", canvasEdgesParallel);
+  sigma.register("sigma.canvas.edges.tapered", canvasEdgesTapered);
 }

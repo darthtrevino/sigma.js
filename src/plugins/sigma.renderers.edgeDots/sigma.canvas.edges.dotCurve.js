@@ -44,7 +44,7 @@ export default function extend(sigma) {
     cp =
       source.id === target.id
         ? sigma.utils.getSelfLoopControlPoints(sX, sY, sSize)
-        : sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY);
+        : sigma.utils.geom.getQuadraticControlPoint(sX, sY, tX, tY);
 
     if (!color)
       switch (edgeColor) {

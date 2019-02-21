@@ -11,13 +11,9 @@ export default function extend(sigma) {
   let sigInst;
   const imgCache = {};
 
-  function initPlugin(inst) {
-    sigInst = inst;
-  }
-
   function drawImage(node, x, y, size, context) {
     if (sigInst && node.image && node.image.url) {
-      const url = node.image.url;
+      const { url } = node.image;
       const ih = node.image.h || 1; // 1 is arbitrary, anyway only the ratio counts
       const iw = node.image.w || 1;
       const scale = node.image.scale || 1;
@@ -89,7 +85,7 @@ export default function extend(sigma) {
         ? ""
         : document.location.href;
       // To fix cases where an anchor tag was used
-      absolutePath = absolutePath.split("#")[0];
+      [absolutePath] = absolutePath.split("#");
       image.setAttributeNS(
         null,
         "class",
@@ -113,7 +109,6 @@ export default function extend(sigma) {
 
   function register(name, drawShape, drawBorder) {
     sigma.canvas.nodes[name] = function customDraw(node, context, settings) {
-      const args = arguments;
       const prefix = settings("prefix") || "";
       const size = node[`${prefix}size`];
       const color = node.color || settings("defaultNodeColor");
@@ -138,7 +133,6 @@ export default function extend(sigma) {
     sigma.svg.nodes[name] = {
       create(node, settings) {
         const group = document.createElementNS(settings("xmlns"), "g");
-
         const circle = document.createElementNS(settings("xmlns"), "circle");
 
         group.setAttributeNS(
@@ -162,36 +156,21 @@ export default function extend(sigma) {
       },
       update(node, group, settings) {
         const classPrefix = settings("classPrefix");
-
         const clip = node.image.clip || 1;
-
         // 1 is arbitrary, anyway only the ratio counts
-
         const ih = node.image.h || 1;
-
         const iw = node.image.w || 1;
-
         const prefix = settings("prefix") || "";
-
         const scale = node.image.scale || 1;
-
         const size = node[`${prefix}size`];
-
         const x = node[`${prefix}x`];
-
         const y = node[`${prefix}y`];
-
         const r = scale * size;
-
         const xratio = iw < ih ? iw / ih : 1;
-
         const yratio = ih < iw ? ih / iw : 1;
 
-        for (
-          let i = 0, childNodes = group.childNodes;
-          i < childNodes.length;
-          i++
-        ) {
+        const { childNodes } = group;
+        for (let i = 0; i < childNodes.length; i++) {
           const className = childNodes[i].getAttribute("class");
 
           switch (className) {
@@ -231,9 +210,9 @@ export default function extend(sigma) {
                 r * yratio * 2 * Math.cos(-3.142 / 4)
               );
               break;
-            default:
+            default: {
               // no class name, must be the clip-path
-              var clipPath = childNodes[i].firstChild;
+              const clipPath = childNodes[i].firstChild;
               if (clipPath != null) {
                 const clipPathId = `${classPrefix}-clip-path-${node.id}`;
                 if (clipPath.getAttribute("id") === clipPathId) {
@@ -243,6 +222,7 @@ export default function extend(sigma) {
                 }
               }
               break;
+            }
           }
         }
 
@@ -252,7 +232,7 @@ export default function extend(sigma) {
     };
   }
 
-  ShapeLibrary.enumerate().forEach(function(shape) {
-    register(shape.name, shape.drawShape, shape.drawBorder);
-  });
+  ShapeLibrary.enumerate().forEach(shape =>
+    register(shape.name, shape.drawShape, shape.drawBorder)
+  );
 }

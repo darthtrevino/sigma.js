@@ -350,8 +350,8 @@
         // Find neighbors:
         var x, y, p, id, neighbors;
 
-        x = sigma.utils.getX(e) - dom.offsetWidth / 2;
-        y = sigma.utils.getY(e) - dom.offsetHeight / 2;
+        x = sigma.utils.events.getX(e) - dom.offsetWidth / 2;
+        y = sigma.utils.events.getY(e) - dom.offsetHeight / 2;
 
         p = c.cameraPosition(x, y);
         x = p.x;
@@ -391,22 +391,24 @@
     dom.addEventListener(
       "mousemove",
       function(e) {
-        mouseX = sigma.utils.getX(e);
-        mouseY = sigma.utils.getY(e);
+        mouseX = sigma.utils.events.getX(e);
+        mouseY = sigma.utils.events.getY(e);
       },
       false
     );
     dom.addEventListener(
       "DOMMouseScroll",
       function(e) {
-        radius *= sigma.utils.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
+        radius *=
+          sigma.utils.events.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
       },
       false
     );
     dom.addEventListener(
       "mousewheel",
       function(e) {
-        radius *= sigma.utils.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
+        radius *=
+          sigma.utils.events.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
       },
       false
     );
