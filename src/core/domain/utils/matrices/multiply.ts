@@ -7,7 +7,7 @@
  *                      2x2.
  * @return {array}      Returns the matrix.
  */
-export default function multiply(a, b, m2) {
+export default function multiply(a: number[], b: number[], m2?: boolean) {
   const l = m2 ? 2 : 3;
   const a00 = a[0 * l + 0];
   const a01 = a[0 * l + 1];

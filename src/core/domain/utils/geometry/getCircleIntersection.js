@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase, @typescript-eslint/camelcase */
 
 /**
  * Return the coordinates of the intersection points of two circles.

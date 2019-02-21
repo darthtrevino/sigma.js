@@ -18,7 +18,10 @@ export default function Dispatcher() {
  * @param  {function(Object)} handler The handler to bind.
  * @return {dispatcher}               Returns the instance itself.
  */
-Dispatcher.prototype.bind = function bind(events, handler) {
+Dispatcher.prototype.bind = function bind(
+  events: string[] | string,
+  handler: Function
+) {
   /* eslint-disable prefer-rest-params */
   if (arguments.length === 1 && typeof arguments[0] === "object") {
     const argObject = events;
@@ -57,7 +60,10 @@ Dispatcher.prototype.bind = function bind(events, handler) {
  *                                     events will be removed.
  * @return {dispatcher}                Returns the instance itself.
  */
-Dispatcher.prototype.unbind = function unbind(events, handler) {
+Dispatcher.prototype.unbind = function unbind(
+  events: string | string[],
+  handler: Function
+) {
   let i;
   let n;
   const eArray = typeof events === "string" ? events.split(" ") : events;
@@ -97,7 +103,10 @@ Dispatcher.prototype.unbind = function unbind(events, handler) {
  * @param  {?object}    data   The content of the event (optional).
  * @return {dispatcher}        Returns the instance itself.
  */
-Dispatcher.prototype.dispatchEvent = function dispatcHEvent(events, data) {
+Dispatcher.prototype.dispatchEvent = function dispatcHEvent(
+  events: string | string[],
+  data?: any
+) {
   const self = this;
   const eArray = typeof events === "string" ? events.split(" ") : events;
   data = data === undefined ? {} : data;
@@ -128,7 +137,7 @@ Dispatcher.prototype.dispatchEvent = function dispatcHEvent(events, data) {
  * @param  {?object} data   The content of the event (optional).
  * @return {object}         Returns the instance itself.
  */
-Dispatcher.prototype.getEvent = function getEvent(event, data) {
+Dispatcher.prototype.getEvent = function getEvent(event: string, data?: any) {
   return {
     type: event,
     data: data || {},
@@ -142,7 +151,7 @@ Dispatcher.prototype.getEvent = function getEvent(event, data) {
  *
  * @param {object} target The target.
  */
-Dispatcher.extend = function extend(target, args) {
+Dispatcher.extend = function extend(target: any, args?: any) {
   let k;
   /* eslint-disable-next-line no-restricted-syntax */
   for (k in Dispatcher.prototype) {
