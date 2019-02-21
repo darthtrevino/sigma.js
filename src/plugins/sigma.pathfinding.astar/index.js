@@ -1,8 +1,4 @@
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") {
-    throw new Error("sigma is not declared");
-  }
-
   // Default function to compute path length between two nodes:
   // the euclidian
   function defaultPathLengthFunction(node1, node2, previousPathLength) {
@@ -43,7 +39,6 @@ export default function extend(sigma) {
     );
 
     const pathLengthFunction = currentSettings("pathLengthFunction");
-
     const heuristicLengthFunction =
       currentSettings("heuristicLengthFunction") || pathLengthFunction;
 
@@ -63,7 +58,7 @@ export default function extend(sigma) {
       };
 
       if (
-        closedList[nodeId] == undefined ||
+        closedList[nodeId] === undefined ||
         closedList[nodeId].pathLength > pathLength
       ) {
         closedList[nodeId] = newItem;
@@ -104,7 +99,7 @@ export default function extend(sigma) {
       inspectedItem = openList.shift();
 
       // We reached the destination node
-      if (inspectedItem.nodeId == destId) {
+      if (inspectedItem.nodeId === destId) {
         pathFound = true;
         break;
       }

@@ -4,8 +4,6 @@
  * examples/api-candy.html code samples to know more.
  */
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   sigma.utils.pkg("sigma.plugins");
 
   /**
@@ -44,29 +42,17 @@ export default function extend(sigma) {
 
     // Init variables:
     const _self = this;
-
     const _s = s;
-
     const _body = document.body;
-
     const _renderer = renderer;
-
     let _mouse = renderer.container.lastChild;
-
     const _camera = renderer.camera;
-
     let _node = null;
-
     let _prefix = "";
-
     const _hoverStack = [];
-
     const _hoverIndex = {};
-
     let _isMouseDown = false;
-
     const _isMouseOverCanvas = false;
-
     let _drag = false;
 
     if (renderer instanceof sigma.renderers.svg) {
@@ -84,14 +70,12 @@ export default function extend(sigma) {
     renderer.bind("outNode", treatOutNode);
     renderer.bind("click", click);
 
-    _s.bind("kill", function() {
-      _self.unbindAll();
-    });
+    _s.bind("kill", () => _self.unbindAll());
 
     /**
      * Unbind all event listeners.
      */
-    this.unbindAll = function() {
+    this.unbindAll = () => {
       _mouse.removeEventListener("mousedown", nodeMouseDown);
       _body.removeEventListener("mousemove", nodeMouseMove);
       _body.removeEventListener("mouseup", nodeMouseUp);
@@ -103,8 +87,10 @@ export default function extend(sigma) {
     // element.offsetTop and element.offsetLeft.
     function calculateOffset(element) {
       const style = window.getComputedStyle(element);
-      const getCssProperty = function(prop) {
-        return parseInt(style.getPropertyValue(prop).replace("px", "")) || 0;
+      const getCssProperty = prop => {
+        return (
+          parseInt(style.getPropertyValue(prop).replace("px", ""), 10) || 0
+        );
       };
       return {
         left:
@@ -317,16 +303,13 @@ export default function extend(sigma) {
    * @param  {sigma} s The related sigma instance.
    * @param  {renderer} renderer The related renderer instance.
    */
-  sigma.plugins.dragNodes = function(s, renderer) {
+  sigma.plugins.dragNodes = function dragNodes(s, renderer) {
     // Create object if undefined
     if (!_instance[s.id]) {
       _instance[s.id] = new DragNodes(s, renderer);
     }
 
-    s.bind("kill", function() {
-      sigma.plugins.killDragNodes(s);
-    });
-
+    s.bind("kill", () => sigma.plugins.killDragNodes(s));
     return _instance[s.id];
   };
 
@@ -335,7 +318,7 @@ export default function extend(sigma) {
    *
    * @param  {sigma} s The related sigma instance.
    */
-  sigma.plugins.killDragNodes = function(s) {
+  sigma.plugins.killDragNodes = function killDragNodes(s) {
     if (_instance[s.id] instanceof DragNodes) {
       _instance[s.id].unbindAll();
       delete _instance[s.id];

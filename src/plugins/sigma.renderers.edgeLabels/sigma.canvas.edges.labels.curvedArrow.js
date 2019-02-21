@@ -1,6 +1,4 @@
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   // Initialize packages:
   sigma.utils.pkg("sigma.canvas.edges.labels");
 

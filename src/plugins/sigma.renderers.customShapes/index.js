@@ -1,8 +1,6 @@
 import ShapeLibrary from "./shape-library";
 
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   if (typeof ShapeLibrary === "undefined")
     throw new Error("ShapeLibrary is not declared");
 

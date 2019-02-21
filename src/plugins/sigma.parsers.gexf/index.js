@@ -1,8 +1,6 @@
-import gexf from "./gexf-parser";
+import gexf from "./src/parser";
 
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   // Initialize package:
   sigma.utils.pkg("sigma.parsers");
 
@@ -28,7 +26,7 @@ export default function extend(sigma) {
    *                                      be called with the related sigma
    *                                      instance as parameter.
    */
-  sigma.parsers.gexf = function(target, sig, callback) {
+  sigma.parsers.gexf = function gexfParser(target, sig, callback) {
     let i;
     let l;
     let arr;

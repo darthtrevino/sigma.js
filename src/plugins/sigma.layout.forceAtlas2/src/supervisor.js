@@ -1,7 +1,5 @@
 /* eslint-disable no-eval */
 export default function extend(sigma, global = window) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   /**
    * Sigma ForceAtlas2.5 Supervisor
    * ===============================

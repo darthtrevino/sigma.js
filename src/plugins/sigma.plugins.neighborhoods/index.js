@@ -21,8 +21,6 @@
  *  > });
  */
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   /**
    * This method takes the ID of node as argument and returns the graph of the
    * specified node, with every other nodes that are connected to it and every
@@ -99,7 +97,7 @@ export default function extend(sigma) {
   /**
    * sigma.plugins.neighborhoods constructor.
    */
-  sigma.plugins.neighborhoods = function() {
+  sigma.plugins.neighborhoods = function neighborhoods() {
     const ready = false;
 
     const readyCallbacks = [];
@@ -112,9 +110,7 @@ export default function extend(sigma) {
      * @param  {string} centerNodeID The ID of the center node.
      * @return {object}              Returns the neighborhood.
      */
-    this.neighborhood = function(centerNodeID) {
-      return graph.neighborhood(centerNodeID);
-    };
+    this.neighborhood = centerNodeID => graph.neighborhood(centerNodeID);
 
     /**
      * This method loads the JSON graph at "path", stores it in the local graph
@@ -171,8 +167,6 @@ export default function extend(sigma) {
      *
      * @param {object} g The graph object to read.
      */
-    this.read = function(g) {
-      graph.clear().read(g);
-    };
+    this.read = g => graph.clear().read(g);
   };
 }

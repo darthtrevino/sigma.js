@@ -1,3 +1,5 @@
+import * as _helpers from "./utils";
+
 /**
  * GEXF Library
  * =============
@@ -6,116 +8,6 @@
  * URL: https://github.com/Yomguithereal/gexf-parser
  * Version: 0.1.1
  */
-
-/**
- * Helper Namespace
- * -----------------
- *
- * A useful batch of function dealing with DOM operations and types.
- */
-const _helpers = {
-  getModelTags(xml) {
-    const attributesTags = xml.getElementsByTagName("attributes");
-
-    const modelTags = {};
-
-    const l = attributesTags.length;
-
-    let i;
-
-    for (i = 0; i < l; i++)
-      modelTags[attributesTags[i].getAttribute("class")] =
-        attributesTags[i].childNodes;
-
-    return modelTags;
-  },
-  nodeListToArray(nodeList) {
-    // Return array
-    const children = [];
-
-    // Iterating
-    for (let i = 0, len = nodeList.length; i < len; ++i) {
-      if (nodeList[i].nodeName !== "#text") children.push(nodeList[i]);
-    }
-
-    return children;
-  },
-  nodeListEach(nodeList, func) {
-    // Iterating
-    for (let i = 0, len = nodeList.length; i < len; ++i) {
-      if (nodeList[i].nodeName !== "#text") func(nodeList[i]);
-    }
-  },
-  nodeListToHash(nodeList, filter) {
-    // Return object
-    const children = {};
-
-    // Iterating
-    for (let i = 0; i < nodeList.length; i++) {
-      if (nodeList[i].nodeName !== "#text") {
-        const prop = filter(nodeList[i]);
-        children[prop.key] = prop.value;
-      }
-    }
-
-    return children;
-  },
-  namedNodeMapToObject(nodeMap) {
-    // Return object
-    const attributes = {};
-
-    // Iterating
-    for (let i = 0; i < nodeMap.length; i++) {
-      attributes[nodeMap[i].name] = nodeMap[i].value;
-    }
-
-    return attributes;
-  },
-  getFirstElementByTagNS(node, ns, tag) {
-    let el = node.getElementsByTagName(`${ns}:${tag}`)[0];
-
-    if (!el) el = node.getElementsByTagNameNS(ns, tag)[0];
-
-    if (!el) el = node.getElementsByTagName(tag)[0];
-
-    return el;
-  },
-  getAttributeNS(node, ns, attribute) {
-    let attr_value = node.getAttribute(`${ns}:${attribute}`);
-
-    if (attr_value === undefined)
-      attr_value = node.getAttributeNS(ns, attribute);
-
-    if (attr_value === undefined) attr_value = node.getAttribute(attribute);
-
-    return attr_value;
-  },
-  enforceType(type, value) {
-    switch (type) {
-      case "boolean":
-        value = value === "true";
-        break;
-
-      case "integer":
-      case "long":
-      case "float":
-      case "double":
-        value = +value;
-        break;
-
-      case "liststring":
-        value = value ? value.split("|") : [];
-        break;
-    }
-
-    return value;
-  },
-  getRGB(values) {
-    return values[3]
-      ? `rgba(${values.join(",")})`
-      : `rgb(${values.slice(0, -1).join(",")})`;
-  }
-};
 
 /**
  * Parser Core Functions
@@ -212,7 +104,7 @@ function Graph(xml) {
     metas.lastmodifieddate = _xml.els.meta.getAttribute("lastmodifieddate");
 
     // Other information
-    _helpers.nodeListEach(_xml.els.meta.childNodes, function(child) {
+    _helpers.nodeListEach(_xml.els.meta.childNodes, child => {
       metas[child.tagName.toLowerCase()] = child.textContent;
     });
 
@@ -225,7 +117,7 @@ function Graph(xml) {
 
     // Iterating through attributes
     if (_xml.els.model[cls])
-      _helpers.nodeListEach(_xml.els.model[cls], function(attr) {
+      _helpers.nodeListEach(_xml.els.model[cls], attr => {
         // Properties
         const properties = {
           id: attr.getAttribute("id") || attr.getAttribute("for"),
@@ -234,10 +126,10 @@ function Graph(xml) {
         };
 
         // Defaults
-        const default_el = _helpers.nodeListToArray(attr.childNodes);
+        const defaultEl = _helpers.nodeListToArray(attr.childNodes);
 
-        if (default_el.length > 0)
-          properties.defaultValue = default_el[0].textContent;
+        if (defaultEl.length > 0)
+          properties.defaultValue = defaultEl[0].textContent;
 
         // Creating attribute
         attributes.push(properties);
@@ -247,12 +139,12 @@ function Graph(xml) {
   }
 
   // Data from nodes or edges
-  function _data(model, node_or_edge) {
+  function _data(model, nodeOrEdge) {
     const data = {};
-    const attvalues_els = node_or_edge.getElementsByTagName("attvalue");
+    const attValuesEls = nodeOrEdge.getElementsByTagName("attvalue");
 
     // Getting Node Indicated Attributes
-    const ah = _helpers.nodeListToHash(attvalues_els, function(el) {
+    const ah = _helpers.nodeListToHash(attValuesEls, el => {
       const attributes = _helpers.namedNodeMapToObject(el.attributes);
       const key = attributes.id || attributes.for;
 
@@ -261,7 +153,7 @@ function Graph(xml) {
     });
 
     // Iterating through model
-    model.map(function(a) {
+    model.map(a => {
       // Default value?
       data[a.id] =
         !(a.id in ah) && "defaultValue" in a
@@ -277,7 +169,7 @@ function Graph(xml) {
     const nodes = [];
 
     // Iteration through nodes
-    _helpers.nodeListEach(_xml.els.nodes, function(n) {
+    _helpers.nodeListEach(_xml.els.nodes, n => {
       // Basic properties
       const properties = {
         id: n.getAttribute("id"),
@@ -302,48 +194,44 @@ function Graph(xml) {
     const viz = {};
 
     // Color
-    const color_el = _helpers.getFirstElementByTagNS(node, "viz", "color");
+    const colorEl = _helpers.getFirstElementByTagNS(node, "viz", "color");
 
-    if (color_el) {
-      const color = ["r", "g", "b", "a"].map(function(c) {
-        return color_el.getAttribute(c);
-      });
-
+    if (colorEl) {
+      const color = ["r", "g", "b", "a"].map(c => colorEl.getAttribute(c));
       viz.color = _helpers.getRGB(color);
     }
 
     // Position
-    const pos_el = _helpers.getFirstElementByTagNS(node, "viz", "position");
-
-    if (pos_el) {
+    const posEl = _helpers.getFirstElementByTagNS(node, "viz", "position");
+    if (posEl) {
       viz.position = {};
 
-      ["x", "y", "z"].map(function(p) {
-        viz.position[p] = +pos_el.getAttribute(p);
+      ["x", "y", "z"].map(p => {
+        viz.position[p] = +posEl.getAttribute(p);
       });
     }
 
     // Size
-    const size_el = _helpers.getFirstElementByTagNS(node, "viz", "size");
-    if (size_el) viz.size = +size_el.getAttribute("value");
+    const sizeEl = _helpers.getFirstElementByTagNS(node, "viz", "size");
+    if (sizeEl) viz.size = +sizeEl.getAttribute("value");
 
     // Shape
-    const shape_el = _helpers.getFirstElementByTagNS(node, "viz", "shape");
-    if (shape_el) viz.shape = shape_el.getAttribute("value");
+    const shapeEl = _helpers.getFirstElementByTagNS(node, "viz", "shape");
+    if (shapeEl) viz.shape = shapeEl.getAttribute("value");
 
     return viz;
   }
 
   // Edges
-  function _edges(model, default_type) {
+  function _edges(model, defaultType) {
     const edges = [];
 
     // Iteration through edges
-    _helpers.nodeListEach(_xml.els.edges, function(e) {
+    _helpers.nodeListEach(_xml.els.edges, e => {
       // Creating the edge
       const properties = _helpers.namedNodeMapToObject(e.attributes);
       if (!("type" in properties)) {
-        properties.type = default_type;
+        properties.type = defaultType;
       }
 
       // Retrieving edge data
@@ -363,23 +251,20 @@ function Graph(xml) {
     const viz = {};
 
     // Color
-    const color_el = _helpers.getFirstElementByTagNS(edge, "viz", "color");
+    const colorEl = _helpers.getFirstElementByTagNS(edge, "viz", "color");
 
-    if (color_el) {
-      const color = ["r", "g", "b", "a"].map(function(c) {
-        return color_el.getAttribute(c);
-      });
-
+    if (colorEl) {
+      const color = ["r", "g", "b", "a"].map(c => colorEl.getAttribute(c));
       viz.color = _helpers.getRGB(color);
     }
 
     // Shape
-    const shape_el = _helpers.getFirstElementByTagNS(edge, "viz", "shape");
-    if (shape_el) viz.shape = shape_el.getAttribute("value");
+    const shapeEl = _helpers.getFirstElementByTagNS(edge, "viz", "shape");
+    if (shapeEl) viz.shape = shapeEl.getAttribute("value");
 
     // Thickness
-    const thick_el = _helpers.getFirstElementByTagNS(edge, "viz", "thickness");
-    if (thick_el) viz.thickness = +thick_el.getAttribute("value");
+    const thickEl = _helpers.getFirstElementByTagNS(edge, "viz", "thickness");
+    if (thickEl) viz.thickness = +thickEl.getAttribute("value");
 
     return viz;
   }
@@ -387,7 +272,6 @@ function Graph(xml) {
   // Returning the Graph
   //---------------------
   const nodeModel = _model("node");
-
   const edgeModel = _model("edge");
 
   const graph = {
@@ -414,8 +298,8 @@ function Graph(xml) {
  */
 
 // Fetching GEXF with XHR
-function fetch(gexf_url, callback) {
-  const xhr = (function() {
+function fetch(gexfUrl, callback) {
+  const xhr = (() => {
     if (window.XMLHttpRequest) return new XMLHttpRequest();
 
     let names;
@@ -450,20 +334,18 @@ function fetch(gexf_url, callback) {
   // We'll be parsing the response string then.
   if (xhr.overrideMimeType) {
     xhr.overrideMimeType("text/xml");
-    getResult = function(r) {
-      return r.responseXML;
-    };
+    getResult = r => r.responseXML;
   } else {
-    getResult = function(r) {
+    getResult = r => {
       const p = new DOMParser();
       return p.parseFromString(r.responseText, "application/xml");
     };
   }
 
-  xhr.open("GET", gexf_url, async);
+  xhr.open("GET", gexfUrl, async);
 
   if (async)
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) callback(getResult(xhr));
     };
 
@@ -478,13 +360,11 @@ function parse(gexf) {
 }
 
 // Fetch and parse the GEXF File
-function fetchAndParse(gexf_url, callback) {
+function fetchAndParse(gexfUrl, callback) {
   if (typeof callback === "function") {
-    return fetch(gexf_url, function(gexf) {
-      callback(Graph(gexf));
-    });
+    return fetch(gexfUrl, gexf => callback(Graph(gexf)));
   }
-  return Graph(fetch(gexf_url));
+  return Graph(fetch(gexfUrl));
 }
 
 export default {

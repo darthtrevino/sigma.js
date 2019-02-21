@@ -4,8 +4,6 @@
  * examples/animate.html code sample to know more.
  */
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   sigma.utils.pkg("sigma.plugins");
 
   let _id = 0;
@@ -111,15 +109,13 @@ export default function extend(sigma) {
 
     let nodes;
 
-    let startPositions;
-
     if (o.nodes && o.nodes.length) {
       if (typeof o.nodes[0] === "object") nodes = o.nodes;
       else nodes = s.graph.nodes(o.nodes); // argument is an array of IDs
     } else nodes = s.graph.nodes();
 
     // Store initial positions:
-    startPositions = nodes.reduce(function(res, node) {
+    const startPositions = nodes.reduce((res, node) => {
       let k;
       res[node.id] = {};
       for (k in animate) if (k in node) res[node.id][k] = node[k];
@@ -141,7 +137,7 @@ export default function extend(sigma) {
       let p = (sigma.utils.dateNow() - start) / duration;
 
       if (p >= 1) {
-        nodes.forEach(function(node) {
+        nodes.forEach(node => {
           for (const k in animate) if (k in animate) node[k] = node[animate[k]];
         });
 
@@ -157,7 +153,7 @@ export default function extend(sigma) {
         if (typeof o.onComplete === "function") o.onComplete();
       } else {
         p = easing(p);
-        nodes.forEach(function(node) {
+        nodes.forEach(node => {
           for (const k in animate)
             if (k in animate) {
               if (k.match(/color$/))
@@ -180,7 +176,7 @@ export default function extend(sigma) {
     step();
   };
 
-  sigma.plugins.kill = function(s) {
+  sigma.plugins.kill = function kill(s) {
     for (var k in s.animations || {}) cancelAnimationFrame(s.animations[k]);
 
     // Allow to refresh edgequadtree:

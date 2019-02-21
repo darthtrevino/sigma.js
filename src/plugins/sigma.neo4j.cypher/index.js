@@ -1,6 +1,4 @@
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   // Declare neo4j package
   sigma.utils.pkg("sigma.neo4j");
 
@@ -16,17 +14,12 @@ export default function extend(sigma) {
    * @param   {object|string}     data        Data that will be send to the server
    * @param   {function}          callback    The callback function
    */
-  sigma.neo4j.send = function(neo4j, endpoint, method, data, callback) {
+  sigma.neo4j.send = function send(neo4j, endpoint, method, data, callback) {
     const xhr = sigma.utils.xhr();
-
-    let url;
-
     let user;
-
     let password;
-
     // if neo4j arg is not an object
-    url = neo4j;
+    let url = neo4j;
     if (typeof neo4j === "object") {
       url = neo4j.url;
       user = neo4j.user;
@@ -48,7 +41,7 @@ export default function extend(sigma) {
     }
     xhr.setRequestHeader("Accept", "application/json");
     xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function onreadystatechange() {
       if (xhr.readyState === 4) {
         // Call the callback if specified:
         callback(JSON.parse(xhr.responseText));
@@ -65,13 +58,10 @@ export default function extend(sigma) {
    *
    * @return A graph object
    */
-  sigma.neo4j.cypher_parse = function(result) {
+  sigma.neo4j.cypher_parse = function cypherParse(result) {
     const graph = { nodes: [], edges: [] };
-
     const nodesMap = {};
-
     const edgesMap = {};
-
     let key;
 
     // Iteration on all result data
@@ -141,15 +131,11 @@ export default function extend(sigma) {
    *                                          with the related sigma instance as
    *                                          parameter.
    */
-  sigma.neo4j.cypher = function(neo4j, cypher, sig, callback) {
+  sigma.neo4j.cypher = function cypher(neo4j, cypher, sig, callback) {
     const endpoint = "/db/data/transaction/commit";
 
-    let data;
-
-    let cypherCallback;
-
     // Data that will be send to the server
-    data = JSON.stringify({
+    const data = JSON.stringify({
       statements: [
         {
           statement: cypher,
@@ -160,8 +146,8 @@ export default function extend(sigma) {
     });
 
     // Callback method after server response
-    cypherCallback = function(callback) {
-      return function(response) {
+    function cypherCallback(cb) {
+      return response => {
         let graph = { nodes: [], edges: [] };
 
         graph = sigma.neo4j.cypher_parse(response);
@@ -179,14 +165,14 @@ export default function extend(sigma) {
 
           // ...or it's finally the callback:
         } else if (typeof sig === "function") {
-          callback = sig;
+          cb = sig;
           sig = null;
         }
 
         // Call the callback if specified:
-        if (callback) callback(sig || graph);
+        if (cb) cb(sig || graph);
       };
-    };
+    }
 
     // Let's call neo4j
     sigma.neo4j.send(neo4j, endpoint, "POST", data, cypherCallback(callback));
@@ -200,7 +186,7 @@ export default function extend(sigma) {
    *
    * @return An array of label
    */
-  sigma.neo4j.getLabels = function(neo4j, callback) {
+  sigma.neo4j.getLabels = function getLabels(neo4j, callback) {
     sigma.neo4j.send(neo4j, "/db/data/labels", "GET", null, callback);
   };
 
@@ -212,7 +198,7 @@ export default function extend(sigma) {
    *
    * @return An array of relationship type
    */
-  sigma.neo4j.getTypes = function(neo4j, callback) {
+  sigma.neo4j.getTypes = function getTypes(neo4j, callback) {
     sigma.neo4j.send(
       neo4j,
       "/db/data/relationship/types",

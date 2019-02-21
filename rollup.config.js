@@ -13,6 +13,9 @@ function library(ns) {
     rootFileName,
     `
     import sigma from "sigma";
+    if (typeof sigma === "undefined") {
+      throw new Error("sigma is not declared");
+    }
     import plugin from "../../src/plugins/${ns}/index.js";
     plugin(sigma);
     `

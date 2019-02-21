@@ -1,6 +1,4 @@
 export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
   // Initialize package:
   sigma.utils.pkg("sigma.parsers");
   sigma.utils.pkg("sigma.utils");
@@ -13,18 +11,15 @@ export default function extend(sigma) {
   sigma.utils.xhr = function xhr() {
     if (window.XMLHttpRequest) return new XMLHttpRequest();
 
-    let names;
-    let i;
-
     if (window.ActiveXObject) {
-      names = [
+      const names = [
         "Msxml2.XMLHTTP.6.0",
         "Msxml2.XMLHTTP.3.0",
         "Msxml2.XMLHTTP",
         "Microsoft.XMLHTTP"
       ];
 
-      for (i in names)
+      for (let i in names)
         try {
           return new ActiveXObject(names[i]);
         } catch (e) {}
