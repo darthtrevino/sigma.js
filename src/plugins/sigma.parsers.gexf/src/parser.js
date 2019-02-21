@@ -1,4 +1,6 @@
+/* eslint-disable no-use-before-define */
 import * as _helpers from "./utils";
+import sigma from "../../../core/sigma.core";
 
 /**
  * GEXF Library
@@ -153,7 +155,7 @@ function Graph(xml) {
     });
 
     // Iterating through model
-    model.map(a => {
+    model.forEach(a => {
       // Default value?
       data[a.id] =
         !(a.id in ah) && "defaultValue" in a
@@ -206,7 +208,7 @@ function Graph(xml) {
     if (posEl) {
       viz.position = {};
 
-      ["x", "y", "z"].map(p => {
+      ["x", "y", "z"].forEach(p => {
         viz.position[p] = +posEl.getAttribute(p);
       });
     }
@@ -299,29 +301,7 @@ function Graph(xml) {
 
 // Fetching GEXF with XHR
 function fetch(gexfUrl, callback) {
-  const xhr = (() => {
-    if (window.XMLHttpRequest) return new XMLHttpRequest();
-
-    let names;
-    let i;
-
-    if (window.ActiveXObject) {
-      names = [
-        "Msxml2.XMLHTTP.6.0",
-        "Msxml2.XMLHTTP.3.0",
-        "Msxml2.XMLHTTP",
-        "Microsoft.XMLHTTP"
-      ];
-
-      for (i in names)
-        try {
-          return new ActiveXObject(names[i]);
-        } catch (e) {}
-    }
-
-    return null;
-  })();
-
+  const xhr = sigma.utils.xhr();
   if (!xhr)
     throw new Error("XMLHttpRequest not supported, cannot load the file.");
 

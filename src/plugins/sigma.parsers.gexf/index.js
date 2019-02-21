@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import gexf from "./src/parser";
 
 export default function extend(sigma) {
@@ -26,7 +27,7 @@ export default function extend(sigma) {
    *                                      be called with the related sigma
    *                                      instance as parameter.
    */
-  sigma.parsers.gexf = function gexfParser(target, sig, callback) {
+  sigma.parsers.gexf = function gexfParserFn(target, sig, callback) {
     let i;
     let l;
     let arr;

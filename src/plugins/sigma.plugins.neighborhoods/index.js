@@ -121,29 +121,7 @@ export default function extend(sigma) {
      */
     this.load = function load(path, callback) {
       // Quick XHR polyfill:
-      const xhr = (() => {
-        if (window.XMLHttpRequest) return new XMLHttpRequest();
-        if (window.ActiveXObject) {
-          const names = [
-            "Msxml2.XMLHTTP.6.0",
-            "Msxml2.XMLHTTP.3.0",
-            "Msxml2.XMLHTTP",
-            "Microsoft.XMLHTTP"
-          ];
-
-          for (let i = 0; i < names.length; i++) {
-            const name = names[i];
-            /* globals ActiveXObject: true */
-            try {
-              return new ActiveXObject(name);
-            } catch (e) {
-              // swallow
-            }
-          }
-        }
-
-        return null;
-      })();
+      const xhr = sigma.utils.xhr();
 
       if (!xhr)
         throw new Error("XMLHttpRequest not supported, cannot load the data.");

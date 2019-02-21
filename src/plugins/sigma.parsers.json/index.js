@@ -4,31 +4,6 @@ export default function extend(sigma) {
   sigma.utils.pkg("sigma.utils");
 
   /**
-   * Just an XmlHttpRequest polyfill for different IE versions.
-   *
-   * @return {*} The XHR like object.
-   */
-  sigma.utils.xhr = function xhr() {
-    if (window.XMLHttpRequest) return new XMLHttpRequest();
-
-    if (window.ActiveXObject) {
-      const names = [
-        "Msxml2.XMLHTTP.6.0",
-        "Msxml2.XMLHTTP.3.0",
-        "Msxml2.XMLHTTP",
-        "Microsoft.XMLHTTP"
-      ];
-
-      for (const i in names)
-        try {
-          return new ActiveXObject(names[i]);
-        } catch (e) {}
-    }
-
-    return null;
-  };
-
-  /**
    * This function loads a JSON file and creates a new sigma instance or
    * updates the graph of a given instance. It is possible to give a callback
    * that will be executed at the end of the process.

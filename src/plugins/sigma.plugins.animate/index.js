@@ -60,6 +60,20 @@ export default function extend(sigma) {
     return `rgb(${[c.r | 0, c.g | 0, c.b | 0].join(",")})`;
   }
 
+  function getEasing(options) {
+    const { easings } = sigma.utils;
+    switch (typeof options.easing) {
+      case "string":
+        return easings[options.easing];
+      case "function": {
+        // eslint-disable-next-line prefer-destructuring
+        return options.easing;
+      }
+      default:
+        return easings.quadraticInOut;
+    }
+  }
+
   /**
    * This function will animate some specified node properties. It will
    * basically call requestAnimationFrame, interpolate the values and call the
@@ -91,34 +105,25 @@ export default function extend(sigma) {
    *                           target values.
    * @param  {?object} options Eventually an object with options.
    */
-  sigma.plugins.animate = function animate(s, animate, options) {
+  sigma.plugins.animate = function animateFn(s, animate, options) {
     const o = options || {};
-
     const id = ++_id;
-
     const duration = o.duration || s.settings("animationsTime");
-
-    const easing =
-      typeof o.easing === "string"
-        ? sigma.utils.easings[o.easing]
-        : typeof o.easing === "function"
-        ? o.easing
-        : sigma.utils.easings.quadraticInOut;
-
+    const easing = getEasing(o);
     const start = sigma.utils.dateNow();
-
     let nodes;
-
     if (o.nodes && o.nodes.length) {
+      // eslint-disable-next-line prefer-destructuring
       if (typeof o.nodes[0] === "object") nodes = o.nodes;
       else nodes = s.graph.nodes(o.nodes); // argument is an array of IDs
     } else nodes = s.graph.nodes();
 
     // Store initial positions:
     const startPositions = nodes.reduce((res, node) => {
-      let k;
       res[node.id] = {};
-      for (k in animate) if (k in node) res[node.id][k] = node[k];
+      Object.keys(animate).forEach(k => {
+        if (k in node) res[node.id][k] = node[k];
+      });
       return res;
     }, {});
 
@@ -126,35 +131,33 @@ export default function extend(sigma) {
     sigma.plugins.kill(s);
 
     // Do not refresh edgequadtree during drag:
-    let k;
-    let c;
-    for (k in s.cameras) {
-      c = s.cameras[k];
+    Object.keys(s.cameras).forEach(k => {
+      const c = s.cameras[k];
       c.edgequadtree._enabled = false;
-    }
+    });
 
     function step() {
       let p = (sigma.utils.dateNow() - start) / duration;
 
       if (p >= 1) {
         nodes.forEach(node => {
-          for (const k in animate) if (k in animate) node[k] = node[animate[k]];
+          Object.keys(animate).forEach(k => {
+            if (k in animate) node[k] = node[animate[k]];
+          });
         });
 
         // Allow to refresh edgequadtree:
-        let k;
-        let c;
-        for (k in s.cameras) {
-          c = s.cameras[k];
+        Object.keys(s.cameras).forEach(k => {
+          const c = s.cameras[k];
           c.edgequadtree._enabled = true;
-        }
+        });
 
         s.refresh();
         if (typeof o.onComplete === "function") o.onComplete();
       } else {
         p = easing(p);
         nodes.forEach(node => {
-          for (const k in animate)
+          Object.keys(animate).forEach(k => {
             if (k in animate) {
               if (k.match(/color$/))
                 node[k] = interpolateColors(
@@ -166,6 +169,7 @@ export default function extend(sigma) {
                 node[k] =
                   node[animate[k]] * p + startPositions[node.id][k] * (1 - p);
             }
+          });
         });
 
         s.refresh();
@@ -177,14 +181,15 @@ export default function extend(sigma) {
   };
 
   sigma.plugins.kill = function kill(s) {
-    for (var k in s.animations || {}) cancelAnimationFrame(s.animations[k]);
+    Object.keys(s.animations).forEach(k => {
+      cancelAnimationFrame(s.animations[k]);
+    });
 
     // Allow to refresh edgequadtree:
-    var k;
     let c;
-    for (k in s.cameras) {
+    Object.keys(s.cameras).forEach(k => {
       c = s.cameras[k];
       c.edgequadtree._enabled = true;
-    }
+    });
   };
 }

@@ -79,6 +79,7 @@ import copy from "./domain/middleware/copy";
 import rescale from "./domain/middleware/rescale";
 import getBoundaries from "./domain/utils/geometry/getBoundaries";
 import emptyObject from "./domain/utils/misc/emptyObject";
+import xhr from "./domain/utils/misc/xhr";
 
 export default sigma => {
   /**
@@ -90,6 +91,7 @@ export default sigma => {
   sigma.register("sigma.utils.floatColor", floatColor);
   sigma.register("sigma.utils.zoomTo", zoomTo(sigma));
   sigma.register("sigma.utils.emptyObject", emptyObject);
+  sigma.register("sigma.utils.xhr", xhr);
 
   /**
    * Geometry Utils
