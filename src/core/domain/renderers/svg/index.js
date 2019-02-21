@@ -99,23 +99,17 @@ export default sigma => {
 
     let a;
     let i;
-    let k;
     let e;
     let l;
     let o;
     let source;
     let target;
-    let start;
-    let edges;
     let renderers;
-    let subrenderers;
     const index = {};
-    const graph = this.graph;
-    const nodes = this.graph.nodes;
-    const prefix = this.options.prefix || "";
+    const { graph } = this;
+    const { nodes } = graph;
     let drawEdges = this.settings(options, "drawEdges");
     const drawNodes = this.settings(options, "drawNodes");
-    const drawLabels = this.settings(options, "drawLabels");
     const embedSettings = this.settings.embedObjects(options, {
       prefix: this.options.prefix,
       forceLabels: this.options.forceLabels
@@ -160,7 +154,7 @@ export default sigma => {
     // Display nodes
     //---------------
     renderers = sigma.svg.nodes;
-    subrenderers = sigma.svg.labels;
+    const subrenderers = sigma.svg.labels;
 
     // -- First we create the nodes which are not already created
     if (drawNodes)
@@ -188,23 +182,23 @@ export default sigma => {
 
     // -- Second we update the nodes
     if (drawNodes)
-      for (a = this.nodesOnScreen, i = 0, l = a.length; i < l; i++) {
-        if (a[i].hidden) continue;
+      this.nodesOnScreen
+        .filter(node => !node.hidden)
+        .forEach(node => {
+          // Node
+          (renderers[node.type] || renderers.def).update(
+            node,
+            this.domElements.nodes[node.id],
+            embedSettings
+          );
 
-        // Node
-        (renderers[a[i].type] || renderers.def).update(
-          a[i],
-          this.domElements.nodes[a[i].id],
-          embedSettings
-        );
-
-        // Label
-        (subrenderers[a[i].type] || subrenderers.def).update(
-          a[i],
-          this.domElements.labels[a[i].id],
-          embedSettings
-        );
-      }
+          // Label
+          (subrenderers[node.type] || subrenderers.def).update(
+            node,
+            this.domElements.labels[node.id],
+            embedSettings
+          );
+        });
 
     // Display edges
     //---------------
@@ -261,13 +255,8 @@ export default sigma => {
     const dom = document.createElementNS(this.settings("xmlns"), tag);
 
     const c = this.settings("classPrefix");
-
-    let g;
-
     let l;
-
     let i;
-
     dom.style.position = "absolute";
     dom.setAttribute("class", `${c}-svg`);
 
@@ -286,8 +275,7 @@ export default sigma => {
     // Creating groups
     const groups = ["edges", "nodes", "labels", "hovers"];
     for (i = 0, l = groups.length; i < l; i++) {
-      g = document.createElementNS(this.settings("xmlns"), "g");
-
+      const g = document.createElementNS(this.settings("xmlns"), "g");
       g.setAttributeNS(null, "id", `${c}-group-${groups[i]}`);
       g.setAttributeNS(null, "class", `${c}-group`);
 
@@ -309,14 +297,10 @@ export default sigma => {
    * @return {SvgRenderer}              Returns the instance itself.
    */
   SvgRenderer.prototype.hideDOMElements = function hideDOMElements(elements) {
-    let o;
-    let i;
-
-    for (i in elements) {
-      o = elements[i];
+    Object.keys(elements).forEach(i => {
+      const o = elements[i];
       sigma.svg.utils.hide(o);
-    }
-
+    });
     return this;
   };
 
@@ -334,8 +318,7 @@ export default sigma => {
     let hoveredNode;
 
     function overNode(e) {
-      const node = e.data.node;
-
+      const { node } = e.data;
       const embedSettings = self.settings.embedObjects({
         prefix
       });
@@ -357,8 +340,7 @@ export default sigma => {
     }
 
     function outNode(e) {
-      const node = e.data.node;
-
+      const { node } = e.data;
       const embedSettings = self.settings.embedObjects({
         prefix
       });

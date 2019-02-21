@@ -12,8 +12,8 @@
   "main": "build/sigma.require.js",
   "scripts": {
     "start": "http-server -p 8000",
-    "build:development": "rollup -c",
-    "build:production": "env NODE_ENV=production rollup -c",
+    "build:dev": "rollup -c",
+    "build:prod": "env NODE_ENV=production rollup -c",
     "lint": "eslint .",
     "prettify_all": "prettier {src,test,plugins}/**/*.js --write",
     "rollup_watch": "rollup -c -w",
