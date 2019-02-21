@@ -94,7 +94,8 @@
       "no-multi-assign": "off",
       "no-param-reassign": "off",
       "no-console": "off",
-      "no-bitwise": "off"
+      "no-bitwise": "off",
+      "import/no-unresolved": "off"
     }
   },
   "babel": {
