@@ -1,5 +1,6 @@
 import sigma from "../../../core/index";
 import plugin from "../index";
+
 plugin(sigma);
 
 /* eslint-disable no-func-assign, no-shadow */
