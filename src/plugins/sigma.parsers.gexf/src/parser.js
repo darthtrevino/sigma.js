@@ -1,4 +1,4 @@
-/* eslint-disable no-use-before-define */
+/* eslint-disable no-use-before-define, @typescript-eslint/no-use-before-define */
 import * as _helpers from "./utils";
 
 export default sigma => {

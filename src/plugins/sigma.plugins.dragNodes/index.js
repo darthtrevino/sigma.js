@@ -1,4 +1,4 @@
-/* eslint-disable no-use-before-define */
+/* eslint-disable no-use-before-define, @typescript-eslint/no-use-before-define */
 /**
  * This plugin provides a method to drag & drop nodes. Check the
  * sigma.plugins.dragNodes function doc or the examples/basic.html &

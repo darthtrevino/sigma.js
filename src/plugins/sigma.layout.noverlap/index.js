@@ -1,4 +1,4 @@
-/* eslint-disable no-loop-func */
+/* eslint-disable no-loop-func, @typescript-eslint/camelcase */
 export default function extend(sigma) {
   // Initialize package:
   sigma.utils.pkg("sigma.layout.noverlap");

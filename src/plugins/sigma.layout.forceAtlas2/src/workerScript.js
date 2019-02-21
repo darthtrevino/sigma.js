@@ -1,5 +1,5 @@
 /* global self: true */
-/* eslint-disable no-continue, no-restricted-globals, no-constant-condition */
+/* eslint-disable @typescript-eslint/camelcase, no-continue, no-restricted-globals, no-constant-condition */
 
 /**
  * Worker Function Wrapper

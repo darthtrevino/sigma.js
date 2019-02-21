@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 export default function extend(sigma) {
   // Declare neo4j package
   sigma.utils.pkg("sigma.neo4j");
