@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /**
  * This plugin provides a method to drag & drop nodes. Check the
  * sigma.plugins.dragNodes function doc or the examples/basic.html &
@@ -52,7 +53,6 @@ export default function extend(sigma) {
     const _hoverStack = [];
     const _hoverIndex = {};
     let _isMouseDown = false;
-    const _isMouseOverCanvas = false;
     let _drag = false;
 
     if (renderer instanceof sigma.renderers.svg) {
@@ -99,7 +99,7 @@ export default function extend(sigma) {
       };
     }
 
-    function click(event) {
+    function click() {
       // event triggered at the end of the click
       _isMouseDown = false;
       _body.removeEventListener("mousemove", nodeMouseMove);
@@ -129,11 +129,7 @@ export default function extend(sigma) {
 
     function treatOutNode(event) {
       // Remove the node from the array
-      const indexCheck = _hoverStack
-        .map(function(e) {
-          return e;
-        })
-        .indexOf(event.data.node);
+      const indexCheck = _hoverStack.map(e => e).indexOf(event.data.node);
       _hoverStack.splice(indexCheck, 1);
       delete _hoverIndex[event.data.node.id];
 
@@ -158,14 +154,13 @@ export default function extend(sigma) {
         _body.addEventListener("mouseup", nodeMouseUp);
 
         // Do not refresh edgequadtree during drag:
-        let k;
         let c;
-        for (k in _s.cameras) {
+        Object.keys(_s.cameras).forEach(k => {
           c = _s.cameras[k];
           if (c.edgequadtree !== undefined) {
             c.edgequadtree._enabled = false;
           }
-        }
+        });
 
         // Deactivate drag graph.
         _renderer.settings({ mouseEnabled: false, enableHovering: false });
@@ -186,14 +181,13 @@ export default function extend(sigma) {
       _body.removeEventListener("mouseup", nodeMouseUp);
 
       // Allow to refresh edgequadtree:
-      let k;
       let c;
-      for (k in _s.cameras) {
+      Object.keys(_s.cameras).forEach(k => {
         c = _s.cameras[k];
         if (c.edgequadtree !== undefined) {
           c.edgequadtree._enabled = true;
         }
-      }
+      });
 
       // Activate drag graph.
       _renderer.settings({ mouseEnabled: true, enableHovering: true });
@@ -217,26 +211,24 @@ export default function extend(sigma) {
     }
 
     function nodeMouseMove(event) {
+      let timeOut;
+      let xRatio;
+      let yRatio;
+
       if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
         clearTimeout(timeOut);
-        var timeOut = setTimeout(executeNodeMouseMove, 0);
+        timeOut = setTimeout(executeNodeMouseMove, 0);
       } else {
         executeNodeMouseMove();
       }
 
       function executeNodeMouseMove() {
         const offset = calculateOffset(_renderer.container);
-
         let x = event.clientX - offset.left;
-
         let y = event.clientY - offset.top;
-
         const cos = Math.cos(_camera.angle);
-
         const sin = Math.sin(_camera.angle);
-
         const nodes = _s.graph.nodes();
-
         const ref = [];
 
         // Getting and derotating the reference coordinates.
@@ -254,13 +246,13 @@ export default function extend(sigma) {
         // Applying linear interpolation.
         // if the nodes are on top of each other, we use the camera ratio to interpolate
         if (ref[0].x === ref[1].x && ref[0].y === ref[1].y) {
-          var xRatio = ref[0].renX === 0 ? 1 : ref[0].renX;
-          var yRatio = ref[0].renY === 0 ? 1 : ref[0].renY;
+          xRatio = ref[0].renX === 0 ? 1 : ref[0].renX;
+          yRatio = ref[0].renY === 0 ? 1 : ref[0].renY;
           x = (ref[0].x / xRatio) * (x - ref[0].renX) + ref[0].x;
           y = (ref[0].y / yRatio) * (y - ref[0].renY) + ref[0].y;
         } else {
-          var xRatio = (ref[1].renX - ref[0].renX) / (ref[1].x - ref[0].x);
-          var yRatio = (ref[1].renY - ref[0].renY) / (ref[1].y - ref[0].y);
+          xRatio = (ref[1].renX - ref[0].renX) / (ref[1].x - ref[0].x);
+          yRatio = (ref[1].renY - ref[0].renY) / (ref[1].y - ref[0].y);
 
           // if the coordinates are the same, we use the other ratio to interpolate
           if (ref[1].x === ref[0].x) {

@@ -20,7 +20,9 @@ export default function extend(sigma) {
     let password;
     // if neo4j arg is not an object
     let url = neo4j;
+
     if (typeof neo4j === "object") {
+      /* eslint-disable prefer-destructuring */
       url = neo4j.url;
       user = neo4j.user;
       password = neo4j.password;
@@ -62,12 +64,11 @@ export default function extend(sigma) {
     const graph = { nodes: [], edges: [] };
     const nodesMap = {};
     const edgesMap = {};
-    let key;
 
     // Iteration on all result data
-    result.results[0].data.forEach(function(data) {
+    result.results[0].data.forEach(data => {
       // iteration on graph for all node
-      data.graph.nodes.forEach(function(node) {
+      data.graph.nodes.forEach(node => {
         const sigmaNode = {
           id: node.id,
           label: node.id,
@@ -87,7 +88,7 @@ export default function extend(sigma) {
       });
 
       // iteration on graph for all node
-      data.graph.relationships.forEach(function(edge) {
+      data.graph.relationships.forEach(edge => {
         const sigmaEdge = {
           id: edge.id,
           label: edge.type,
@@ -107,13 +108,14 @@ export default function extend(sigma) {
     });
 
     // construct sigma nodes
-    for (key in nodesMap) {
+    Object.keys(nodesMap).forEach(key => {
       graph.nodes.push(nodesMap[key]);
-    }
+    });
+
     // construct sigma nodes
-    for (key in edgesMap) {
+    Object.keys(edgesMap).forEach(key => {
       graph.edges.push(edgesMap[key]);
-    }
+    });
 
     return graph;
   };
@@ -131,7 +133,7 @@ export default function extend(sigma) {
    *                                          with the related sigma instance as
    *                                          parameter.
    */
-  sigma.neo4j.cypher = function cypher(neo4j, cypher, sig, callback) {
+  sigma.neo4j.cypher = function cypherFn(neo4j, cypher, sig, callback) {
     const endpoint = "/db/data/transaction/commit";
 
     // Data that will be send to the server
