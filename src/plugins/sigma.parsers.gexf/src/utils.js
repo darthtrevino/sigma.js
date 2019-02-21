@@ -91,7 +91,7 @@ export function enforceType(type, value) {
       value = value ? value.split("|") : [];
       break;
     default:
-      console.log(`passing over type ${type}`);
+    // do nothing
   }
 
   return value;

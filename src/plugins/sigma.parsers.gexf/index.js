@@ -1,7 +1,8 @@
 /* eslint-disable consistent-return */
-import gexf from "./src/parser";
+import gexfFactory from "./src/parser";
 
 export default function extend(sigma) {
+  const gexf = gexfFactory(sigma);
   // Initialize package:
   sigma.utils.pkg("sigma.parsers");
 
