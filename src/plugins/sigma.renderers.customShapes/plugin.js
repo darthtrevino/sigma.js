@@ -10,7 +10,7 @@ export default function extend(sigma) {
   sigma.utils.pkg("sigma.canvas.nodes");
   sigma.utils.pkg("sigma.svg.nodes");
 
-  let sigInst = undefined;
+  let sigInst;
   const imgCache = {};
 
   const initPlugin = function(inst) {

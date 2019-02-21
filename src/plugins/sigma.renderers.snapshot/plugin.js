@@ -15,23 +15,24 @@ export default function extend(sigma) {
     throw new Error("sigma.renderers.snapshot: sigma not in scope.");
 
   // Constants
-  var CONTEXTS = ["scene", "edges", "nodes", "labels"],
-    TYPES = {
-      png: "image/png",
-      jpg: "image/jpeg",
-      gif: "image/gif",
-      tiff: "image/tiff"
-    };
+  const CONTEXTS = ["scene", "edges", "nodes", "labels"];
+
+  const TYPES = {
+    png: "image/png",
+    jpg: "image/jpeg",
+    gif: "image/gif",
+    tiff: "image/tiff"
+  };
 
   // Utilities
   function download(dataUrl, extension, filename) {
     // Anchor
-    var anchor = document.createElement("a");
+    let anchor = document.createElement("a");
     anchor.setAttribute("href", dataUrl);
-    anchor.setAttribute("download", filename || "graph." + extension);
+    anchor.setAttribute("download", filename || `graph.${extension}`);
 
     // Click event
-    var event = document.createEvent("MouseEvent");
+    const event = document.createEvent("MouseEvent");
     event.initMouseEvent(
       "click",
       true,
@@ -61,17 +62,21 @@ export default function extend(sigma) {
     // Enforcing
     if (params.format && !(params.format in TYPES))
       throw Error(
-        'sigma.renderers.snaphot: unsupported format "' + params.format + '".'
+        `sigma.renderers.snaphot: unsupported format "${params.format}".`
       );
 
-    var self = this,
-      webgl = this instanceof sigma.renderers.webgl,
-      doneContexts = [];
+    const self = this;
+
+    const webgl = this instanceof sigma.renderers.webgl;
+
+    let doneContexts = [];
 
     // Creating a false canvas where we'll merge the other
-    var merged = document.createElement("canvas"),
-      mergedContext = merged.getContext("2d"),
-      sized = false;
+    let merged = document.createElement("canvas");
+
+    let mergedContext = merged.getContext("2d");
+
+    let sized = false;
 
     // Iterating through context
     CONTEXTS.forEach(function(name) {
@@ -79,8 +84,9 @@ export default function extend(sigma) {
 
       if (params.labels === false && name === "labels") return;
 
-      var canvas = self.domElements[name] || self.domElements["scene"],
-        context = self.contexts[name];
+      const canvas = self.domElements[name] || self.domElements.scene;
+
+      const context = self.contexts[name];
 
       if (~doneContexts.indexOf(context)) return;
 
@@ -116,7 +122,7 @@ export default function extend(sigma) {
       doneContexts.push(context);
     });
 
-    var dataUrl = merged.toDataURL(TYPES[params.format || "png"]);
+    const dataUrl = merged.toDataURL(TYPES[params.format || "png"]);
 
     if (params.download)
       download(dataUrl, params.format || "png", params.filename);

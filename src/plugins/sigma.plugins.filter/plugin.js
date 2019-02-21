@@ -59,9 +59,9 @@ export default function extend(sigma) {
    * @version 0.1
    */
 
-  let _g = undefined;
+  let _g;
 
-  let _s = undefined;
+  let _s;
 
   let _chain = [];
   // chain of wrapped filters

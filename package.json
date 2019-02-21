@@ -59,18 +59,12 @@
     }
   },
   "lint-staged": {
-    "src/core/**/*.{js,ts}": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
-    ],
-    "src/plugins/**/*.{js,ts}": [
+    "src/**/*.{js,ts}": [
       "prettier --write",
       "git add"
     ]
   },
   "eslintIgnore": [
-    "src/plugins/**/*.js",
     "build/**/*.js",
     "examples/**/*.js"
   ],
