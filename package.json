@@ -11,9 +11,11 @@
   "license": "MIT",
   "main": "build/sigma.require.js",
   "scripts": {
+    "clean": "rimraf lib build",
     "start": "http-server -p 8000",
-    "build:dev": "rollup -c",
-    "build:prod": "env NODE_ENV=production rollup -c",
+    "compile": "tsc",
+    "bundle_dev": "rollup -c",
+    "bundle_prod": "env NODE_ENV=production rollup -c",
     "lint": "eslint .",
     "prettify_all": "prettier {src,test,plugins}/**/*.js --write",
     "rollup_watch": "rollup -c -w",
@@ -24,7 +26,8 @@
   },
   "dependencies": {
     "conrad": "^0.1.0",
-    "node-env": "^0.1.6"
+    "node-env": "^0.1.6",
+    "rimraf": "^2.6.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -49,7 +52,8 @@
     "rollup": "^1.2.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-terser": "^4.0.4"
+    "rollup-plugin-terser": "^4.0.4",
+    "typescript": "^3.3.3"
   },
   "husky": {
     "hooks": {
@@ -65,7 +69,8 @@
   },
   "eslintIgnore": [
     "build/**/*.js",
-    "examples/**/*.js"
+    "examples/**/*.js",
+    "lib/**/*.js"
   ],
   "eslintConfig": {
     "extends": [

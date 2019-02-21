@@ -1,3 +1,5 @@
+type ConfigMap = { [key: string]: any };
+
 /**
  * This utils aims to facilitate the manipulation of each instance setting.
  * Using a function instead of an object brings two main advantages: First,
@@ -7,8 +9,8 @@
  *
  * @return {configurable} The "settings" function.
  */
-export default function Configurable(...args) {
-  const data = {};
+export default function Configurable(...args: any) {
+  const data: ConfigMap = {};
   const datas = Array.prototype.slice.call(args, 0);
 
   /**
@@ -43,7 +45,7 @@ export default function Configurable(...args) {
    *  > settings({mySetting: 'abc'}, 'mySetting');  // Logs: 'abc'
    *  > settings({hisSetting: 'abc'}, 'mySetting'); // Logs: 456
    */
-  function settings(a1, a2) {
+  function settings(a1: string | ConfigMap, a2?: string) {
     if (arguments.length === 1 && typeof a1 === "string") {
       if (data[a1] !== undefined) {
         return data[a1];
@@ -76,7 +78,7 @@ export default function Configurable(...args) {
    * @return {function} Returns the function. Check its documentation to know
    *                    more about how it works.
    */
-  settings.embedObjects = function embedObjects(...eoArgs) {
+  settings.embedObjects = function embedObjects(...eoArgs: ConfigMap[]) {
     const callArgs = datas
       .concat(data)
       .concat(Array.prototype.splice.call(eoArgs, 0));

@@ -7,6 +7,9 @@ const { NODE_ENV: environment } = process.env;
 const isProd = environment === "production";
 const qualifier = isProd ? ".min." : ".";
 
+if (!fs.existsSync("build")) {
+  fs.mkdirSync("build");
+}
 if (!fs.existsSync("build/temp")) {
   fs.mkdirSync("build/temp");
 }
@@ -25,7 +28,7 @@ function library(ns) {
     if (typeof sigma === "undefined") {
       throw new Error("sigma is not declared");
     }
-    import plugin from "../../src/plugins/${ns}/index.js";
+    import plugin from "../../lib/plugins/${ns}/index.js";
     plugin(sigma);
     `
   );
@@ -46,7 +49,7 @@ function library(ns) {
 export default [
   // browser-friendly UMD build
   {
-    input: "src/core/index.js",
+    input: "lib/core/index.js",
     output: {
       name: "sigma",
       file: `build/sigma.umd${qualifier}js`,
@@ -61,7 +64,7 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   {
-    input: "src/core/index.js",
+    input: "lib/core/index.js",
     external: ["ms"],
     output: [
       { file: `build/sigma.cjs${qualifier}js`, format: "cjs" },

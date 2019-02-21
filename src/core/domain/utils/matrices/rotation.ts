@@ -5,7 +5,7 @@
  * @param  {boolean} m2    If true, the function will return a 2x2 matrix.
  * @return {array}         Returns the matrix.
  */
-export default function rotation(angle, m2) {
+export default function rotation(angle: number, m2?: boolean) {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
   return m2 ? [cos, -sin, sin, cos] : [cos, -sin, 0, sin, cos, 0, 0, 0, 1];
