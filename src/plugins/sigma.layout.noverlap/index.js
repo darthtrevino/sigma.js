@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 export default function extend(sigma) {
   // Initialize package:
   sigma.utils.pkg("sigma.layout.noverlap");
@@ -65,11 +66,6 @@ export default function extend(sigma) {
     this.atomicGo = function atomicGo() {
       if (!this.running || this.iterCount < 1) return false;
       const nodes = this.nodes || this.sigInst.graph.nodes();
-      const nodesCount = nodes.length;
-      let i;
-      let n;
-      let n1;
-      let n2;
       let xmin = Infinity;
       let xmax = -Infinity;
       let ymin = Infinity;
@@ -90,8 +86,7 @@ export default function extend(sigma) {
       this.iterCount--;
       this.running = false;
 
-      for (i = 0; i < nodesCount; i++) {
-        n = nodes[i];
+      nodes.forEach(n => {
         n.dn.dx = 0;
         n.dn.dy = 0;
 
@@ -112,7 +107,7 @@ export default function extend(sigma) {
           ymax,
           n.dn_y + (n.dn_size * self.config.scaleNodes + self.config.nodeMargin)
         );
-      }
+      });
 
       const xwidth = xmax - xmin;
       const yheight = ymax - ymin;
@@ -133,9 +128,7 @@ export default function extend(sigma) {
       }
 
       // Place nodes in grid
-      for (i = 0; i < nodesCount; i++) {
-        n = nodes[i];
-
+      nodes.forEach(n => {
         nxmin =
           n.dn_x -
           (n.dn_size * self.config.scaleNodes + self.config.nodeMargin);
@@ -166,10 +159,9 @@ export default function extend(sigma) {
             grid[row][col].push(n.id);
           }
         }
-      }
+      });
 
       const adjacentNodes = {}; // An object that stores the node ids of adjacent nodes (either in same grid box or adjacent grid box) for all nodes
-
       for (row = 0; row < self.config.gridSize; row++) {
         for (col = 0; col < self.config.gridSize; col++) {
           grid[row][col].forEach(nodeId => {
@@ -201,9 +193,8 @@ export default function extend(sigma) {
       }
 
       // If two nodes overlap then repulse them
-      for (i = 0; i < nodesCount; i++) {
-        n1 = nodes[i];
-        adjacentNodes[n1.id].forEach(function(nodeId) {
+      nodes.forEach(n1 => {
+        adjacentNodes[n1.id].forEach(nodeId => {
           const n2 = self.sigInst.graph.nodes(nodeId);
           const xDist = n2.dn_x - n1.dn_x;
           const yDist = n2.dn_y - n1.dn_y;
@@ -224,15 +215,14 @@ export default function extend(sigma) {
             }
           }
         });
-      }
+      });
 
-      for (i = 0; i < nodesCount; i++) {
-        n = nodes[i];
-        if (!n.fixed) {
+      nodes
+        .filter(n => !n.fixed)
+        .forEach(n => {
           n.dn_x += n.dn.dx * 0.1 * self.config.speed;
           n.dn_y += n.dn.dy * 0.1 * self.config.speed;
-        }
-      }
+        });
 
       if (this.running && this.iterCount < 1) {
         this.running = false;
@@ -255,9 +245,8 @@ export default function extend(sigma) {
       if (this.running) return;
 
       const nodes = this.sigInst.graph.nodes();
-
-      const prefix = this.sigInst.renderers[self.config.rendererIndex].options
-        .prefix;
+      const { rendererIndex } = self.config;
+      const { prefix } = this.sigInst.renderers[rendererIndex].options;
 
       this.running = true;
 
@@ -292,11 +281,11 @@ export default function extend(sigma) {
             easing: self.easing,
             onComplete() {
               self.sigInst.refresh();
-              for (let i = 0; i < nodes.length; i++) {
-                nodes[i].dn = null;
-                nodes[i].dn_x = null;
-                nodes[i].dn_y = null;
-              }
+              nodes.forEach(n => {
+                n.dn = null;
+                n.dn_x = null;
+                n.dn_y = null;
+              });
               _eventEmitter[self.sigInst.id].dispatchEvent("stop");
             },
             duration: self.duration
@@ -304,18 +293,14 @@ export default function extend(sigma) {
         );
       } else {
         // Apply changes
-        for (var i = 0; i < nodes.length; i++) {
-          nodes[i].x = nodes[i].dn_x;
-          nodes[i].y = nodes[i].dn_y;
-        }
-
+        nodes.forEach(n => {
+          n.x = n.dn_x;
+          n.y = n.dn_y;
+          n.dn = null;
+          n.dn_x = null;
+          n.dn_y = null;
+        });
         this.sigInst.refresh();
-
-        for (var i = 0; i < nodes.length; i++) {
-          nodes[i].dn = null;
-          nodes[i].dn_x = null;
-          nodes[i].dn_y = null;
-        }
         _eventEmitter[self.sigInst.id].dispatchEvent("stop");
       }
     };
