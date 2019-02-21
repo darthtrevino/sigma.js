@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import * as _helpers from "./utils";
-import sigma from "../../../core/sigma.core";
+
 export default sigma => {
   /**
    * GEXF Library
