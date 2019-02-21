@@ -92,6 +92,7 @@ import collision from "./domain/utils/geometry/collision";
 import lineToSquare from "./domain/utils/geometry/lineToSquare";
 import quadraticCurveToSquare from "./domain/utils/geometry/quadraticCurveToSquare";
 import selfLoopToSquare from "./domain/utils/geometry/selfLoopToSquare";
+import emptyObject from "./domain/utils/misc/emptyObject";
 
 export default sigma => {
   /**
@@ -157,6 +158,7 @@ export default sigma => {
   sigma.register("sigma.utils.getOffset", getOffset);
   sigma.register("sigma.utils.doubleClick", doubleClick(sigma));
   sigma.register("sigma.utils.unbindDoubleClick", unbindDoubleClick);
+  sigma.register("sigma.utils.emptyObject", emptyObject);
 
   /**
    * Here are just some of the most basic easing functions, used for the

@@ -1,4 +1,7 @@
-import sigma from "sigma";
-import plugin from "./plugin";
+import worker from "./src/worker";
+import supervisor from "./src/supervisor";
 
-plugin(sigma);
+export default function extend(sigma) {
+  worker(sigma);
+  supervisor(sigma);
+}

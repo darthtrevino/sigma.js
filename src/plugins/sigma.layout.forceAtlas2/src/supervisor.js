@@ -1,5 +1,5 @@
+/* eslint-disable no-eval */
 export default function extend(sigma, global = window) {
-  console.log("SUPERVISOR EXTEND");
   if (typeof sigma === "undefined") throw new Error("sigma is not declared");
 
   /**
@@ -63,7 +63,7 @@ export default function extend(sigma, global = window) {
 
     // Worker message receiver
     this.msgName = this.worker ? "message" : "newCoords";
-    this.listener = function(e) {
+    this.listener = function listener(e) {
       // Retrieving data
       _this.nodesByteArray = new Float32Array(e.data.nodes);
 
@@ -86,18 +86,18 @@ export default function extend(sigma, global = window) {
     this.graphToByteArrays();
 
     // Binding on kill to properly terminate layout when parent is killed
-    sigInst.bind("kill", function() {
+    sigInst.bind("kill", function kill() {
       sigInst.killForceAtlas2();
     });
   }
 
-  Supervisor.prototype.makeBlob = function(workerFn) {
+  Supervisor.prototype.makeBlob = function makeBlob(workerFn) {
     let blob;
 
     try {
       blob = new Blob([workerFn], { type: "application/javascript" });
     } catch (e) {
-      global.BlobBuilder =
+      const BlobBuilder =
         global.BlobBuilder || global.WebKitBlobBuilder || global.MozBlobBuilder;
 
       blob = new BlobBuilder();
@@ -108,21 +108,14 @@ export default function extend(sigma, global = window) {
     return blob;
   };
 
-  Supervisor.prototype.graphToByteArrays = function() {
+  Supervisor.prototype.graphToByteArrays = function graphToByteArrays() {
     const nodes = this.graph.nodes();
-
     const edges = this.graph.edges();
-
     const nbytes = nodes.length * this.ppn;
-
     const ebytes = edges.length * this.ppe;
-
     const nIndex = {};
-
     let i;
-
     let j;
-
     let l;
 
     // Allocating Byte arrays with correct nb of bytes
@@ -158,12 +151,9 @@ export default function extend(sigma, global = window) {
   };
 
   // TODO: make a better send function
-  Supervisor.prototype.applyLayoutChanges = function() {
+  Supervisor.prototype.applyLayoutChanges = function applyLayoutChanges() {
     const nodes = this.graph.nodes();
-
     let j = 0;
-
-    let realIndex;
 
     // Moving nodes
     for (let i = 0, l = this.nodesByteArray.length; i < l; i += this.ppn) {
@@ -173,7 +163,9 @@ export default function extend(sigma, global = window) {
     }
   };
 
-  Supervisor.prototype.sendByteArrayToWorker = function(action) {
+  Supervisor.prototype.sendByteArrayToWorker = function sendByteArrayToWorker(
+    action
+  ) {
     const content = {
       action: action || "loop",
       nodes: this.nodesByteArray.buffer
@@ -191,18 +183,16 @@ export default function extend(sigma, global = window) {
     else global.postMessage(content, "*");
   };
 
-  Supervisor.prototype.start = function() {
+  Supervisor.prototype.start = function start() {
     if (this.running) return;
 
     this.running = true;
 
     // Do not refresh edgequadtree during layout:
-    let k;
-    let c;
-    for (k in this.sigInst.cameras) {
-      c = this.sigInst.cameras[k];
-      c.edgequadtree._enabled = false;
-    }
+    Object.keys(this.sigInst.camera).forEach(k => {
+      const camera = this.sigInst.cameras[k];
+      camera.edgequadtree._enabled = false;
+    });
 
     if (!this.started) {
       // Sending init message to worker
@@ -213,24 +203,22 @@ export default function extend(sigma, global = window) {
     }
   };
 
-  Supervisor.prototype.stop = function() {
+  Supervisor.prototype.stop = function stop() {
     if (!this.running) return;
 
     // Allow to refresh edgequadtree:
-    let k;
-    let c;
     let bounds;
-    for (k in this.sigInst.cameras) {
-      c = this.sigInst.cameras[k];
-      c.edgequadtree._enabled = true;
+    Object.keys(this.sigInst.camera).forEach(k => {
+      const camera = this.sigInst.cameras[k];
+      camera.edgequadtree._enabled = true;
 
       // Find graph boundaries:
-      bounds = sigma.utils.getBoundaries(this.graph, c.readPrefix);
+      bounds = sigma.utils.getBoundaries(this.graph, camera.readPrefix);
 
       // Refresh edgequadtree:
-      if (c.settings("drawEdges") && c.settings("enableEdgeHovering"))
-        c.edgequadtree.index(this.sigInst.graph, {
-          prefix: c.readPrefix,
+      if (camera.settings("drawEdges") && camera.settings("enableEdgeHovering"))
+        camera.edgequadtree.index(this.sigInst.graph, {
+          prefix: camera.readPrefix,
           bounds: {
             x: bounds.minX,
             y: bounds.minY,
@@ -238,12 +226,12 @@ export default function extend(sigma, global = window) {
             height: bounds.maxY - bounds.minY
           }
         });
-    }
+    });
 
     this.running = false;
   };
 
-  Supervisor.prototype.killWorker = function() {
+  Supervisor.prototype.killWorker = function killWorker() {
     if (this.worker) {
       this.worker.terminate();
     } else {
@@ -252,14 +240,11 @@ export default function extend(sigma, global = window) {
     }
   };
 
-  Supervisor.prototype.configure = function(config) {
+  Supervisor.prototype.configure = function configure(config) {
     // Setting configuration
     this.config = config;
-
     if (!this.started) return;
-
     const data = { action: "config", config: this.config };
-
     if (this.shouldUseWorker) this.worker.postMessage(data);
     else global.postMessage(data, "*");
   };
@@ -268,7 +253,7 @@ export default function extend(sigma, global = window) {
    * Interface
    * ----------
    */
-  sigma.prototype.startForceAtlas2 = function(config) {
+  sigma.prototype.startForceAtlas2 = function startForceAtlas2(config) {
     // Create supervisor if undefined
     if (!this.supervisor) this.supervisor = new Supervisor(this, config);
 
@@ -281,7 +266,7 @@ export default function extend(sigma, global = window) {
     return this;
   };
 
-  sigma.prototype.stopForceAtlas2 = function() {
+  sigma.prototype.stopForceAtlas2 = function stopForceAtlas2() {
     if (!this.supervisor) return this;
 
     // Pause algorithm
@@ -290,7 +275,7 @@ export default function extend(sigma, global = window) {
     return this;
   };
 
-  sigma.prototype.killForceAtlas2 = function() {
+  sigma.prototype.killForceAtlas2 = function killForceAtlas2() {
     if (!this.supervisor) return this;
 
     // Stop Algorithm
@@ -305,7 +290,7 @@ export default function extend(sigma, global = window) {
     return this;
   };
 
-  sigma.prototype.configForceAtlas2 = function(config) {
+  sigma.prototype.configForceAtlas2 = function configForceAtlas2(config) {
     if (!this.supervisor) this.supervisor = new Supervisor(this, config);
 
     this.supervisor.configure(config);
@@ -313,7 +298,7 @@ export default function extend(sigma, global = window) {
     return this;
   };
 
-  sigma.prototype.isForceAtlas2Running = function(config) {
+  sigma.prototype.isForceAtlas2Running = function isForceAtlas2Running() {
     return !!this.supervisor && this.supervisor.running;
   };
 }

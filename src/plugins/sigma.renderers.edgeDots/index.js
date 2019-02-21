@@ -1,4 +1,7 @@
-import sigma from "sigma";
-import plugin from "./plugin";
+import canvasEdgesDotCurve from "./sigma.canvas.edges.dotCurve";
+import canvasEdgesDotCurveArrow from "./sigma.canvas.edges.dotCurvedArrow";
 
-plugin(sigma);
+export default function extend(sigma) {
+  canvasEdgesDotCurve(sigma);
+  canvasEdgesDotCurveArrow(sigma);
+}

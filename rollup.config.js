@@ -1,10 +1,25 @@
+import fs from "fs";
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import { terser } from "rollup-plugin-terser";
 
+if (!fs.existsSync("build/temp")) {
+  fs.mkdirSync("build/temp");
+}
+
 function library(ns) {
+  const rootFileName = `build/temp/${ns}.js`;
+  fs.writeFileSync(
+    rootFileName,
+    `
+    import sigma from "sigma";
+    import plugin from "../../src/plugins/${ns}/index.js";
+    plugin(sigma);
+    `
+  );
+
   return {
-    input: `src/plugins/${ns}/index.js`,
+    input: rootFileName,
     output: {
       file: `build/plugins/${ns}.js`,
       format: "umd",
