@@ -1,3 +1,5 @@
+import emptyObject from "../utils/misc/emptyObject";
+
 const _methods = Object.create(null);
 const _indexes = Object.create(null);
 const _initBindings = Object.create(null);
@@ -113,23 +115,6 @@ function graph(settings) {
     const method = bindGraphMethod(methodName, data, _methods[methodName]);
     this[methodName] = method;
     data[methodName] = method;
-  });
-}
-
-/**
- * This custom tool function removes every pair key/value from an hash. The
- * goal is to avoid creating a new object while some other references are
- * still hanging in some scopes...
- *
- * @param  {object} obj The object to empty.
- * @return {object}     The empty object.
- */
-function __emptyObject(obj) {
-  Object.keys(obj).forEach(k => {
-    // eslint-disable-next-line no-prototype-builtins
-    if (!("hasOwnProperty" in obj) || obj.hasOwnProperty(k)) {
-      delete obj[k];
-    }
   });
 }
 
@@ -648,15 +633,15 @@ graph.addMethod("clear", function clear() {
   // Due to GC issues, I prefer not to create new object. These objects are
   // only available from the methods and attached functions, but still, it is
   // better to prevent ghost references to unrelevant data...
-  __emptyObject(this.nodesIndex);
-  __emptyObject(this.edgesIndex);
-  __emptyObject(this.nodesIndex);
-  __emptyObject(this.inNeighborsIndex);
-  __emptyObject(this.outNeighborsIndex);
-  __emptyObject(this.allNeighborsIndex);
-  __emptyObject(this.inNeighborsCount);
-  __emptyObject(this.outNeighborsCount);
-  __emptyObject(this.allNeighborsCount);
+  emptyObject(this.nodesIndex);
+  emptyObject(this.edgesIndex);
+  emptyObject(this.nodesIndex);
+  emptyObject(this.inNeighborsIndex);
+  emptyObject(this.outNeighborsIndex);
+  emptyObject(this.allNeighborsIndex);
+  emptyObject(this.inNeighborsCount);
+  emptyObject(this.outNeighborsCount);
+  emptyObject(this.allNeighborsCount);
 
   return this;
 });

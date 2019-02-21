@@ -146,13 +146,13 @@ export default function configure(sigma) {
             !source.hidden &&
             !target.hidden &&
             (!isCanvas || (nodeIndex[edge.source] || nodeIndex[edge.target])) &&
-            sigma.utils.getDistance(
+            sigma.utils.geom.getDistance(
               source[`${prefix}x`],
               source[`${prefix}y`],
               modifiedX,
               modifiedY
             ) > source[`${prefix}size`] &&
-            sigma.utils.getDistance(
+            sigma.utils.geom.getDistance(
               target[`${prefix}x`],
               target[`${prefix}y`],
               modifiedX,
@@ -167,7 +167,7 @@ export default function configure(sigma) {
                   source[`${prefix}size`]
                 );
                 if (
-                  sigma.utils.isPointOnBezierCurve(
+                  sigma.utils.geom.isPointOnBezierCurve(
                     modifiedX,
                     modifiedY,
                     source[`${prefix}x`],
@@ -184,14 +184,14 @@ export default function configure(sigma) {
                   insertEdge(selected, edge);
                 }
               } else {
-                cp = sigma.utils.getQuadraticControlPoint(
+                cp = sigma.utils.geom.getQuadraticControlPoint(
                   source[`${prefix}x`],
                   source[`${prefix}y`],
                   target[`${prefix}x`],
                   target[`${prefix}y`]
                 );
                 if (
-                  sigma.utils.isPointOnQuadraticCurve(
+                  sigma.utils.geom.isPointOnQuadraticCurve(
                     modifiedX,
                     modifiedY,
                     source[`${prefix}x`],
@@ -207,7 +207,7 @@ export default function configure(sigma) {
                 }
               }
             } else if (
-              sigma.utils.isPointOnSegment(
+              sigma.utils.geom.isPointOnSegment(
                 modifiedX,
                 modifiedY,
                 source[`${prefix}x`],

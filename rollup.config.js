@@ -1,10 +1,36 @@
+import fs from "fs";
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import { terser } from "rollup-plugin-terser";
 
+const { NODE_ENV: environment } = process.env;
+const isProd = environment === "production";
+
+if (!fs.existsSync("build/temp")) {
+  fs.mkdirSync("build/temp");
+}
+
+const umdPlugins = isProd
+  ? [resolve(), commonjs(), terser()]
+  : [resolve(), commonjs()];
+const cjsPlugins = isProd ? [terser()] : undefined;
+
 function library(ns) {
+  const rootFileName = `build/temp/${ns}.js`;
+  fs.writeFileSync(
+    rootFileName,
+    `
+    import sigma from "sigma";
+    if (typeof sigma === "undefined") {
+      throw new Error("sigma is not declared");
+    }
+    import plugin from "../../src/plugins/${ns}/index.js";
+    plugin(sigma);
+    `
+  );
+
   return {
-    input: `src/plugins/${ns}/index.js`,
+    input: rootFileName,
     output: {
       file: `build/plugins/${ns}.js`,
       format: "umd",
@@ -12,7 +38,7 @@ function library(ns) {
         sigma: "sigma"
       }
     },
-    plugins: [resolve(), commonjs(), terser()]
+    plugins: umdPlugins
   };
 }
 
@@ -25,7 +51,7 @@ export default [
       file: "build/sigma.umd.js",
       format: "umd"
     },
-    plugins: [resolve(), commonjs(), terser()]
+    plugins: umdPlugins
   },
   // CommonJS (for Node) and ES module (for bundlers) build.
   // (We could have three entries in the configuration array
@@ -40,7 +66,7 @@ export default [
       { file: "build/sigma.cjs.js", format: "cjs" },
       { file: "build/sigma.esm.js", format: "es" }
     ],
-    plugins: [terser()]
+    plugins: cjsPlugins
   },
   library("sigma.exporters.svg"),
   library("sigma.layout.noverlap"),

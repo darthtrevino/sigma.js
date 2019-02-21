@@ -78,20 +78,8 @@ import webglThickLineGPU from "./domain/renderers/webgl/thickLineGPU";
 import copy from "./domain/middleware/copy";
 import rescale from "./domain/middleware/rescale";
 import getBoundaries from "./domain/utils/geometry/getBoundaries";
-import lowerRightCoor from "./domain/utils/geometry/lowerRightCoor";
-import pointToSquare from "./domain/utils/geometry/pointToSquare";
-import isAxisAligned from "./domain/utils/geometry/isAxisAligned";
-import lowerLeftCoor from "./domain/utils/geometry/lowerLeftCoor";
-import rectangleCorners from "./domain/utils/geometry/rectangleCorners";
-import axisAlignedTopPoints from "./domain/utils/geometry/axisAlignedTopPoints";
-import splitSquare from "./domain/utils/geometry/splitSquare";
-import axis from "./domain/utils/geometry/axis";
-import projection from "./domain/utils/geometry/projection";
-import axisCollision from "./domain/utils/geometry/axisCollision";
-import collision from "./domain/utils/geometry/collision";
-import lineToSquare from "./domain/utils/geometry/lineToSquare";
-import quadraticCurveToSquare from "./domain/utils/geometry/quadraticCurveToSquare";
-import selfLoopToSquare from "./domain/utils/geometry/selfLoopToSquare";
+import emptyObject from "./domain/utils/misc/emptyObject";
+import xhr from "./domain/utils/misc/xhr";
 
 export default sigma => {
   /**
@@ -102,61 +90,55 @@ export default sigma => {
   sigma.register("sigma.utils.id", id);
   sigma.register("sigma.utils.floatColor", floatColor);
   sigma.register("sigma.utils.zoomTo", zoomTo(sigma));
+  sigma.register("sigma.utils.emptyObject", emptyObject);
+  sigma.register("sigma.utils.xhr", xhr);
 
   /**
    * Geometry Utils
    */
   sigma.register(
-    "sigma.utils.getQuadraticControlPoint",
+    "sigma.utils.geom.getQuadraticControlPoint",
     getQuadraticControlPoint
   );
   sigma.register(
-    "sigma.utils.getPointOnQuadraticCurve",
+    "sigma.utils.geom.getPointOnQuadraticCurve",
     getPointsOnQuadraticCurve
   );
-  sigma.register("sigma.utils.getPointOnBezierCurve", getPointOnBezierCurve);
+  sigma.register(
+    "sigma.utils.geom.getPointOnBezierCurve",
+    getPointOnBezierCurve
+  );
   sigma.register(
     "sigma.utils.getSelfLoopControlPoints",
     getSelfLoopControlPoints
   );
-  sigma.register("sigma.utils.getDistance", getDistance);
-  sigma.register("sigma.utils.getCircleIntersection", getCircleIntersection);
-  sigma.register("sigma.utils.isPointOnSegment", isPointOnSegment);
+  sigma.register("sigma.utils.geom.getDistance", getDistance);
   sigma.register(
-    "sigma.utils.isPointOnQuadraticCurve",
+    "sigma.utils.geom.getCircleIntersection",
+    getCircleIntersection
+  );
+  sigma.register("sigma.utils.geom.isPointOnSegment", isPointOnSegment);
+  sigma.register(
+    "sigma.utils.geom.isPointOnQuadraticCurve",
     isPointOnQuadraticCurve
   );
-  sigma.register("sigma.utils.isPointOnBezierCurve", isPointOnBezierCurve);
-  sigma.register("sigma.utils.getBoundaries", getBoundaries);
-  sigma.register("sigma.utils.pointToSquare", pointToSquare);
-  sigma.register("sigma.utils.isAxisAligned", isAxisAligned);
-  sigma.register("sigma.utils.axisAlignedTopPoints", axisAlignedTopPoints);
-  sigma.register("sigma.utils.lowerLeftCoor", lowerLeftCoor);
-  sigma.register("sigma.utils.lowerRightCoor", lowerRightCoor);
-  sigma.register("sigma.utils.rectangleCorners", rectangleCorners);
-  sigma.register("sigma.utils.splitSquare", splitSquare);
-  sigma.register("sigma.utils.axis", axis);
-  sigma.register("sigma.utils.projection", projection);
-  sigma.register("sigma.utils.axisCollision", axisCollision);
-  sigma.register("sigma.utils.collision", collision);
-  sigma.register("sigma.utils.lineToSquare", lineToSquare);
-  sigma.register("sigma.utils.quadraticCurveToSquare", quadraticCurveToSquare);
-  sigma.register("sigma.utils.selfLoopToSquare", selfLoopToSquare);
+  sigma.register("sigma.utils.geom.isPointOnBezierCurve", isPointOnBezierCurve);
+  sigma.register("sigma.utils.geom.getBoundaries", getBoundaries);
 
   /**
    * Event Utilities
    */
-  sigma.register("sigma.utils.getX", getX);
-  sigma.register("sigma.utils.getY", getY);
-  sigma.register("sigma.utils.getPixelRatio", getPixelRatio);
-  sigma.register("sigma.utils.getWidth", getWidth);
-  sigma.register("sigma.utils.getCenter", getCenter);
-  sigma.register("sigma.utils.mouseCoords", mouseCoords);
-  sigma.register("sigma.utils.getHeight", getHeight);
-  sigma.register("sigma.utils.getDelta", getDelta);
-  sigma.register("sigma.utils.getOffset", getOffset);
-  sigma.register("sigma.utils.doubleClick", doubleClick(sigma));
-  sigma.register("sigma.utils.unbindDoubleClick", unbindDoubleClick);
+  sigma.register("sigma.utils.events.getX", getX);
+  sigma.register("sigma.utils.events.getY", getY);
+  sigma.register("sigma.utils.events.getPixelRatio", getPixelRatio);
+  sigma.register("sigma.utils.events.getWidth", getWidth);
+  sigma.register("sigma.utils.events.getCenter", getCenter);
+  sigma.register("sigma.utils.events.mouseCoords", mouseCoords);
+  sigma.register("sigma.utils.events.getHeight", getHeight);
+  sigma.register("sigma.utils.events.getDelta", getDelta);
+  sigma.register("sigma.utils.events.getOffset", getOffset);
+  sigma.register("sigma.utils.events.doubleClick", doubleClick(sigma));
+  sigma.register("sigma.utils.events.unbindDoubleClick", unbindDoubleClick);
 
   /**
    * Here are just some of the most basic easing functions, used for the
@@ -178,8 +160,8 @@ export default sigma => {
   /**
    * WebGL Utilities
    */
-  sigma.register("sigma.utils.loadShader", loadShader);
-  sigma.register("sigma.utils.loadProgram", loadProgram);
+  sigma.register("sigma.utils.webgl.loadShader", loadShader);
+  sigma.register("sigma.utils.webgl.loadProgram", loadProgram);
 
   /**
    * Matrix Utilities

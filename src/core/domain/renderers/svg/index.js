@@ -14,12 +14,13 @@ import Dispatcher from "../../classes/Dispatcher";
 export default sigma => {
   function SvgRenderer(graph, camera, settings, options) {
     if (typeof options !== "object")
-      throw new Error("SvgRenderer: Wrong arguments.");
+      throw new Error("SvgRenderer: Wrong options arguments.");
 
     if (!(options.container instanceof HTMLElement))
       throw new Error("Container not found.");
 
     const self = this;
+
     Dispatcher.extend(this);
 
     // Initialize main attributes:
@@ -72,9 +73,7 @@ export default sigma => {
     });
 
     // Bind resize:
-    window.addEventListener("resize", function handleResize() {
-      self.resize();
-    });
+    window.addEventListener("resize", () => self.resize());
 
     // Deal with sigma events:
     // TODO: keep an option to override the DOM events?
@@ -93,13 +92,14 @@ export default sigma => {
    */
   SvgRenderer.prototype.render = function render(options) {
     options = options || {};
+
     let a;
     let i;
     let e;
     let l;
-    let o;
     let source;
     let target;
+    let renderers;
     const index = {};
     const { graph } = this;
     const { nodes } = graph;
@@ -133,22 +133,22 @@ export default sigma => {
     );
 
     // Node index
-    for (a = this.nodesOnScreen, i = 0, l = a.length; i < l; i++)
-      index[a[i].id] = a[i];
+    this.nodesOnScreen.forEach(node => {
+      index[node.id] = node;
+    });
 
     // Find which edges are on screen
-    for (a = graph.edges(), i = 0, l = a.length; i < l; i++) {
-      o = a[i];
+    graph.edges().forEach(o => {
       if (
         (index[o.source] || index[o.target]) &&
         (!o.hidden && !nodes(o.source).hidden && !nodes(o.target).hidden)
       )
         this.edgesOnScreen.push(o);
-    }
+    });
 
     // Display nodes
     //---------------
-    let renderers = sigma.svg.nodes;
+    renderers = sigma.svg.nodes;
     const subrenderers = sigma.svg.labels;
 
     // -- First we create the nodes which are not already created
@@ -178,18 +178,18 @@ export default sigma => {
     // -- Second we update the nodes
     if (drawNodes)
       this.nodesOnScreen
-        .filter(n => !n.hidden)
+        .filter(node => !node.hidden)
         .forEach(node => {
           // Node
-          (renderers[a[i].type] || renderers.def).update(
-            a[i],
+          (renderers[node.type] || renderers.def).update(
+            node,
             this.domElements.nodes[node.id],
             embedSettings
           );
 
           // Label
-          (subrenderers[a[i].type] || subrenderers.def).update(
-            a[i],
+          (subrenderers[node.type] || subrenderers.def).update(
+            node,
             this.domElements.labels[node.id],
             embedSettings
           );
@@ -250,13 +250,8 @@ export default sigma => {
     const dom = document.createElementNS(this.settings("xmlns"), tag);
 
     const c = this.settings("classPrefix");
-
-    let g;
-
     let l;
-
     let i;
-
     dom.style.position = "absolute";
     dom.setAttribute("class", `${c}-svg`);
 
@@ -275,8 +270,7 @@ export default sigma => {
     // Creating groups
     const groups = ["edges", "nodes", "labels", "hovers"];
     for (i = 0, l = groups.length; i < l; i++) {
-      g = document.createElementNS(this.settings("xmlns"), "g");
-
+      const g = document.createElementNS(this.settings("xmlns"), "g");
       g.setAttributeNS(null, "id", `${c}-group-${groups[i]}`);
       g.setAttributeNS(null, "class", `${c}-group`);
 
@@ -313,12 +307,16 @@ export default sigma => {
   // TODO: add option about whether to display hovers or not
   SvgRenderer.prototype.bindHovers = function bindHovers(prefix) {
     const renderers = sigma.svg.hovers;
+
     const self = this;
+
     let hoveredNode;
 
     function overNode(e) {
       const { node } = e.data;
-      const embedSettings = self.settings.embedObjects({ prefix });
+      const embedSettings = self.settings.embedObjects({
+        prefix
+      });
 
       if (!embedSettings("enableHovering")) return;
 
@@ -402,9 +400,7 @@ export default sigma => {
    */
   SvgRenderer.prototype.resize = function resize(w, h) {
     const oldWidth = this.width;
-
     const oldHeight = this.height;
-
     const pixelRatio = 1;
 
     if (w !== undefined && h !== undefined) {
@@ -421,7 +417,6 @@ export default sigma => {
     if (oldWidth !== this.width || oldHeight !== this.height) {
       this.domElements.graph.style.width = `${w}px`;
       this.domElements.graph.style.height = `${h}px`;
-
       if (this.domElements.graph.tagName.toLowerCase() === "svg") {
         this.domElements.graph.setAttribute("width", w * pixelRatio);
         this.domElements.graph.setAttribute("height", h * pixelRatio);
@@ -430,5 +425,6 @@ export default sigma => {
 
     return this;
   };
+
   return SvgRenderer;
 };

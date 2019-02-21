@@ -28,4 +28,4 @@ This plugin modifies
 
 ## Utils
 
-This plugin modifies functions `sigma.utils.getQuadraticControlPoint` and `sigma.utils.getSelfLoopControlPoints` with an optional amplitude modifier parameters.
+This plugin modifies functions `sigma.utils.geom.getQuadraticControlPoint` and `sigma.utils.getSelfLoopControlPoints` with an optional amplitude modifier parameters.

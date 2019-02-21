@@ -123,11 +123,11 @@ export default function configure(sigma) {
 
     // Click
     container.addEventListener("click", click, false);
-    sigma.utils.doubleClick(container, "click", doubleClick);
+    sigma.utils.events.doubleClick(container, "click", doubleClick);
 
     // Touch counterparts
     container.addEventListener("touchstart", click, false);
-    sigma.utils.doubleClick(container, "touchstart", doubleClick);
+    sigma.utils.events.doubleClick(container, "touchstart", doubleClick);
 
     // Mouseover
     container.addEventListener("mouseover", onOver, true);

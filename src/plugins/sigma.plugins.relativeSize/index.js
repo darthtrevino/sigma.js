@@ -1,3 +1,5 @@
-import sigma from "sigma";
-import plugin from "./plugin";
-plugin(sigma);
+import relativeSize from "./src/relativeSize";
+
+export default function extend(sigma) {
+  sigma.register("sigma.plugins.relativeSize", relativeSize);
+}
