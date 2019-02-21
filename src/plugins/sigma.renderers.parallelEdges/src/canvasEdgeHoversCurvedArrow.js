@@ -1,8 +1,6 @@
-export default function extend(sigma) {
-  sigma.utils.pkg("sigma.canvas.edges");
-
+export default sigma => {
   /**
-   * This edge renderer will display edges as curves with arrow heading.
+   * This hover renderer will display the edge with a different color or size.
    *
    * @param  {object}                   edge         The edge object.
    * @param  {object}                   source node  The edge source node.
@@ -10,49 +8,27 @@ export default function extend(sigma) {
    * @param  {CanvasRenderingContext2D} context      The canvas context.
    * @param  {configurable}             settings     The settings function.
    */
-  sigma.canvas.edges.curvedArrow = function(
-    edge,
-    source,
-    target,
-    context,
-    settings
-  ) {
-    let color = edge.color;
-
+  return function curvedArrow(edge, source, target, context, settings) {
+    let { color } = edge;
     const prefix = settings("prefix") || "";
-
     const edgeColor = settings("edgeColor");
-
     const defaultNodeColor = settings("defaultNodeColor");
-
     const defaultEdgeColor = settings("defaultEdgeColor");
 
     let cp = {};
-
-    const size = edge[`${prefix}size`] || 1;
-
+    const size = settings("edgeHoverSizeRatio") * (edge[`${prefix}size`] || 1);
     const count = edge.count || 0;
-
     const tSize = target[`${prefix}size`];
-
     const sX = source[`${prefix}x`];
-
     const sY = source[`${prefix}y`];
-
     const tX = target[`${prefix}x`];
-
     const tY = target[`${prefix}y`];
 
-    const aSize = Math.max(size * 2.5, settings("minArrowSize"));
-
     let d;
-
+    let aSize;
     let aX;
-
     let aY;
-
     let vX;
-
     let vY;
 
     cp =
@@ -61,13 +37,15 @@ export default function extend(sigma) {
         : sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY, count);
 
     if (source.id === target.id) {
-      d = Math.sqrt(Math.pow(tX - cp.x1, 2) + Math.pow(tY - cp.y1, 2));
+      d = Math.sqrt((tX - cp.x1) ** 2 + (tY - cp.y1) ** 2);
+      aSize = size * 2.5;
       aX = cp.x1 + ((tX - cp.x1) * (d - aSize - tSize)) / d;
       aY = cp.y1 + ((tY - cp.y1) * (d - aSize - tSize)) / d;
       vX = ((tX - cp.x1) * aSize) / d;
       vY = ((tY - cp.y1) * aSize) / d;
     } else {
-      d = Math.sqrt(Math.pow(tX - cp.x, 2) + Math.pow(tY - cp.y, 2));
+      d = Math.sqrt((tX - cp.x) ** 2 + (tY - cp.y) ** 2);
+      aSize = size * 2.5;
       aX = cp.x + ((tX - cp.x) * (d - aSize - tSize)) / d;
       aY = cp.y + ((tY - cp.y) * (d - aSize - tSize)) / d;
       vX = ((tX - cp.x) * aSize) / d;
@@ -86,6 +64,12 @@ export default function extend(sigma) {
           color = defaultEdgeColor;
           break;
       }
+
+    if (settings("edgeHoverColor") === "edge") {
+      color = edge.hover_color || color;
+    } else {
+      color = edge.hover_color || settings("defaultEdgeHoverColor") || color;
+    }
 
     context.strokeStyle = color;
     context.lineWidth = size;
@@ -107,4 +91,4 @@ export default function extend(sigma) {
     context.closePath();
     context.fill();
   };
-}
+};

@@ -76,18 +76,12 @@ export default function extend(sigma) {
       let xmax = -Infinity;
       let ymin = Infinity;
       let ymax = -Infinity;
-      let xwidth;
-      let yheight;
-      let xcenter;
-      let ycenter;
-      let grid;
       let row;
       let col;
       let minXBox;
       let maxXBox;
       let minYBox;
       let maxYBox;
-      let adjacentNodes;
       let subRow;
       let subCol;
       let nxmin;
@@ -122,16 +116,16 @@ export default function extend(sigma) {
         );
       }
 
-      xwidth = xmax - xmin;
-      yheight = ymax - ymin;
-      xcenter = (xmin + xmax) / 2;
-      ycenter = (ymin + ymax) / 2;
+      const xwidth = xmax - xmin;
+      const yheight = ymax - ymin;
+      const xcenter = (xmin + xmax) / 2;
+      const ycenter = (ymin + ymax) / 2;
       xmin = xcenter - (self.config.permittedExpansion * xwidth) / 2;
       xmax = xcenter + (self.config.permittedExpansion * xwidth) / 2;
       ymin = ycenter - (self.config.permittedExpansion * yheight) / 2;
       ymax = ycenter + (self.config.permittedExpansion * yheight) / 2;
 
-      grid = {}; // An object of objects where grid[row][col] is an array of node ids representing nodes that fall in that grid. Nodes can fall in more than one grid
+      const grid = {}; // An object of objects where grid[row][col] is an array of node ids representing nodes that fall in that grid. Nodes can fall in more than one grid
 
       for (row = 0; row < self.config.gridSize; row++) {
         grid[row] = {};
@@ -176,11 +170,11 @@ export default function extend(sigma) {
         }
       }
 
-      adjacentNodes = {}; // An object that stores the node ids of adjacent nodes (either in same grid box or adjacent grid box) for all nodes
+      const adjacentNodes = {}; // An object that stores the node ids of adjacent nodes (either in same grid box or adjacent grid box) for all nodes
 
       for (row = 0; row < self.config.gridSize; row++) {
         for (col = 0; col < self.config.gridSize; col++) {
-          grid[row][col].forEach(function(nodeId) {
+          grid[row][col].forEach(nodeId => {
             if (!adjacentNodes[nodeId]) {
               adjacentNodes[nodeId] = [];
             }
@@ -194,7 +188,7 @@ export default function extend(sigma) {
                 subCol <= Math.min(col + 1, self.config.gridSize - 1);
                 subCol++
               ) {
-                grid[subRow][subCol].forEach(function(subNodeId) {
+                grid[subRow][subCol].forEach(subNodeId => {
                   if (
                     subNodeId !== nodeId &&
                     adjacentNodes[nodeId].indexOf(subNodeId) === -1
@@ -249,7 +243,7 @@ export default function extend(sigma) {
       return this.running;
     };
 
-    this.go = function() {
+    this.go = function go() {
       this.iterCount = this.config.maxIterations;
 
       while (this.running) {
@@ -259,7 +253,7 @@ export default function extend(sigma) {
       this.stop();
     };
 
-    this.start = function() {
+    this.start = function start() {
       if (this.running) return;
 
       const nodes = this.sigInst.graph.nodes();
@@ -283,7 +277,7 @@ export default function extend(sigma) {
       this.go();
     };
 
-    this.stop = function() {
+    this.stop = function stop() {
       const nodes = this.sigInst.graph.nodes();
 
       this.running = false;
@@ -328,7 +322,7 @@ export default function extend(sigma) {
       }
     };
 
-    this.kill = function() {
+    this.kill = function kill() {
       this.sigInst = null;
       this.config = null;
       this.easing = null;
@@ -364,7 +358,7 @@ export default function extend(sigma) {
    *
    * @return {sigma.classes.dispatcher} Returns an event emitter.
    */
-  sigma.prototype.configNoverlap = function(config) {
+  sigma.prototype.configNoverlap = function configNoverlap(config) {
     const sigInst = this;
 
     if (!config) throw new Error('Missing argument: "config"');
@@ -377,7 +371,7 @@ export default function extend(sigma) {
       sigma.classes.dispatcher.extend(_eventEmitter[sigInst.id]);
 
       // Binding on kill to clear the references
-      sigInst.bind("kill", function() {
+      sigInst.bind("kill", function kill() {
         _instance[sigInst.id].kill();
         _instance[sigInst.id] = null;
         _eventEmitter[sigInst.id] = null;
@@ -416,7 +410,7 @@ export default function extend(sigma) {
    * @return {sigma.classes.dispatcher} Returns an event emitter.
    */
 
-  sigma.prototype.startNoverlap = function(config) {
+  sigma.prototype.startNoverlap = function startNoverlap(config) {
     const sigInst = this;
 
     if (config) {
@@ -433,9 +427,8 @@ export default function extend(sigma) {
    *
    * @return {boolean}
    */
-  sigma.prototype.isNoverlapRunning = function() {
+  sigma.prototype.isNoverlapRunning = function isNoverlapRunning() {
     const sigInst = this;
-
     return !!_instance[sigInst.id] && _instance[sigInst.id].running;
   };
 }

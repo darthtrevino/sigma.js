@@ -1,9 +1,4 @@
-export default function extend(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
-
-  // Initialize packages:
-  sigma.utils.pkg("sigma.canvas.edges.labels");
-
+export default sigma => {
   /**
    * This label renderer will just display the label on the curve of the edge.
    * The label is rendered at half distance of the edge extremities, and is
@@ -15,7 +10,7 @@ export default function extend(sigma) {
    * @param  {CanvasRenderingContext2D} context      The canvas context.
    * @param  {configurable}             settings     The settings function.
    */
-  sigma.canvas.edges.labels.curve = function(
+  return function canvasEdgesLabelsCurve(
     edge,
     source,
     target,
@@ -27,7 +22,6 @@ export default function extend(sigma) {
     const prefix = settings("prefix") || "";
     const size = edge[`${prefix}size`] || 1;
     if (size < settings("edgeLabelThreshold")) return;
-    let fontSize;
     const sSize = source[`${prefix}size`];
     const count = edge.count || 0;
     const sX = source[`${prefix}x`];
@@ -69,12 +63,12 @@ export default function extend(sigma) {
     // The final form is:
     // f'(x) = b * x * x^(-1 / a), thus f'(1) = b. Application:
     // fontSize = defaultEdgeLabelSize if edgeLabelSizePowRatio = 1
-    fontSize =
+    const fontSize =
       settings("edgeLabelSize") === "fixed"
         ? settings("defaultEdgeLabelSize")
         : settings("defaultEdgeLabelSize") *
           size *
-          Math.pow(size, -1 / settings("edgeLabelSizePowRatio"));
+          size ** (-1 / settings("edgeLabelSizePowRatio"));
 
     context.save();
 
@@ -110,4 +104,4 @@ export default function extend(sigma) {
 
     context.restore();
   };
-}
+};

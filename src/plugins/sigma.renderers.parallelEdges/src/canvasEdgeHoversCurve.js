@@ -1,42 +1,28 @@
-export default function extend(sigma) {
-  sigma.utils.pkg("sigma.canvas.edges");
-
-  /**
-   * This edge renderer will display edges as curves.
-   *
-   * @param  {object}                   edge         The edge object.
-   * @param  {object}                   source node  The edge source node.
-   * @param  {object}                   target node  The edge target node.
-   * @param  {CanvasRenderingContext2D} context      The canvas context.
-   * @param  {configurable}             settings     The settings function.
-   */
-  sigma.canvas.edges.curve = function(edge, source, target, context, settings) {
-    let color = edge.color;
-
+/**
+ * This hover renderer will display the edge with a different color or size.
+ *
+ * @param  {object}                   edge         The edge object.
+ * @param  {object}                   source node  The edge source node.
+ * @param  {object}                   target node  The edge target node.
+ * @param  {CanvasRenderingContext2D} context      The canvas context.
+ * @param  {configurable}             settings     The settings function.
+ */
+export default sigma => {
+  return function curve(edge, source, target, context, settings) {
+    let { color } = edge;
     const prefix = settings("prefix") || "";
-
-    const size = edge[`${prefix}size`] || 1;
-
+    const size = settings("edgeHoverSizeRatio") * (edge[`${prefix}size`] || 1);
     const count = edge.count || 0;
-
     const edgeColor = settings("edgeColor");
-
     const defaultNodeColor = settings("defaultNodeColor");
-
     const defaultEdgeColor = settings("defaultEdgeColor");
 
     let cp = {};
-
     const sSize = source[`${prefix}size`];
-
     const sX = source[`${prefix}x`];
-
     const sY = source[`${prefix}y`];
-
     const tX = target[`${prefix}x`];
-
     const tY = target[`${prefix}y`];
-
     cp =
       source.id === target.id
         ? sigma.utils.getSelfLoopControlPoints(sX, sY, sSize, count)
@@ -55,6 +41,12 @@ export default function extend(sigma) {
           break;
       }
 
+    if (settings("edgeHoverColor") === "edge") {
+      color = edge.hover_color || color;
+    } else {
+      color = edge.hover_color || settings("defaultEdgeHoverColor") || color;
+    }
+
     context.strokeStyle = color;
     context.lineWidth = size;
     context.beginPath();
@@ -66,4 +58,4 @@ export default function extend(sigma) {
     }
     context.stroke();
   };
-}
+};
