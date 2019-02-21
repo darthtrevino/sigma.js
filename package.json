@@ -14,15 +14,16 @@
     "clean": "rimraf lib build",
     "start": "http-server -p 8000",
     "compile": "tsc",
-    "bundle_dev": "rollup -c",
-    "bundle_prod": "env NODE_ENV=production rollup -c",
+    "bundle:dev": "rollup -c",
+    "bundle:prod": "env NODE_ENV=production rollup -c",
+    "bundle": "run-p bundle:*",
     "lint": "eslint .",
     "prettify_all": "prettier {src,test,plugins}/**/*.js --write",
     "rollup_watch": "rollup -c -w",
     "test_watch": "jest --watch",
     "develop": "run-p rollup_watch test_watch",
     "unit_test": "jest --coverage",
-    "test": "run-s unit_test build:prod"
+    "test": "run-s lint unit_test compile bundle"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^1.4.0",
