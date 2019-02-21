@@ -1,3 +1,5 @@
+import { Point } from "./interfaces";
+
 /**
  * Compute the coordinates of the point positioned
  * at length t in the quadratic bezier curve.
@@ -12,7 +14,15 @@
  * @param  {number} yi The Y coordinate of the control point.
  * @return {object}    {x,y}.
  */
-export default function getPointsOnQuadraticCurve(t, x1, y1, x2, y2, xi, yi) {
+export default function getPointsOnQuadraticCurve(
+  t: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  xi: number,
+  yi: number
+): Point {
   // http://stackoverflow.com/a/5634528
   const x = (1 - t) ** 2 * x1 + 2 * (1 - t) * t * xi + t ** 2 * x2;
   const y = (1 - t) ** 2 * y1 + 2 * (1 - t) * t * yi + t ** 2 * y2;

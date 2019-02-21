@@ -17,16 +17,16 @@ import getPointOnQuadraticCurve from "./getPointOnQuadraticCurve";
  *                          false otherwise.
  */
 export default function isPointOnQuadraticCurve(
-  x,
-  y,
-  x1,
-  y1,
-  x2,
-  y2,
-  cpx,
-  cpy,
-  epsilon
-) {
+  x: number,
+  y: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  cpx: number,
+  cpy: number,
+  epsilon: number
+): boolean {
   // Fails if the point is too far from the extremities of the segment,
   // preventing for more costly computation:
   const dP1P2 = getDistance(x1, y1, x2, y2);

@@ -1,4 +1,5 @@
 import getPointOnQuadraticCurve from "./getPointOnQuadraticCurve";
+import { Edge, Point, Rectangle } from "./interfaces";
 
 /**
  * Transforms a graph edge of type 'curve' with x1, y1, x2, y2,
@@ -9,7 +10,7 @@ import getPointOnQuadraticCurve from "./getPointOnQuadraticCurve";
  * @param  {object} cp A control point (x,y).
  * @return {object}    A square: two points (x1, y1), (x2, y2) and height.
  */
-export default function quadraticCurveToSquare(e, cp) {
+export default function quadraticCurveToSquare(e: Edge, cp: Point): Rectangle {
   const pt = getPointOnQuadraticCurve(0.5, e.x1, e.y1, e.x2, e.y2, cp.x, cp.y);
 
   // Bounding box of the two points and the point at the middle of the

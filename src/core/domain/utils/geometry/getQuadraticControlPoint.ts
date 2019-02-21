@@ -1,3 +1,5 @@
+import { Point } from "./interfaces";
+
 /**
  * Return the control point coordinates for a quadratic bezier curve.
  *
@@ -7,7 +9,12 @@
  * @param  {number} y2  The Y coordinate of the end point.
  * @return {x,y}        The control point coordinates.
  */
-export default function getQuadraticControlPoint(x1, y1, x2, y2) {
+export default function getQuadraticControlPoint(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): Point {
   return {
     x: (x1 + x2) / 2 + (y2 - y1) / 4,
     y: (y1 + y2) / 2 + (x1 - x2) / 4

@@ -1,5 +1,6 @@
 import lowerLeftCoor from "./lowerLeftCoor";
 import lowerRightCoor from "./lowerRightCoor";
+import { Rectangle, Point } from "./interfaces";
 
 /**
  * Get the coordinates of all the corners of a rectangle from its top point.
@@ -7,7 +8,9 @@ import lowerRightCoor from "./lowerRightCoor";
  * @param  {object} A rectangle defined by two points (x1, y1) and (x2, y2).
  * @return {array}  An array of the four corners' coordinates (x, y).
  */
-export default function rectangleCorners(r) {
+export default function rectangleCorners(
+  r: Rectangle
+): [Point, Point, Point, Point] {
   const llc = lowerLeftCoor(r);
   const lrc = lowerRightCoor(r, llc);
 

@@ -1,3 +1,5 @@
+import { Point } from "./interfaces";
+
 /**
  * Compute the coordinates of the point positioned
  * at length t in the cubic bezier curve.
@@ -15,16 +17,16 @@
  * @return {object}    {x,y} The point at t.
  */
 export default function getPointOnBezierCurve(
-  t,
-  x1,
-  y1,
-  x2,
-  y2,
-  cx,
-  cy,
-  dx,
-  dy
-) {
+  t: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  cx: number,
+  cy: number,
+  dx: number,
+  dy: number
+): Point {
   // http://stackoverflow.com/a/15397596
   // Blending functions:
   const b0t = (1 - t) ** 3;

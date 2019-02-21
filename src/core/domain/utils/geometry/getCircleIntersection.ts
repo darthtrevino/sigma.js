@@ -15,7 +15,14 @@
  * @param  {number} r1  The radius of the second circle.
  * @return {xi,yi}      The coordinates of the intersection points.
  */
-export default function getCircleIntersection(x0, y0, r0, x1, y1, r1) {
+export default function getCircleIntersection(
+  x0: number,
+  y0: number,
+  r0: number,
+  x1: number,
+  y1: number,
+  r1: number
+) {
   // http://stackoverflow.com/a/12219802
 
   // dx and dy are the vertical and horizontal distances between the circle

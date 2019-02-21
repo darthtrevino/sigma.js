@@ -1,3 +1,5 @@
+import { Point } from "./interfaces";
+
 /**
  * Project a rectangle's corner on an axis.
  *
@@ -5,9 +7,8 @@
  * @param  {object} Coordinates of an axis (x, y).
  * @return {object} The projection defined by coordinates (x, y).
  */
-export default function projection(c, a) {
+export default function projection(c: Point, a: Point): Point {
   const l = (c.x * a.x + c.y * a.y) / (a.x ** 2 + a.y ** 2);
-
   return {
     x: l * a.x,
     y: l * a.y

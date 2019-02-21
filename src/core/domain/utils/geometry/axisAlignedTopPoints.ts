@@ -1,3 +1,5 @@
+import { Rectangle } from "./interfaces";
+
 /**
  * Compute top points of an axis-aligned rectangle. This is useful in
  * cases when the rectangle has been rotated (left, right or bottom up) and
@@ -7,7 +9,7 @@
  *                  (x1, y1), (x2, y2) and height.
  * @return {object} A rectangle: two points (x1, y1), (x2, y2) and height.
  */
-export default function axisAlignedTopPoints(r) {
+export default function axisAlignedTopPoints(r: Rectangle): Rectangle {
   // Basic
   if (r.y1 === r.y2 && r.x1 < r.x2) return r;
 

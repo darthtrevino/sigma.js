@@ -19,18 +19,18 @@ import getPointOnBezierCurve from "./getPointOnBezierCurve";
  *                          false otherwise.
  */
 export default function isPointOnBezierCurve(
-  x,
-  y,
-  x1,
-  y1,
-  x2,
-  y2,
-  cpx1,
-  cpy1,
-  cpx2,
-  cpy2,
-  epsilon
-) {
+  x: number,
+  y: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  cpx1: number,
+  cpy1: number,
+  cpx2: number,
+  cpy2: number,
+  epsilon: number
+): boolean {
   // Fails if the point is too far from the extremities of the segment,
   // preventing for more costly computation:
   const dP1CP1 = getDistance(x1, y1, cpx1, cpy1);

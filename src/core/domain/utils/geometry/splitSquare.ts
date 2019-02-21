@@ -1,3 +1,5 @@
+import { Boundaries, Point } from "./interfaces";
+
 /**
  * Split a square defined by its boundaries into four.
  *
@@ -5,7 +7,14 @@
  * @return {array}  An array containing the four new squares, themselves
  *                  defined by an array of their four corners (x, y).
  */
-export default function splitSquare(b) {
+export default function splitSquare(
+  b: Boundaries
+): [
+  [Point, Point, Point, Point],
+  [Point, Point, Point, Point],
+  [Point, Point, Point, Point],
+  [Point, Point, Point, Point]
+] {
   return [
     [
       { x: b.x, y: b.y },

@@ -1,5 +1,6 @@
 import axis from "./axis";
 import axisCollision from "./axisCollision";
+import { RectangleCorners } from "./interfaces";
 
 /**
  * Check whether two rectangles collide on each one of their four axis. If
@@ -9,7 +10,10 @@ import axisCollision from "./axisCollision";
  * @param  {array}    Rectangle B's corners.
  * @return {boolean}  True if the rectangles collide.
  */
-export default function collision(c1, c2) {
+export default function collision(
+  c1: RectangleCorners,
+  c2: RectangleCorners
+): boolean {
   const axs = axis(c1, c2);
   let col = true;
 

@@ -1,11 +1,12 @@
 import getSelfLoopControlPoints from "./getSelfLoopControlPoints";
+import { Node } from "./interfaces";
 /**
  * Transforms a graph self loop into an axis-aligned square.
  *
  * @param  {object} n A graph node with a point (x, y) and a size.
  * @return {object}   A square: two points (x1, y1), (x2, y2) and height.
  */
-export default function selfLoopToSquare(n) {
+export default function selfLoopToSquare(n: Node) {
   // Fitting to the curve is too costly, we compute a larger bounding box
   // using the control points:
   const cp = getSelfLoopControlPoints(n.x, n.y, n.size);

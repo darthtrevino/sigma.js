@@ -1,3 +1,4 @@
+import { Point, RectangleCorners } from "./interfaces";
 import projection from "./projection";
 
 /**
@@ -8,7 +9,11 @@ import projection from "./projection";
  * @param  {array}    Rectangle B's corners.
  * @return {boolean}  True if the rectangles collide on the axis.
  */
-export default function axisCollision(a, c1, c2) {
+export default function axisCollision(
+  a: Point,
+  c1: RectangleCorners,
+  c2: RectangleCorners
+): boolean {
   const sc1 = [];
   const sc2 = [];
 

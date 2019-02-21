@@ -1,3 +1,5 @@
+import { Edge, Rectangle } from "./interfaces";
+
 /**
  * Transforms a graph edge with x1, y1, x2, y2 and size into an
  * axis-aligned square.
@@ -6,7 +8,7 @@
  *                  (x1, y1), (x2, y2) and a size.
  * @return {object} A square: two points (x1, y1), (x2, y2) and height.
  */
-export default function lineToSquare(e) {
+export default function lineToSquare(e: Edge): Rectangle {
   if (e.y1 < e.y2) {
     // (e.x1, e.y1) on top
     if (e.x1 < e.x2) {

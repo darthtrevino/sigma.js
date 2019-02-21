@@ -13,7 +13,15 @@ import getDistance from "./getDistance";
  * @return {boolean}        True if point is "close to" the line
  *                          segment, false otherwise.
  */
-export default function isPointOnSegment(x, y, x1, y1, x2, y2, epsilon) {
+export default function isPointOnSegment(
+  x: number,
+  y: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  epsilon: number
+): boolean {
   // http://stackoverflow.com/a/328122
   const crossProduct = Math.abs((y - y1) * (x2 - x1) - (x - x1) * (y2 - y1));
   const d = getDistance(x1, y1, x2, y2);
