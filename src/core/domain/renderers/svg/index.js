@@ -19,14 +19,6 @@ export default sigma => {
     if (!(options.container instanceof HTMLElement))
       throw new Error("Container not found.");
 
-    let i;
-
-    let l;
-
-    let a;
-
-    let fn;
-
     const self = this;
 
     Dispatcher.extend(this);
@@ -61,20 +53,24 @@ export default sigma => {
     this.edgesOnScreen = [];
 
     // Find the prefix:
-    this.options.prefix = `renderer${sigma.utils.id()}:`;
+    this.options.prefix = `renderer${id()}:`;
 
     // Initialize the DOM elements
     this.initDOM("svg");
 
     // Initialize captors:
     this.captors = [];
-    a = this.options.captors || [sigma.captors.mouse, sigma.captors.touch];
-    for (i = 0, l = a.length; i < l; i++) {
-      fn = typeof a[i] === "function" ? a[i] : sigma.captors[a[i]];
+    const captors = this.options.captors || [
+      sigma.captors.mouse,
+      sigma.captors.touch
+    ];
+    captors.forEach(captor => {
+      const Captor =
+        typeof captor === "function" ? captor : sigma.captors[captor];
       this.captors.push(
-        new fn(this.domElements.graph, this.camera, this.settings)
+        new Captor(this.domElements.graph, this.camera, this.settings)
       );
-    }
+    });
 
     // Bind resize:
     window.addEventListener("resize", () => self.resize());
@@ -101,7 +97,6 @@ export default sigma => {
     let i;
     let e;
     let l;
-    let o;
     let source;
     let target;
     let renderers;
@@ -138,18 +133,18 @@ export default sigma => {
     );
 
     // Node index
-    for (a = this.nodesOnScreen, i = 0, l = a.length; i < l; i++)
-      index[a[i].id] = a[i];
+    this.nodesOnScreen.forEach(node => {
+      index[node.id] = node;
+    });
 
     // Find which edges are on screen
-    for (a = graph.edges(), i = 0, l = a.length; i < l; i++) {
-      o = a[i];
+    graph.edges().forEach(o => {
       if (
         (index[o.source] || index[o.target]) &&
         (!o.hidden && !nodes(o.source).hidden && !nodes(o.target).hidden)
       )
         this.edgesOnScreen.push(o);
-    }
+    });
 
     // Display nodes
     //---------------
