@@ -1,7 +1,10 @@
-import canvasEdgesDotCurve from "./sigma.canvas.edges.dotCurve";
-import canvasEdgesDotCurveArrow from "./sigma.canvas.edges.dotCurvedArrow";
+import canvasEdgesDotCurve from "./src/edgeDotCurve";
+import canvasEdgesDotCurveArrow from "./src/edgeDotCurveArrow";
 
 export default function extend(sigma) {
-  canvasEdgesDotCurve(sigma);
-  canvasEdgesDotCurveArrow(sigma);
+  sigma.register("sigma.canvas.edges.dotCurve", canvasEdgesDotCurve(sigma));
+  sigma.register(
+    "sigma.canvas.edges.dotCurvedArrow",
+    canvasEdgesDotCurveArrow(sigma)
+  );
 }

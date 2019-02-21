@@ -34,12 +34,6 @@ export default function extend(sigma) {
   sigma.classes.graph.addMethod("neighborhood", function neighborhood(
     centerId
   ) {
-    let k1;
-    let k2;
-    let k3;
-    let node;
-    let center;
-
     // Those two local indexes are here just to avoid duplicates:
     const localNodesIndex = {};
     const localEdgesIndex = {};
@@ -55,38 +49,48 @@ export default function extend(sigma) {
 
     // Add center. It has to be cloned to add it the "center" attribute
     // without altering the current graph:
-    node = this.nodes(centerId);
-    center = {};
+    const node = this.nodes(centerId);
+    const center = {};
     center.center = true;
-    for (k1 in node) center[k1] = node[k1];
+    Object.keys(node).forEach(k => {
+      center[k] = node[k];
+    });
 
     localNodesIndex[centerId] = true;
     graph.nodes.push(center);
 
     // Add neighbors and edges between the center and the neighbors:
-    for (k1 in this.allNeighborsIndex[centerId]) {
+    Object.keys(this.allNeighborsIndex[centerId]).forEach(k1 => {
       if (!localNodesIndex[k1]) {
         localNodesIndex[k1] = true;
         graph.nodes.push(this.nodesIndex[k1]);
       }
 
-      for (k2 in this.allNeighborsIndex[centerId][k1])
+      Object.keys(this.allNeighborsIndex[centerId][k1]).forEach(k2 => {
         if (!localEdgesIndex[k2]) {
           localEdgesIndex[k2] = true;
           graph.edges.push(this.edgesIndex[k2]);
         }
-    }
+      });
+    });
 
     // Add edges connecting two neighbors:
-    for (k1 in localNodesIndex)
-      if (k1 !== centerId)
-        for (k2 in localNodesIndex)
-          if (k2 !== centerId && k1 !== k2 && this.allNeighborsIndex[k1][k2])
-            for (k3 in this.allNeighborsIndex[k1][k2])
-              if (!localEdgesIndex[k3]) {
+    Object.keys(localNodesIndex)
+      .filter(k => k !== centerId)
+      .forEach(k1 => {
+        Object.keys(localNodesIndex)
+          .filter(
+            k2 => k2 !== centerId && k1 !== k2 && this.allNeighborsIndex[k1][k2]
+          )
+          .forEach(k2 => {
+            Object.keys(this.allNeighborsIndex[k1][k2])
+              .filter(k3 => !localEdgesIndex[k3])
+              .forEach(k3 => {
                 localEdgesIndex[k3] = true;
                 graph.edges.push(this.edgesIndex[k3]);
-              }
+              });
+          });
+      });
 
     // Finally, let's return the final graph:
     return graph;
@@ -98,10 +102,6 @@ export default function extend(sigma) {
    * sigma.plugins.neighborhoods constructor.
    */
   sigma.plugins.neighborhoods = function neighborhoods() {
-    const ready = false;
-
-    const readyCallbacks = [];
-
     const graph = new sigma.classes.graph();
 
     /**
@@ -119,26 +119,27 @@ export default function extend(sigma) {
      * @param {string}    path     The path of the JSON graph file.
      * @param {?function} callback Eventually a callback to execute.
      */
-    this.load = function(path, callback) {
+    this.load = function load(path, callback) {
       // Quick XHR polyfill:
-      const xhr = (function() {
+      const xhr = (() => {
         if (window.XMLHttpRequest) return new XMLHttpRequest();
-
-        let names;
-        let i;
-
         if (window.ActiveXObject) {
-          names = [
+          const names = [
             "Msxml2.XMLHTTP.6.0",
             "Msxml2.XMLHTTP.3.0",
             "Msxml2.XMLHTTP",
             "Microsoft.XMLHTTP"
           ];
 
-          for (i in names)
+          for (let i = 0; i < names.length; i++) {
+            const name = names[i];
+            /* globals ActiveXObject: true */
             try {
-              return new ActiveXObject(names[i]);
-            } catch (e) {}
+              return new ActiveXObject(name);
+            } catch (e) {
+              // swallow
+            }
+          }
         }
 
         return null;
@@ -148,7 +149,7 @@ export default function extend(sigma) {
         throw new Error("XMLHttpRequest not supported, cannot load the data.");
 
       xhr.open("GET", path, true);
-      xhr.onreadystatechange = function() {
+      xhr.onreadystatechange = function orsc() {
         if (xhr.readyState === 4) {
           graph.clear().read(JSON.parse(xhr.responseText));
 

@@ -22,9 +22,11 @@ export default function extend(sigma) {
     let url = neo4j;
 
     if (typeof neo4j === "object") {
-      /* eslint-disable prefer-destructuring */
+      /* eslint-disable-next-line prefer-destructuring */
       url = neo4j.url;
+      /* eslint-disable-next-line prefer-destructuring */
       user = neo4j.user;
+      /* eslint-disable-next-line prefer-destructuring */
       password = neo4j.password;
     }
 

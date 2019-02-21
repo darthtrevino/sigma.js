@@ -10,16 +10,14 @@ export default function extend(sigma) {
    * @return {array}     The array of adjacent nodes.
    */
   if (!sigma.classes.graph.hasMethod("adjacentNodes"))
-    sigma.classes.graph.addMethod("adjacentNodes", function(id) {
+    sigma.classes.graph.addMethod("adjacentNodes", function adjacentNodes(id) {
       if (typeof id !== "string")
         throw new Error("adjacentNodes: the node id must be a string.");
 
-      let target;
-
       const nodes = [];
-      for (target in this.allNeighborsIndex[id]) {
+      Object.keys(this.allNeighborsIndex[id]).forEach(target => {
         nodes.push(this.nodesIndex[target]);
-      }
+      });
       return nodes;
     });
 
@@ -30,22 +28,18 @@ export default function extend(sigma) {
    * @return {array}     The array of adjacent edges.
    */
   if (!sigma.classes.graph.hasMethod("adjacentEdges"))
-    sigma.classes.graph.addMethod("adjacentEdges", function(id) {
+    sigma.classes.graph.addMethod("adjacentEdges", function adjacentEdges(id) {
       if (typeof id !== "string")
         throw new Error("adjacentEdges: the node id must be a string.");
 
       const a = this.allNeighborsIndex[id];
-
-      let eid;
-
-      let target;
-
       const edges = [];
-      for (target in a) {
-        for (eid in a[target]) {
+
+      Object.keys(a).forEach(target => {
+        Object.keys(a[target]).forEach(eid => {
           edges.push(a[target][eid]);
-        }
-      }
+        });
+      });
       return edges;
     });
 
@@ -58,14 +52,11 @@ export default function extend(sigma) {
    */
 
   let _g;
-
   let _s;
-
   let _chain = [];
   // chain of wrapped filters
 
   let _keysIndex = Object.create(null);
-
   const Processors = {}; // available predicate processors
 
   /**
@@ -111,19 +102,13 @@ export default function extend(sigma) {
    *
    * @param  {string} id The center node.
    */
-  Processors.neighbors = function neighbors(id) {
+  Processors.neighbors = function neighborsFn(id) {
     const n = _g.nodes();
-
     let ln = n.length;
-
     const e = _g.edges();
-
     let le = e.length;
-
     const neighbors = _g.adjacentNodes(id);
-
     let nn = neighbors.length;
-
     const no = {};
 
     while (nn--) no[neighbors[nn].id] = true;
@@ -143,10 +128,10 @@ export default function extend(sigma) {
    * @param  {?string}  key The key to identify the filter.
    */
   function register(fn, p, key) {
-    if (key != undefined && typeof key !== "string")
+    if (key !== undefined && typeof key !== "string")
       throw new Error(`The filter key "${key.toString()}" must be a string.`);
 
-    if (key != undefined && !key.length)
+    if (key !== undefined && !key.length)
       throw new Error("The filter key must be a non-empty string.");
 
     if (typeof fn !== "function")
@@ -171,11 +156,10 @@ export default function extend(sigma) {
    * @param {object} o The filter keys.
    */
   function unregister(o) {
-    _chain = _chain.filter(function(a) {
-      return !(a.key in o);
+    _chain = _chain.filter(a => !(a.key in o));
+    Object.keys(o).forEach(key => {
+      delete _keysIndex[key];
     });
-
-    for (const key in o) delete _keysIndex[key];
   }
 
   /**
@@ -207,10 +191,9 @@ export default function extend(sigma) {
    * @param  {?string}              key The key to identify the filter.
    * @return {sigma.plugins.filter}     Returns the instance.
    */
-  Filter.prototype.nodesBy = function(fn, key) {
+  Filter.prototype.nodesBy = function nodesBy(fn, key) {
     // Wrap the predicate to be applied on the graph and add it to the chain.
     register(Processors.nodes, fn, key);
-
     return this;
   };
 
@@ -233,10 +216,9 @@ export default function extend(sigma) {
    * @param  {?string}              key The key to identify the filter.
    * @return {sigma.plugins.filter}     Returns the instance.
    */
-  Filter.prototype.edgesBy = function(fn, key) {
+  Filter.prototype.edgesBy = function edgesBy(fn, key) {
     // Wrap the predicate to be applied on the graph and add it to the chain.
     register(Processors.edges, fn, key);
-
     return this;
   };
 
@@ -253,7 +235,7 @@ export default function extend(sigma) {
    * @param  {?string}              key The key to identify the filter.
    * @return {sigma.plugins.filter}     Returns the instance.
    */
-  Filter.prototype.neighborsOf = function(id, key) {
+  Filter.prototype.neighborsOf = function neighborsOf(id, key) {
     if (typeof id !== "string")
       throw new Error(`The node id "${id.toString()}" must be a string.`);
     if (!id.length) throw new Error("The node id must be a non-empty string.");
@@ -277,7 +259,7 @@ export default function extend(sigma) {
    *
    * @return {sigma.plugins.filter}      Returns the instance.
    */
-  Filter.prototype.apply = function() {
+  Filter.prototype.apply = function apply() {
     for (let i = 0, len = _chain.length; i < len; ++i) {
       _chain[i].processor(_chain[i].predicate);
     }
@@ -319,34 +301,30 @@ export default function extend(sigma) {
    * @param  {?(string|array|*string))} v Eventually one key, an array of keys.
    * @return {sigma.plugins.filter}       Returns the instance.
    */
-  Filter.prototype.undo = function(v) {
+  Filter.prototype.undo = function undo(v) {
     const q = Object.create(null);
-
     const la = arguments.length;
 
     // find removable filters
     if (la === 1) {
       if (Object.prototype.toString.call(v) === "[object Array]")
-        for (var i = 0, len = v.length; i < len; i++) q[v[i]] = true;
+        for (let i = 0, len = v.length; i < len; i++) q[v[i]] = true;
       // 1 filter key
       else q[v] = true;
     } else if (la > 1) {
-      for (var i = 0; i < la; i++) q[arguments[i]] = true;
+      // eslint-disable-next-line prefer-rest-params
+      for (let i = 0; i < la; i++) q[arguments[i]] = true;
     } else this.clear();
 
     unregister(q);
 
     function processor() {
       const n = _g.nodes();
-
       let ln = n.length;
-
       const e = _g.edges();
-
       let le = e.length;
 
       while (ln--) n[ln].hidden = false;
-
       while (le--) e[le].hidden = false;
     }
 
@@ -361,15 +339,16 @@ export default function extend(sigma) {
   // fast deep copy function
   function deepCopy(o) {
     const copy = Object.create(null);
-    for (const i in o) {
+    Object.keys(o).forEach(i => {
       if (typeof o[i] === "object" && o[i] !== null) {
         copy[i] = deepCopy(o[i]);
       } else if (typeof o[i] === "function" && o[i] !== null) {
         // clone function:
+        // eslint-disable-next-line no-eval
         eval(` copy[i] = ${o[i].toString()}`);
         // copy[i] = o[i].bind(_g);
       } else copy[i] = o[i];
-    }
+    });
     return copy;
   }
 
@@ -393,7 +372,7 @@ export default function extend(sigma) {
    *
    * @return {sigma.plugins.filter} Returns the instance.
    */
-  Filter.prototype.clear = function() {
+  Filter.prototype.clear = function clear() {
     _chain.length = 0; // clear the array
     _keysIndex = Object.create(null);
     return this;
@@ -407,7 +386,7 @@ export default function extend(sigma) {
    *
    * @return {object}   The cloned chain of filters.
    */
-  Filter.prototype.export = function() {
+  Filter.prototype.export = function exportFn() {
     const c = cloneChain(_chain);
     return c;
   };
@@ -428,7 +407,7 @@ export default function extend(sigma) {
    * @param {array} chain The chain of filters.
    * @return {sigma.plugins.filter} Returns the instance.
    */
-  Filter.prototype.import = function(chain) {
+  Filter.prototype.import = function importFn(chain) {
     if (chain === undefined) throw new Error("Wrong arguments.");
 
     if (Object.prototype.toString.call(chain) !== "[object Array]")
@@ -440,7 +419,7 @@ export default function extend(sigma) {
       if (copy[i].predicate === undefined || copy[i].processor === undefined)
         throw new Error("Wrong arguments.");
 
-      if (copy[i].key != undefined && typeof copy[i].key !== "string")
+      if (copy[i].key !== undefined && typeof copy[i].key !== "string")
         throw new Error(
           `The filter key "${copy[i].key.toString()}" must be a string.`
         );
@@ -472,7 +451,6 @@ export default function extend(sigma) {
     }
 
     _chain = copy;
-
     return this;
   };
 
@@ -487,7 +465,7 @@ export default function extend(sigma) {
   /**
    * @param  {sigma} s The related sigma instance.
    */
-  sigma.plugins.filter = function(s) {
+  sigma.plugins.filter = function filterFn(s) {
     // Create filter if undefined
     if (!filter) {
       filter = new Filter(s);
