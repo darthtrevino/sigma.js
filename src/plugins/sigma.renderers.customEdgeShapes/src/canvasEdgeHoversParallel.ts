@@ -7,26 +7,22 @@
  * @param  {CanvasRenderingContext2D} context      The canvas context.
  * @param  {configurable}             settings     The settings function.
  */
-export default sigma => {
-  return function curve(edge, source, target, context, settings) {
-    let { color } = edge;
+export default sigma =>
+  function canvasEdgeHoversParallel(edge, source, target, context, settings) {
+    let color = edge.active
+      ? edge.active_color || settings("defaultEdgeActiveColor")
+      : edge.color;
+
     const prefix = settings("prefix") || "";
-    const size = settings("edgeHoverSizeRatio") * (edge[`${prefix}size`] || 1);
-    const count = edge.count || 0;
+    let size = edge[`${prefix}size`] || 1;
     const edgeColor = settings("edgeColor");
     const defaultNodeColor = settings("defaultNodeColor");
     const defaultEdgeColor = settings("defaultEdgeColor");
-
-    let cp = {};
-    const sSize = source[`${prefix}size`];
     const sX = source[`${prefix}x`];
     const sY = source[`${prefix}y`];
     const tX = target[`${prefix}x`];
     const tY = target[`${prefix}y`];
-    cp =
-      source.id === target.id
-        ? sigma.utils.getSelfLoopControlPoints(sX, sY, sSize, count)
-        : sigma.utils.geom.getQuadraticControlPoint(sX, sY, tX, tY, count);
+    const dist = sigma.utils.geom.getDistance(sX, sY, tX, tY);
 
     if (!color)
       switch (edgeColor) {
@@ -46,16 +42,43 @@ export default sigma => {
     } else {
       color = edge.hover_color || settings("defaultEdgeHoverColor") || color;
     }
+    size *= settings("edgeHoverSizeRatio");
+
+    // Intersection points of the source node circle:
+    const c = sigma.utils.geom.getCircleIntersection(
+      sX,
+      sY,
+      size,
+      tX,
+      tY,
+      dist
+    );
+
+    // Intersection points of the target node circle:
+    const d = sigma.utils.geom.getCircleIntersection(
+      tX,
+      tY,
+      size,
+      sX,
+      sY,
+      dist
+    );
+
+    context.save();
 
     context.strokeStyle = color;
     context.lineWidth = size;
     context.beginPath();
-    context.moveTo(sX, sY);
-    if (source.id === target.id) {
-      context.bezierCurveTo(cp.x1, cp.y1, cp.x2, cp.y2, tX, tY);
-    } else {
-      context.quadraticCurveTo(cp.x, cp.y, tX, tY);
-    }
+    context.moveTo(c.xi, c.yi);
+    context.lineTo(d.xi_prime, d.yi_prime);
+    context.closePath();
     context.stroke();
+
+    context.beginPath();
+    context.moveTo(c.xi_prime, c.yi_prime);
+    context.lineTo(d.xi, d.yi);
+    context.closePath();
+    context.stroke();
+
+    context.restore();
   };
-};

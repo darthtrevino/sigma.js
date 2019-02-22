@@ -20,14 +20,14 @@ export default function touchCaptor(sigma) {
     // CAMERA MANAGEMENT:
     // ******************
     // The camera position when the user starts dragging:
-    private startCameraX = 0;
-    private startCameraY = 0;
-    private startCameraAngle = 0;
-    private startCameraRatio = 0;
+    public startCameraX = 0;
+    public startCameraY = 0;
+    public startCameraAngle = 0;
+    public startCameraRatio = 0;
 
     // The latest stage position:
-    private lastCameraX = 0;
-    private lastCameraY = 0;
+    public lastCameraX = 0;
+    public lastCameraY = 0;
 
     // TOUCH MANAGEMENT:
     // *****************
@@ -408,5 +408,5 @@ export default function touchCaptor(sigma) {
       }
       return undefined;
     };
-  };
+  } as any;
 }

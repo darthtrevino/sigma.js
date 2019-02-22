@@ -10,13 +10,16 @@ import canvasEdgesTapered from "./src/sigmaCanvasEdgesTapered";
 export default function extend(sigma) {
   sigma.register("sigma.canvas.edgehovers.dashed", canvasEdgeHoversDashed);
   sigma.register("sigma.canvas.edgehovers.dotted", canvasEdgeHoversDotted);
-  sigma.register("sigma.canvas.edgehovers.parallel", canvasEdgeHoversParallel);
+  sigma.register(
+    "sigma.canvas.edgehovers.parallel",
+    canvasEdgeHoversParallel(sigma)
+  );
   sigma.register(
     "sigma.canvas.edgehovers.tapered",
     canvasEdgeHoversTapered(sigma)
   );
   sigma.register("sigma.canvas.edges.dashed", canvasEdgesDashed);
   sigma.register("sigma.canvas.edges.dotted", canvasEdgesDotted);
-  sigma.register("sigma.canvas.edges.parallel", canvasEdgesParallel);
-  sigma.register("sigma.canvas.edges.tapered", canvasEdgesTapered);
+  sigma.register("sigma.canvas.edges.parallel", canvasEdgesParallel(sigma));
+  sigma.register("sigma.canvas.edges.tapered", canvasEdgesTapered(sigma));
 }

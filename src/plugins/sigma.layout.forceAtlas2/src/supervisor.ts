@@ -26,7 +26,7 @@ export default function extend(sigma, global = window) {
     options = options || {};
 
     // global URL Polyfill
-    global.URL = global.URL || global.webkitURL;
+    global.URL = global.URL || (global as any).webkitURL;
 
     // Properties
     this.sigInst = sigInst;
@@ -95,7 +95,9 @@ export default function extend(sigma, global = window) {
       blob = new Blob([workerFn], { type: "application/javascript" });
     } catch (e) {
       const BlobBuilder =
-        global.BlobBuilder || global.WebKitBlobBuilder || global.MozBlobBuilder;
+        (global as any).BlobBuilder ||
+        (global as any).WebKitBlobBuilder ||
+        (global as any).MozBlobBuilder;
 
       blob = new BlobBuilder();
       blob.append(workerFn);
@@ -163,7 +165,7 @@ export default function extend(sigma, global = window) {
   Supervisor.prototype.sendByteArrayToWorker = function sendByteArrayToWorker(
     action
   ) {
-    const content = {
+    const content: { [key: string]: any } = {
       action: action || "loop",
       nodes: this.nodesByteArray.buffer
     };
