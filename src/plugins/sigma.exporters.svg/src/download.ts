@@ -4,13 +4,13 @@ export default function download(string, filename, global = window) {
   /**
    * Polyfills
    */
-  const URL = global.URL || global.webkitURL || global;
+  const URL = global.URL || (global as any).webkitURL || global;
 
   // Creating blob href
   const blob = createBlob(string);
 
   // Anchor
-  const o = {};
+  const o: any = {};
   o.anchor = document.createElement("a");
   o.anchor.setAttribute("href", URL.createObjectURL(blob));
   o.anchor.setAttribute("download", filename);
