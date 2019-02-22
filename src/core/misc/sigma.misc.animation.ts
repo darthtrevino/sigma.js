@@ -181,7 +181,6 @@ export default function configure(sigma: SigmaLibrary) {
     const type = typeof filter === "string" ? filter : null;
     const target = typeof filter === "object" ? filter : null;
     const { running } = sigma.misc.animation;
-
     Object.keys(running).forEach(id => {
       if (
         (!type || running[id].type === type) &&
@@ -228,6 +227,7 @@ export default function configure(sigma: SigmaLibrary) {
     });
   }
 
+  sigma.register("sigma.misc.animation.running", Object.create(null));
   sigma.register("sigma.misc.animation.kill", kill);
   sigma.register("sigma.misc.animation.killAll", killAll);
   sigma.register("sigma.misc.animation.has", has);
