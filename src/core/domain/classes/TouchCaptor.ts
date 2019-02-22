@@ -4,8 +4,9 @@ import mouseCoords from "../utils/events/mouseCoords";
 import getCenter from "../utils/events/getCenter";
 import getOffset from "../utils/events/getOffset";
 import Camera from "./Camera";
+import { SigmaLibrary } from "../../interfaces";
 
-export default function touchCaptor(sigma) {
+export default function touchCaptor(sigma: SigmaLibrary) {
   /**
    * The user inputs default captor. It deals with mouse events, keyboards
    * events and touch events.

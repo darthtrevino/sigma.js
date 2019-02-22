@@ -79,7 +79,7 @@ import rescale from "./domain/middleware/rescale";
 import getBoundaries from "./domain/utils/geometry/getBoundaries";
 import emptyObject from "./domain/utils/misc/emptyObject";
 import xhr from "./domain/utils/misc/xhr";
-import { SigmaLibrary } from "./sigma.core";
+import { SigmaLibrary } from "./interfaces";
 
 export default (sigma: SigmaLibrary) => {
   /**

@@ -1,4 +1,8 @@
-export default function configure(sigma) {
+import { Event, Node, Edge, SigmaLibrary } from "../interfaces";
+import Dispatcher from "../domain/classes/Dispatcher";
+import Sigma from "../domain/classes/Sigma";
+
+export default function configure(sigma: SigmaLibrary) {
   /**
    * This method listens to "overNode", "outNode", "overEdge" and "outEdge"
    * events from a renderer and renders the nodes differently on the top layer.
@@ -7,10 +11,11 @@ export default function configure(sigma) {
    *
    * It has to be called in the scope of the related renderer.
    */
-  sigma.register("sigma.misc.drawHovers", function drawHovers(prefix) {
+  function drawHovers(this: any, prefix: string) {
+    //TODO: this type should be renderer
     const self = this;
-    const hoveredNodes = {};
-    const hoveredEdges = {};
+    const hoveredNodes: { [key: string]: Node } = {};
+    const hoveredEdges: { [key: string]: Edge } = {};
 
     function draw() {
       let source;
@@ -146,7 +151,7 @@ export default function configure(sigma) {
       }
     }
 
-    this.bind("overNode", event => {
+    this.bind("overNode", (event: Event<{ node: Node }>) => {
       const { node } = event.data;
       if (!node.hidden) {
         hoveredNodes[node.id] = node;
@@ -154,12 +159,12 @@ export default function configure(sigma) {
       }
     });
 
-    this.bind("outNode", event => {
+    this.bind("outNode", (event: Event<{ node: Node }>) => {
       delete hoveredNodes[event.data.node.id];
       draw();
     });
 
-    this.bind("overEdge", event => {
+    this.bind("overEdge", (event: Event<{ edge: Edge }>) => {
       const { edge } = event.data;
       if (!edge.hidden) {
         hoveredEdges[edge.id] = edge;
@@ -167,11 +172,13 @@ export default function configure(sigma) {
       }
     });
 
-    this.bind("outEdge", event => {
+    this.bind("outEdge", (event: Event<{ edge: Edge }>) => {
       delete hoveredEdges[event.data.edge.id];
       draw();
     });
 
     this.bind("render", () => draw());
-  });
+  }
+
+  sigma.register("sigma.misc.drawHovers", drawHovers);
 }

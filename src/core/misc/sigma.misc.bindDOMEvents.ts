@@ -1,4 +1,6 @@
-export default function configure(sigma) {
+import { SigmaLibrary } from "../interfaces";
+
+export default function configure(sigma: SigmaLibrary) {
   /**
    * This helper will bind any DOM renderer (for instance svg)
    * to its captors, to properly dispatch the good events to the sigma instance
@@ -6,13 +8,12 @@ export default function configure(sigma) {
    *
    * It has to be called in the scope of the related renderer.
    */
-  sigma.register("sigma.misc.bindDOMEvents", function bindDOMEvents(container) {
+  function bindDOMEvents(this: any, container: HTMLElement) {
     const self = this;
-
     const { graph } = this;
 
     // DOMElement abstraction
-    function Element(domElement) {
+    function Element(domElement: HTMLElement) {
       // Helpers
       this.attr = attrName => domElement.getAttributeNS(null, attrName);
 
@@ -36,7 +37,7 @@ export default function configure(sigma) {
     }
 
     // Click
-    function click(e) {
+    function click(e: any) {
       if (!self.settings("eventsEnabled")) return;
 
       // Generic event
@@ -56,7 +57,7 @@ export default function configure(sigma) {
     }
 
     // Double click
-    function doubleClick(e) {
+    function doubleClick(e: any) {
       if (!self.settings("eventsEnabled")) return;
 
       // Generic event
@@ -76,7 +77,7 @@ export default function configure(sigma) {
     }
 
     // On over
-    function onOver(e) {
+    function onOver(e: any) {
       const target = e.toElement || e.target;
 
       if (!self.settings("eventsEnabled") || !target) return;
@@ -98,7 +99,7 @@ export default function configure(sigma) {
     }
 
     // On out
-    function onOut(e) {
+    function onOut(e: any) {
       const target = e.fromElement || e.originalTarget;
 
       if (!self.settings("eventsEnabled")) return;
@@ -134,5 +135,7 @@ export default function configure(sigma) {
 
     // Mouseout
     container.addEventListener("mouseout", onOut, true);
-  });
+  }
+
+  sigma.register("sigma.misc.bindDOMEvents", bindDOMEvents);
 }

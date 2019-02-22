@@ -1,9 +1,7 @@
-export default function configure(sigma) {
-  if (typeof sigma === "undefined") throw new Error("sigma is not declared");
+import { SigmaLibrary } from "../interfaces";
+import Camera, { CameraLocation } from "../domain/classes/Camera";
 
-  // Initialize packages:
-  sigma.utils.pkg("sigma.misc.animation.running");
-
+export default function configure(sigma: SigmaLibrary) {
   /**
    * Generates a unique ID for the animation.
    *
@@ -11,8 +9,8 @@ export default function configure(sigma) {
    */
   const _getID = (function getId() {
     let id = 0;
-    return function next() {
-      return `${++id}`;
+    return function next(): number {
+      return ++id;
     };
   })();
 
@@ -41,7 +39,7 @@ export default function configure(sigma) {
    * @return {number}          The animation id, to make it easy to kill
    *                           through the method "sigma.misc.animation.kill".
    */
-  sigma.misc.animation.camera = function animationCamera(camera, val, options) {
+  function animationCamera(camera: Camera, val: CameraLocation, options?: any) {
     if (
       !(camera instanceof sigma.classes.camera) ||
       typeof val !== "object" ||
@@ -59,7 +57,7 @@ export default function configure(sigma) {
         "There must be at least one valid coordinate in the given val."
       );
 
-    let id;
+    let id: number;
     let anim;
     const o = options || {};
     const start = sigma.utils.dateNow();
@@ -139,7 +137,7 @@ export default function configure(sigma) {
     sigma.misc.animation.running[id] = anim;
 
     return id;
-  };
+  }
 
   /**
    * Kills a running animation. It triggers the eventual onComplete callback.
@@ -147,7 +145,7 @@ export default function configure(sigma) {
    * @param  {number} id  The id of the animation to kill.
    * @return {object}     Returns the sigma.misc.animation package.
    */
-  sigma.misc.animation.kill = function kill(id) {
+  function kill(id: number) {
     if (arguments.length !== 1 || typeof id !== "number")
       throw new Error("animation.kill: Wrong arguments.");
 
@@ -165,7 +163,7 @@ export default function configure(sigma) {
     }
 
     return this;
-  };
+  }
 
   /**
    * Kills every running animations, or only the one with the specified type,
@@ -177,13 +175,12 @@ export default function configure(sigma) {
    * @return {number}                  Returns the number of animations killed
    *                                   that way.
    */
-  sigma.misc.animation.killAll = function killAll(filter) {
+  function killAll(filter?: string | object) {
     let o;
     let count = 0;
     const type = typeof filter === "string" ? filter : null;
     const target = typeof filter === "object" ? filter : null;
     const { running } = sigma.misc.animation;
-
     Object.keys(running).forEach(id => {
       if (
         (!type || running[id].type === type) &&
@@ -205,7 +202,7 @@ export default function configure(sigma) {
     });
 
     return count;
-  };
+  }
 
   /**
    * Returns "true" if any animation that is currently still running matches
@@ -217,7 +214,7 @@ export default function configure(sigma) {
    * @return {boolean}              Returns true if any running animation
    *                                matches.
    */
-  sigma.misc.animation.has = function has(filter) {
+  function has(filter: string | object) {
     const type = typeof filter === "string" ? filter : null;
     const target = typeof filter === "object" ? filter : null;
     const { running } = sigma.misc.animation;
@@ -228,5 +225,11 @@ export default function configure(sigma) {
         (!target || running[id].target === target)
       );
     });
-  };
+  }
+
+  sigma.register("sigma.misc.animation.running", Object.create(null));
+  sigma.register("sigma.misc.animation.kill", kill);
+  sigma.register("sigma.misc.animation.killAll", killAll);
+  sigma.register("sigma.misc.animation.has", has);
+  sigma.register("sigma.misc.animation.camera", animationCamera);
 }

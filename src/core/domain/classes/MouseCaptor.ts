@@ -6,7 +6,7 @@ import getY from "../utils/events/getY";
 import getCenter from "../utils/events/getCenter";
 import getDelta from "../utils/events/getDelta";
 import Camera from "./Camera";
-import { SigmaLibrary } from "../../sigma.core";
+import { SigmaLibrary } from "../../interfaces";
 
 export default (sigma: SigmaLibrary) => {
   /**

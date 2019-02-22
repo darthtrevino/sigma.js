@@ -5,7 +5,7 @@ import Dispatcher from "../../classes/Dispatcher";
 import getPixelRatio from "../../utils/events/getPixelRatio";
 import multiply from "../../utils/matrices/multiply";
 import translation from "../../utils/matrices/translation";
-import { SigmaLibrary } from "../../../sigma.core";
+import { SigmaLibrary } from "../../../interfaces";
 
 /**
  * This function is the constructor of the canvas sigma's renderer.

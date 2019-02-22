@@ -1,4 +1,4 @@
-import { SigmaLibrary } from "../../../sigma.core";
+import { SigmaLibrary } from "../../../interfaces";
 
 /**
  * The default renderer for hovered edge extremities. It renders the edge

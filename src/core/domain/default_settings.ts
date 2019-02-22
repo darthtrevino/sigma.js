@@ -1,4 +1,6 @@
-const settings: { [key: string]: any } = {
+import { SigmaSettings } from "../interfaces";
+
+const settings: SigmaSettings = {
   /**
    * GRAPH SETTINGS:
    * ***************
