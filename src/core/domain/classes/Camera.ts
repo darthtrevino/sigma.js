@@ -2,7 +2,7 @@ import scale from "../utils/matrices/scale";
 import rotation from "../utils/matrices/rotation";
 import translation from "../utils/matrices/translation";
 import multiply from "../utils/matrices/multiply";
-import Dispatcher from "./DispatcherClass";
+import Dispatcher from "./Dispatcher";
 
 /**
  * The camera constructor. It just initializes its attributes and methods.

@@ -1,4 +1,4 @@
-import Dispatcher from "./DispatcherClass";
+import Dispatcher from "./Dispatcher";
 import unbindDoubleClick from "../utils/events/unbindDoubleClick";
 import mouseCoords from "../utils/events/mouseCoords";
 import getCenter from "../utils/events/getCenter";
