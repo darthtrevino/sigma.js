@@ -14,7 +14,7 @@ export default function loadProgram(
   attribs?: string[],
   locations?: number[],
   error?: (err: Error) => void
-): WebGLProgram {
+): WebGLProgram | undefined {
   let i;
   const program = gl.createProgram();
 
@@ -35,7 +35,7 @@ export default function loadProgram(
       );
 
     gl.deleteProgram(program);
-    return null;
+    return undefined;
   }
 
   return program;

@@ -9,8 +9,8 @@ export default function configure(sigma: SigmaLibrary) {
    */
   const _getID = (function getId() {
     let id = 0;
-    return function next() {
-      return `${++id}`;
+    return function next(): number {
+      return ++id;
     };
   })();
 
@@ -57,7 +57,7 @@ export default function configure(sigma: SigmaLibrary) {
         "There must be at least one valid coordinate in the given val."
       );
 
-    let id;
+    let id: number;
     let anim;
     const o = options || {};
     const start = sigma.utils.dateNow();

@@ -382,3 +382,22 @@ export interface SigmaLibrary {
   svg: { [key: string]: any };
   webgl: { [key: string]: any };
 }
+
+export interface Event<T> {
+  data: T;
+}
+
+export interface Node {
+  id: string;
+  hidden?: boolean;
+  type: string;
+  size: number;
+}
+
+export interface Edge {
+  id: string;
+  hidden?: boolean;
+  source: string;
+  target: string;
+  type: string;
+}

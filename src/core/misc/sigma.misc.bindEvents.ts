@@ -1,4 +1,6 @@
-export default function configure(sigma) {
+import { SigmaLibrary, Edge, Node } from "../interfaces";
+
+export default function configure(sigma: SigmaLibrary) {
   /**
    * This helper will bind any no-DOM renderer (for instance canvas or WebGL)
    * to its captors, to properly dispatch the good events to the sigma instance
@@ -6,12 +8,12 @@ export default function configure(sigma) {
    *
    * It has to be called in the scope of the related renderer.
    */
-  sigma.register("sigma.misc.bindEvents", function bindEvents(prefix) {
-    let mX;
-    let mY;
+  function bindEvents(this: any, prefix: string) {
+    let mX: number;
+    let mY: number;
     const self = this;
 
-    function getNodes(e) {
+    function getNodes(e): Node[] {
       if (e) {
         mX = "x" in e.data ? e.data.x : mX;
         mY = "y" in e.data ? e.data.y : mY;
@@ -23,7 +25,7 @@ export default function configure(sigma) {
       let y;
       let s;
       let inserted;
-      const selected = [];
+      const selected: Node[] = [];
       const modifiedX = mX + self.width / 2;
       const modifiedY = mY + self.height / 2;
       const point = self.camera.cameraPosition(mX, mY);
@@ -61,7 +63,7 @@ export default function configure(sigma) {
       return selected;
     }
 
-    function getEdges(e) {
+    function getEdges(e: any): Edge[] {
       if (!self.settings("enableEdgeHovering")) {
         // No event if the setting is off:
         return [];
@@ -93,9 +95,9 @@ export default function configure(sigma) {
       let source;
       let target;
       let cp;
-      const nodeIndex = {};
+      const nodeIndex: { [key: string]: Node } = {};
       let inserted;
-      const selected = [];
+      const selected: Edge[] = [];
       const modifiedX = mX + self.width / 2;
       const modifiedY = mY + self.height / 2;
       const point = self.camera.cameraPosition(mX, mY);
@@ -113,7 +115,7 @@ export default function configure(sigma) {
         edges = self.camera.edgequadtree.point(point.x, point.y);
       }
 
-      function insertEdge(ieSelected, ieEdge) {
+      function insertEdge(ieSelected: any, ieEdge: any) {
         inserted = false;
 
         for (j = 0; j < ieSelected.length; j++)
@@ -225,13 +227,13 @@ export default function configure(sigma) {
       return selected;
     }
 
-    function bindCaptor(captor) {
+    function bindCaptor(captor: any) {
       let nodes;
       let edges;
-      let overNodes = {};
-      let overEdges = {};
+      let overNodes: { [key: string]: Node } = {};
+      let overEdges: { [key: string]: Edge } = {};
 
-      function onClick(e) {
+      function onClick(e: any) {
         if (!self.settings("eventsEnabled")) return;
 
         self.dispatchEvent("click", e.data);
@@ -259,7 +261,7 @@ export default function configure(sigma) {
         } else self.dispatchEvent("clickStage", { captor: e.data });
       }
 
-      function onDoubleClick(e) {
+      function onDoubleClick(e: any) {
         if (!self.settings("eventsEnabled")) return;
 
         self.dispatchEvent("doubleClick", e.data);
@@ -288,7 +290,7 @@ export default function configure(sigma) {
         } else self.dispatchEvent("doubleClickStage", { captor: e.data });
       }
 
-      function onRightClick(e) {
+      function onRightClick(e: any) {
         if (!self.settings("eventsEnabled")) return;
 
         self.dispatchEvent("rightClick", e.data);
@@ -317,14 +319,14 @@ export default function configure(sigma) {
         } else self.dispatchEvent("rightClickStage", { captor: e.data });
       }
 
-      function onOut(e) {
+      function onOut(e: any) {
         if (!self.settings("eventsEnabled")) return;
 
         let i;
         let l;
         let le;
-        const outNodes = [];
-        const outEdges = [];
+        const outNodes: Node[] = [];
+        const outEdges: Edge[] = [];
 
         Object.keys(overNodes).forEach(k => outNodes.push(overNodes[k]));
 
@@ -355,7 +357,7 @@ export default function configure(sigma) {
           });
       }
 
-      function onMove(e) {
+      function onMove(e: any) {
         if (!self.settings("eventsEnabled")) return;
 
         nodes = getNodes(e);
@@ -364,13 +366,13 @@ export default function configure(sigma) {
         let i;
         let node;
         let edge;
-        const newOutNodes = [];
-        const newOverNodes = [];
-        const currentOverNodes = {};
+        const newOutNodes: Node[] = [];
+        const newOverNodes: Node[] = [];
+        const currentOverNodes: { [key: string]: Node } = {};
         let l = nodes.length;
-        const newOutEdges = [];
-        const newOverEdges = [];
-        const currentOverEdges = {};
+        const newOutEdges: Edge[] = [];
+        const newOverEdges: Edge[] = [];
+        const currentOverEdges: { [key: string]: Edge } = {};
         let le = edges.length;
 
         // Check newly overred nodes:
@@ -465,6 +467,8 @@ export default function configure(sigma) {
       self.bind("render", onMove);
     }
 
-    this.captors.forEach(c => bindCaptor(c));
-  });
+    this.captors.forEach((c: any) => bindCaptor(c));
+  }
+
+  sigma.register("sigma.misc.bindEvents", bindEvents);
 }

@@ -12,7 +12,7 @@ export default function loadShader(
   shaderSource: string,
   shaderType: number,
   error?: (err: Error) => void
-) {
+): WebGLShader | undefined {
   const shader = gl.createShader(shaderType);
 
   // Load the shader source
@@ -35,7 +35,7 @@ export default function loadShader(
     }
 
     gl.deleteShader(shader);
-    return null;
+    return undefined;
   }
 
   return shader;

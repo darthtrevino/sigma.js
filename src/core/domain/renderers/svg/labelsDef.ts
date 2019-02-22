@@ -10,9 +10,7 @@ export default {
    */
   create(node, settings) {
     const prefix = settings("prefix") || "";
-
     const size = node[`${prefix}size`];
-
     const text = document.createElementNS(settings("xmlns"), "text");
 
     const fontSize =
