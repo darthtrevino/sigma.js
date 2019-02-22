@@ -1,15 +1,20 @@
 import emptyObject from "../utils/misc/emptyObject";
+type NamedBindings = { [key: string]: Function };
 
-const _methods = Object.create(null);
-const _indexes = Object.create(null);
-const _initBindings = Object.create(null);
-const _methodBindings = Object.create(null);
-const _methodBeforeBindings = Object.create(null);
-const _defaultSettings = {
+const _methods: NamedBindings = {};
+// tracks binding objects that have been registered.
+const _indexes: { [key: string]: NamedBindings } = {};
+const _initBindings: NamedBindings = {};
+const _methodBindings: { [methodName: string]: NamedBindings } = {};
+const _methodBeforeBindings: { [methodName: string]: NamedBindings } = {};
+const _defaultSettings: { [key: string]: any } = {
   immutable: true,
   clone: true
 };
-const _defaultSettingsFunction = function _defaultSettingsFunction(key) {
+
+const _defaultSettingsFunction = function _defaultSettingsFunction(
+  key: string
+) {
   return _defaultSettings[key];
 };
 
@@ -217,7 +222,12 @@ graph.hasMethod = function hasMethod(methodName) {
  * @param  {boolean}  before     If true the function is called right before.
  * @return {object}              The global graph constructor.
  */
-graph.attach = function attach(methodName, key, fn, before) {
+graph.attach = function attach(
+  methodName: string,
+  key: string,
+  fn: Function,
+  before?: boolean
+) {
   if (
     typeof methodName !== "string" ||
     typeof key !== "string" ||
@@ -229,27 +239,27 @@ graph.attach = function attach(methodName, key, fn, before) {
 
   let bindings;
 
-  if (methodName === "constructor") bindings = _initBindings;
-  else if (before) {
-    if (!_methodBeforeBindings[methodName])
+  if (methodName === "constructor") {
+    bindings = _initBindings;
+  } else if (before) {
+    if (!_methodBeforeBindings[methodName]) {
       throw new Error(`The method "${methodName}" does not exist.`);
-
+    }
     bindings = _methodBeforeBindings[methodName];
   } else {
-    if (!_methodBindings[methodName])
+    if (!_methodBindings[methodName]) {
       throw new Error(`The method "${methodName}" does not exist.`);
+    }
 
     bindings = _methodBindings[methodName];
   }
 
   if (bindings[key])
     throw new Error(
-      `A function "${key}" is already attached ` +
-        `to the method "${methodName}".`
+      `A function "${key}" is already attached to the method "${methodName}".`
     );
 
   bindings[key] = fn;
-
   return this;
 };
 
@@ -295,7 +305,7 @@ graph.attachBefore = function attachBefore(methodName, key, fn) {
  * @param  {object} bindings The object containing the functions to bind.
  * @return {object}          The global graph constructor.
  */
-graph.addIndex = function addIndex(name, bindings) {
+graph.addIndex = function addIndex(name: string, bindings: NamedBindings) {
   if (
     typeof name !== "string" ||
     Object(bindings) !== bindings ||
