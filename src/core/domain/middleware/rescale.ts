@@ -16,8 +16,6 @@ export default function rescale(
   writePrefix: string,
   options?: any
 ) {
-  let i;
-  let l;
   let a;
   let b;
   let c;
@@ -112,12 +110,12 @@ export default function rescale(
   }
 
   // Rescale the nodes and edges:
-  this.graph.edges.forEach(edge => {
+  this.graph.edges().forEach(edge => {
     edge[`${writePrefix}size`] =
       edge[`${readPrefix}size`] * (es ? c : 1) + (es ? d : 0);
   });
 
-  this.graph.nodes.forEach(node => {
+  this.graph.nodes().forEach(node => {
     node[`${writePrefix}size`] =
       node[`${readPrefix}size`] * (ns ? a : 1) + (ns ? b : 0);
     node[`${writePrefix}x`] =
