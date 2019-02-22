@@ -18,7 +18,9 @@ export default {
     let h;
     let e;
     const prefix = settings("prefix") || "";
-    const size = node[`${prefix}size`];
+    let nodeX: number = node[`${prefix}x`];
+    let nodeY: number = node[`${prefix}y`];
+    const size: number = node[`${prefix}size`];
     const fontSize =
       settings("labelSize") === "fixed"
         ? settings("defaultLabelSize")
@@ -51,12 +53,8 @@ export default {
       text.setAttributeNS(null, "font-size", fontSize);
       text.setAttributeNS(null, "font-family", settings("font"));
       text.setAttributeNS(null, "fill", fontColor);
-      text.setAttributeNS(null, "x", Math.round(node[`${prefix}x`] + size + 3));
-      text.setAttributeNS(
-        null,
-        "y",
-        Math.round(node[`${prefix}y`] + fontSize / 3)
-      );
+      text.setAttributeNS(null, "x", `${Math.round(nodeX + size + 3)}`);
+      text.setAttributeNS(null, "y", `${Math.round(nodeY + fontSize / 3)}`);
 
       // Measures
       // OPTIMIZE: Find a better way than a measurement canvas
@@ -76,8 +74,8 @@ export default {
         `${settings("classPrefix")}-hover-area`
       );
       circle.setAttributeNS(null, "fill", "#fff");
-      circle.setAttributeNS(null, "cx", node[`${prefix}x`]);
-      circle.setAttributeNS(null, "cy", node[`${prefix}y`]);
+      circle.setAttributeNS(null, "cx", `${nodeX}`);
+      circle.setAttributeNS(null, "cy", `${nodeY}`);
       circle.setAttributeNS(null, "r", e);
 
       // Rectangle
@@ -87,8 +85,8 @@ export default {
         `${settings("classPrefix")}-hover-area`
       );
       rectangle.setAttributeNS(null, "fill", "#fff");
-      rectangle.setAttributeNS(null, "x", node[`${prefix}x`] + e / 4);
-      rectangle.setAttributeNS(null, "y", node[`${prefix}y`] - e);
+      rectangle.setAttributeNS(null, "x", `${nodeX + e / 4}`);
+      rectangle.setAttributeNS(null, "y", `${nodeY - e}`);
       rectangle.setAttributeNS(null, "width", w);
       rectangle.setAttributeNS(null, "height", h);
     }

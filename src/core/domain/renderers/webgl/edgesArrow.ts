@@ -376,7 +376,6 @@ export default {
     );
 
     const program = loadProgram(gl, [vertexShader, fragmentShader]);
-
     return program;
   }
 };

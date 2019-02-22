@@ -1,3 +1,4 @@
+// @ts-ignore
 import conrad from "conrad";
 import Dispatcher from "../../classes/Dispatcher";
 import id from "../../utils/misc/id";

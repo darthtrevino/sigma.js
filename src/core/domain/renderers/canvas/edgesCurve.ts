@@ -1,5 +1,6 @@
 import getSelfLoopControlPoints from "../../utils/geometry/getSelfLoopControlPoints";
 import getQuadraticControlPoint from "../../utils/geometry/getQuadraticControlPoint";
+import { Line, Point } from "../../utils/geometry/interfaces";
 
 /**
  * This edge renderer will display edges as curves.
@@ -47,9 +48,16 @@ export default function edgesCurve(edge, source, target, context, settings) {
   context.beginPath();
   context.moveTo(sX, sY);
   if (source.id === target.id) {
-    context.bezierCurveTo(cp.x1, cp.y1, cp.x2, cp.y2, tX, tY);
+    context.bezierCurveTo(
+      (cp as Line).x1,
+      (cp as Line).y1,
+      (cp as Line).x2,
+      (cp as Line).y2,
+      tX,
+      tY
+    );
   } else {
-    context.quadraticCurveTo(cp.x, cp.y, tX, tY);
+    context.quadraticCurveTo((cp as Point).x, (cp as Point).y, tX, tY);
   }
   context.stroke();
 }

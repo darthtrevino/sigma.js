@@ -11,9 +11,9 @@
 export default function loadProgram(
   gl: WebGLRenderingContext,
   shaders: WebGLShader[],
-  attribs: string[],
-  locations: number[],
-  error: (err: Error) => void
+  attribs?: string[],
+  locations?: number[],
+  error?: (err: Error) => void
 ): WebGLProgram {
   let i;
   const program = gl.createProgram();
