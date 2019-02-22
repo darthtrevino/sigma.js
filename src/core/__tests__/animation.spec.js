@@ -44,7 +44,6 @@ describe("Animation", () => {
     });
 
     camera.applyView("", "display:");
-
     sigma.misc.animation.camera(
       camera,
       {

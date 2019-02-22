@@ -21,29 +21,18 @@ export default class Camera extends Dispatcher {
   public isAnimated = false;
   public isMoving = false;
   public settings: any;
-  public prefix = "";
-  public readPrefix = "";
+  public prefix: string;
+  public readPrefix: string;
 
   constructor(
     public id: string,
     public graph: any,
     settings: any,
-    options: any
+    options?: any
   ) {
     super();
-
-    Object.defineProperty(this, "graph", {
-      value: graph
-    });
-    Object.defineProperty(this, "id", {
-      value: id
-    });
-    Object.defineProperty(this, "readPrefix", {
-      value: `read_cam${id}:`
-    });
-    Object.defineProperty(this, "prefix", {
-      value: `cam${id}:`
-    });
+    this.readPrefix = `read_cam${id}:`;
+    this.prefix = `cam${id}:`;
 
     this.settings =
       typeof options === "object" && options
@@ -97,9 +86,6 @@ export default class Camera extends Dispatcher {
     read = read !== undefined ? read : this.readPrefix;
     const nodes = options.nodes || this.graph.nodes();
     const edges = options.edges || this.graph.edges();
-    let i;
-    let l;
-    let node;
     const relCos = Math.cos(this.angle) / this.ratio;
     const relSin = Math.sin(this.angle) / this.ratio;
     const nodeRatio = this.ratio ** this.settings("nodesPowRatio");
@@ -109,8 +95,7 @@ export default class Camera extends Dispatcher {
     const yOffset =
       (options.height || 0) / 2 - this.y * relCos + this.x * relSin;
 
-    for (i = 0, l = nodes.length; i < l; i++) {
-      node = nodes[i];
+    nodes.forEach(node => {
       node[`${write}x`] =
         (node[`${read}x`] || 0) * relCos +
         (node[`${read}y`] || 0) * relSin +
@@ -120,11 +105,11 @@ export default class Camera extends Dispatcher {
         (node[`${read}x`] || 0) * relSin +
         yOffset;
       node[`${write}size`] = (node[`${read}size`] || 0) / nodeRatio;
-    }
+    });
 
-    for (i = 0, l = edges.length; i < l; i++) {
-      edges[i][`${write}size`] = (edges[i][`${read}size`] || 0) / edgeRatio;
-    }
+    edges.forEach(edge => {
+      edge[`${write}size`] = (edge[`${read}size`] || 0) / edgeRatio;
+    });
 
     return this;
   };
