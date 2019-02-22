@@ -702,11 +702,11 @@ class Sigma extends Dispatcher {
     return arguments.length ? __instances[id] : { ...__instances };
   }
 
-  public static register(packageName: string, item: any) {
+  public static register(packageName: string, item: any, override?: boolean) {
     const parentPath = packageName.substring(0, packageName.lastIndexOf("."));
     const itemName = packageName.substring(packageName.lastIndexOf(".") + 1);
     const pkg = getPackageObject(parentPath);
-    pkg[itemName] = pkg[itemName] || item;
+    pkg[itemName] = override ? item : pkg[itemName] || item;
   }
 }
 
