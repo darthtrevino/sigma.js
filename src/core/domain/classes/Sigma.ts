@@ -2,7 +2,7 @@ import Dispatcher from "./Dispatcher";
 import Camera from "./Camera";
 import Graph from "./Graph";
 import { Settings } from "./Configurable";
-import { SigmaConfiguration, Keyed } from "../../interfaces";
+import { SigmaConfiguration, Keyed, SigmaSettings } from "../../interfaces";
 
 const __instances = {};
 
@@ -118,7 +118,7 @@ function determineId(conf: SigmaConfiguration): string {
 class Sigma extends Dispatcher {
   // Static Data
   public static classes: any = {};
-  public static settings: { [key: string]: any };
+  public static settings: SigmaSettings;
 
   // current sigma version
   public static version = "1.2.1";
@@ -173,7 +173,6 @@ class Sigma extends Dispatcher {
   constructor(conf: any = {}) {
     super();
     this.conf = unpackConf(conf);
-
     // Local variables:
     let i;
     let l;
