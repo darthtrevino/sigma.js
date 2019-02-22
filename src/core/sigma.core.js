@@ -651,9 +651,7 @@ sigma.prototype.kill = function kill() {
  *                      object.
  */
 sigma.instances = function instances(id) {
-  return arguments.length
-    ? __instances[id]
-    : sigma.utils.extend({}, __instances);
+  return arguments.length ? __instances[id] : { ...__instances };
 };
 
 /**

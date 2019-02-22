@@ -7,7 +7,12 @@
  * @param  {function(string): void} error        Callback for errors.
  * @return {WebGLShader}                         The created shader.
  */
-export default function loadShader(gl, shaderSource, shaderType, error) {
+export default function loadShader(
+  gl: WebGLRenderingContext,
+  shaderSource: string,
+  shaderType: number,
+  error: (err: Error) => void
+) {
   const shader = gl.createShader(shaderType);
 
   // Load the shader source
@@ -23,7 +28,9 @@ export default function loadShader(gl, shaderSource, shaderType, error) {
   if (!compiled) {
     if (error) {
       error(
-        `Error compiling shader "${shader}":${gl.getShaderInfoLog(shader)}`
+        new Error(
+          `Error compiling shader "${shader}":${gl.getShaderInfoLog(shader)}`
+        )
       );
     }
 

@@ -17,11 +17,8 @@ export default function floatColor(input) {
   if (floatColorCache[val]) return floatColorCache[val];
 
   const original = val;
-
   let r = 0;
-
   let g = 0;
-
   let b = 0;
 
   if (val[0] === "#") {

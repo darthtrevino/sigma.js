@@ -8,9 +8,9 @@ import getHeight from "./getHeight";
  * @param  {event}  e A mouse or touch event.
  * @return {object}   The center of the event's target.
  */
-export default function getCenter(e) {
+export default function getCenter(e: MouseEvent | TouchEvent) {
   const ratio =
-    e.target.namespaceURI.indexOf("svg") !== -1 ? 1 : getPixelRatio();
+    (e.target as any).namespaceURI.indexOf("svg") !== -1 ? 1 : getPixelRatio();
   return {
     x: getWidth(e) / (2 * ratio),
     y: getHeight(e) / (2 * ratio)

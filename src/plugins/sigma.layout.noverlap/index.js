@@ -43,7 +43,7 @@ export default function extend(sigma) {
 
       // Properties
       this.sigInst = sigInst;
-      this.config = sigma.utils.extend(options, settings);
+      this.config = { ...options, ...settings };
       this.easing = options.easing;
       this.duration = options.duration;
 

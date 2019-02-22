@@ -28,7 +28,7 @@ export default function extend(sigma) {
   };
 
   // Export the previously designed settings:
-  sigma.settings = sigma.utils.extend(sigma.settings || {}, settings);
+  sigma.settings = { ...(sigma.settings || {}), ...settings };
 
   // Override default settings:
   sigma.settings.drawEdgeLabels = true;

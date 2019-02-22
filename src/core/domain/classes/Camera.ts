@@ -2,7 +2,7 @@ import scale from "../utils/matrices/scale";
 import rotation from "../utils/matrices/rotation";
 import translation from "../utils/matrices/translation";
 import multiply from "../utils/matrices/multiply";
-import Dispatcher from "./Dispatcher";
+import Dispatcher from "./DispatcherClass";
 
 /**
  * The camera constructor. It just initializes its attributes and methods.
@@ -13,12 +13,13 @@ import Dispatcher from "./Dispatcher";
  * @param  {?object}      options  Eventually some overriding options.
  * @return {camera}                Returns the fresh new camera instance.
  */
-export default class Camera {
+export default class Camera extends Dispatcher {
   public x = 0;
   public y = 0;
   public ratio = 1;
   public angle = 0;
   public isAnimated = false;
+  public isMoving = false;
   public settings: any;
   public prefix = "";
   public readPrefix = "";
@@ -29,7 +30,7 @@ export default class Camera {
     settings: any,
     options: any
   ) {
-    Dispatcher.extend(this);
+    super();
 
     Object.defineProperty(this, "graph", {
       value: graph
@@ -68,7 +69,7 @@ export default class Camera {
         else throw new Error(`Value for "${key}" is not a number.`);
       }
     });
-    keys.forEach(() => (this as any).dispatchEvent("coordinatesUpdated"));
+    keys.forEach(() => this.dispatchEvent("coordinatesUpdated"));
     return this;
   };
 

@@ -1,4 +1,4 @@
-import extend from "./extend";
+import Camera from "../../classes/Camera";
 
 /**
  * Perform a zoom into a camera, with or without animation, to the
@@ -22,7 +22,13 @@ import extend from "./extend";
  * @param {?animation} A dictionary with options for a possible animation.
  */
 export default function zoomTo(sigma) {
-  return (camera, x, y, ratio, animation) => {
+  return (
+    camera: Camera,
+    x: number,
+    y: number,
+    ratio: number,
+    animation: any // TODO: animation type
+  ) => {
     const { settings } = camera;
 
     // Create the newRatio dealing with min / max:
@@ -44,9 +50,10 @@ export default function zoomTo(sigma) {
       if (animation && animation.duration) {
         // Complete the animation setings:
         const count = sigma.misc.animation.killAll(camera);
-        animation = extend(animation, {
+        animation = {
+          ...animation,
           easing: count ? "quadraticOut" : "quadraticInOut"
-        });
+        };
 
         sigma.misc.animation.camera(camera, coordinates, animation);
       } else {

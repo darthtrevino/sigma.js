@@ -4,7 +4,8 @@
  * @param  {event}  e A mouse or touch event.
  * @return {number}   The local Y value of the mouse.
  */
-export default function getY(e) {
+export default function getY(event: MouseEvent | TouchEvent) {
+  const e = event as any;
   return (
     (e.offsetY !== undefined && e.offsetY) ||
     (e.layerY !== undefined && e.layerY) ||

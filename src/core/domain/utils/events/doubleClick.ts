@@ -6,11 +6,13 @@
  * @param  {function}    callback The callback to execute.
  */
 export default sigma =>
-  function doubleClick(target, type, callback) {
+  function doubleClick(target: HTMLElement, type: string, callback) {
     let clicks = 0;
-    target._doubleClickHandler = target._doubleClickHandler || {};
-    target._doubleClickHandler[type] = target._doubleClickHandler[type] || [];
-    const handlers = target._doubleClickHandler[type];
+    (target as any)._doubleClickHandler =
+      (target as any)._doubleClickHandler || {};
+    (target as any)._doubleClickHandler[type] =
+      (target as any)._doubleClickHandler[type] || [];
+    const handlers = (target as any)._doubleClickHandler[type];
 
     handlers.push(e => {
       clicks++;

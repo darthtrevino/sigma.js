@@ -18,8 +18,8 @@ export default function configure(sigma) {
    * @param  {string} pkgName The name of the package to create/find.
    * @return {object}         The related package.
    */
-  function getPackageObject(pkgName) {
-    const getPackage = (levels, root) => {
+  function getPackageObject(pkgName: string) {
+    const getPackage = (levels: string[], root: { [key: string]: any }) => {
       return levels.reduce((context, objName) => {
         if (!context[objName]) {
           context[objName] = {};
@@ -34,7 +34,7 @@ export default function configure(sigma) {
     return getPackage(levels, sigma.packages);
   }
 
-  sigma.register = (packageName, item) => {
+  sigma.register = (packageName: string, item: any) => {
     const parentPath = packageName.substring(0, packageName.lastIndexOf("."));
     const itemName = packageName.substring(packageName.lastIndexOf(".") + 1);
     const pkg = getPackageObject(parentPath);

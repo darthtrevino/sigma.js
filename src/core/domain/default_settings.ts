@@ -1,4 +1,4 @@
-export default {
+const settings: { [key: string]: any } = {
   /**
    * GRAPH SETTINGS:
    * ***************
@@ -220,3 +220,5 @@ export default {
   // {number} The default animation time.
   animationsTime: 200
 };
+
+export default settings;

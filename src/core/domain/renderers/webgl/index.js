@@ -1,7 +1,6 @@
 import conrad from "conrad";
 import id from "../../utils/misc/id";
 import Dispatcher from "../../classes/Dispatcher";
-import extend from "../../utils/misc/extend";
 import getPixelRatio from "../../utils/events/getPixelRatio";
 import multiply from "../../utils/matrices/multiply";
 import translation from "../../utils/matrices/translation";
@@ -125,7 +124,7 @@ export default sigma => {
     let type;
     let renderer;
     const { graph } = this;
-    const options = extend(params, this.options);
+    const options = { ...params, ...this.options };
     const defaultEdgeType = this.settings(options, "defaultEdgeType");
     const defaultNodeType = this.settings(options, "defaultNodeType");
 

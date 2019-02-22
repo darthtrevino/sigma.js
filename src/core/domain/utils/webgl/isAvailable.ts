@@ -1,7 +1,7 @@
 export default function isWebGLAvailable(global = window) {
   // Check if WebGL is enabled:
   let canvas;
-  const webgl = !!global.WebGLRenderingContext;
+  const webgl = !!(global as any).WebGLRenderingContext;
   if (webgl) {
     canvas = document.createElement("canvas");
     try {

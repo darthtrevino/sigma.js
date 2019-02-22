@@ -8,7 +8,13 @@
  * @param  {function(string): void} error     Callback for errors.
  * @return {WebGLProgram}                     The created program.
  */
-export default function loadProgram(gl, shaders, attribs, locations, error) {
+export default function loadProgram(
+  gl: WebGLRenderingContext,
+  shaders: WebGLShader[],
+  attribs: string[],
+  locations: number[],
+  error: (err: Error) => void
+): WebGLProgram {
   let i;
   const program = gl.createProgram();
 
@@ -24,7 +30,9 @@ export default function loadProgram(gl, shaders, attribs, locations, error) {
   const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
   if (!linked) {
     if (error)
-      error(`Error in program linking: ${gl.getProgramInfoLog(program)}`);
+      error(
+        new Error(`Error in program linking: ${gl.getProgramInfoLog(program)}`)
+      );
 
     gl.deleteProgram(program);
     return null;

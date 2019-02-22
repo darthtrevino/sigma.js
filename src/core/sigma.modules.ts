@@ -3,7 +3,6 @@ import TouchCaptor from "./domain/classes/TouchCaptor";
 import Camera from "./domain/classes/Camera";
 import Configurable from "./domain/classes/Configurable";
 import Dispatcher from "./domain/classes/Dispatcher";
-import extend from "./domain/utils/misc/extend";
 import dateNow from "./domain/utils/misc/dateNow";
 import id from "./domain/utils/misc/id";
 import floatColor from "./domain/utils/misc/floatColor";
@@ -85,7 +84,6 @@ export default sigma => {
   /**
    * Miscellaneous Utilities
    */
-  sigma.register("sigma.utils.extend", extend);
   sigma.register("sigma.utils.dateNow", dateNow);
   sigma.register("sigma.utils.id", id);
   sigma.register("sigma.utils.floatColor", floatColor);

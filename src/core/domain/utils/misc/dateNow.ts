@@ -3,6 +3,6 @@
  *
  * @return {Number} The current time (in ms).
  */
-export default function dateNow() {
+export default function dateNow(): number {
   return Date.now ? Date.now() : new Date().getTime();
 }

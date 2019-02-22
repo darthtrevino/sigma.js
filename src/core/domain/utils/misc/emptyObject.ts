@@ -6,7 +6,7 @@
  * @param  {object} obj The object to empty.
  * @return {object}     The empty object.
  */
-export default function emptyObject(obj) {
+export default function emptyObject(obj: { [key: string]: any }) {
   Object.keys(obj).forEach(k => {
     // eslint-disable-next-line no-prototype-builtins
     if (!("hasOwnProperty" in obj) || obj.hasOwnProperty(k)) {

@@ -15,7 +15,7 @@
  * @param  {string} pkgName The name of the package to create/find.
  * @return {object}         The related package.
  */
-export default (() => {
-  let id = 0;
-  return () => ++id;
-})();
+let id = 0;
+export default function nextId() {
+  return ++id;
+}

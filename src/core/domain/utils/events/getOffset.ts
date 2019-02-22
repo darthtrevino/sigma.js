@@ -4,7 +4,7 @@
  * @param  {DOMElement} dom The element to retrieve the position.
  * @return {object}         The offset of the DOM element (top, left).
  */
-export default function getOffset(dom) {
+export default function getOffset(dom: any) {
   let left = 0;
   let top = 0;
 
