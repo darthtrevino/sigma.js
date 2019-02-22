@@ -27,7 +27,10 @@ export default class Dispatcher {
    * @param  {function(Object)} handler The handler to bind.
    * @return {dispatcher}               Returns the instance itself.
    */
-  public bind(events: string[] | string, handler: Function) {
+  public bind(
+    events: { [key: string]: Function } | string[] | string,
+    handler?: Function
+  ) {
     /* eslint-disable prefer-rest-params */
     if (arguments.length === 1 && typeof arguments[0] === "object") {
       const argObject = events;
@@ -67,7 +70,7 @@ export default class Dispatcher {
    *                                     events will be removed.
    * @return {dispatcher}                Returns the instance itself.
    */
-  public unbind(events: string | string[], handler: Function) {
+  public unbind(events?: string | string[], handler?: Function) {
     let i;
     let n;
     const eArray = typeof events === "string" ? events.split(" ") : events;
