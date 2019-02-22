@@ -15,6 +15,27 @@ export interface SigmaConfiguration {
   [key: string]: any;
 }
 
+export interface SigmaLibrary {
+  new (item?: any): Sigma;
+
+  instances(id?: string): Sigma | { [key: string]: Sigma };
+  register(packageName: string, item: any);
+
+  classes: { [key: string]: Function };
+  settings: { [key: string]: any };
+
+  renderers: { [key: string]: Function };
+  middlewares: { [key: string]: any };
+  utils: { [key: string]: any };
+  misc: { [key: string]: any };
+  captors: { [key: string]: any };
+
+  // Renderer Utils
+  canvas: { [key: string]: any };
+  svg: { [key: string]: any };
+  webgl: { [key: string]: any };
+}
+
 // Little shortcut:
 // ****************
 // The configuration is supposed to have a list of the configuration
@@ -78,7 +99,7 @@ function determineId(conf: SigmaConfiguration): string {
  *                      different recognized forms to instantiate sigma, check
  *                      example files, documentation in this file and unit
  *                      tests to know more.
- * @return {sigma}      The fresh new sigma instance.
+ * @return {Sigma}      The fresh new sigma instance.
  *
  * Instanciating sigma:
  * ********************
@@ -124,15 +145,27 @@ function determineId(conf: SigmaConfiguration): string {
  *                       will override the default ones defined in the object
  *                       sigma.settings.
  */
-class sigma extends Dispatcher {
+class Sigma extends Dispatcher {
   // Static Data
   public static classes: any = {};
-  public static settings: Settings;
+  public static settings: { [key: string]: any };
+
   // current sigma version
   public static version = "1.2.1";
+
+  // utility namespaces
   public static renderers: { [key: string]: Function };
   public static middlewares: { [key: string]: any };
-  public static utils: { [key: string]: any };
+  public static utils: { [key: string]: any } = {
+    pkg: getPackageObject
+  };
+  public static misc: { [key: string]: any };
+  public static captors: { [key: string]: any };
+
+  // Renderer Utils
+  public static canvas: { [key: string]: any };
+  public static svg: { [key: string]: any };
+  public static webgl: { [key: string]: any };
 
   // Instance Data
   public events = [
@@ -180,13 +213,13 @@ class sigma extends Dispatcher {
     __instances[this.id] = this;
 
     // Initialize settings function:
-    this.settings = sigma.classes.configurable(
-      sigma.settings,
+    this.settings = Sigma.classes.configurable(
+      Sigma.settings,
       this.conf.settings || {}
     );
 
     // Initialize locked attributes:
-    this.graph = new sigma.classes.graph(this.settings);
+    this.graph = new Sigma.classes.graph(this.settings);
 
     // Initialize renderers:
     a = this.conf.renderers || [];
@@ -196,7 +229,7 @@ class sigma extends Dispatcher {
     a = this.conf.middlewares || [];
     for (i = 0, l = a.length; i < l; i++)
       this.middlewares.push(
-        typeof a[i] === "string" ? sigma.middlewares[a[i]] : a[i]
+        typeof a[i] === "string" ? Sigma.middlewares[a[i]] : a[i]
       );
 
     // Check if there is already a graph to fill in:
@@ -215,14 +248,14 @@ class sigma extends Dispatcher {
   }
 
   // Add a custom handler, to redispatch events from renderers:
-  private _handler(e) {
+  private _handler = e => {
     const data: { [key: string]: any } = {};
     Object.keys(e.data).forEach(key => {
       data[key] = e.data[key];
     });
     data.renderer = e.target;
     this.dispatchEvent(e.type, data);
-  }
+  };
 
   public get camera() {
     return this.cameras[0];
@@ -245,15 +278,15 @@ class sigma extends Dispatcher {
       throw new Error(`sigma.addCamera: The camera "${id}" already exists.`);
     }
 
-    const camera = new sigma.classes.camera(id, this.graph, this.settings);
+    const camera = new Sigma.classes.camera(id, this.graph, this.settings);
     this.cameras[id] = camera;
 
     // Add a quadtree to the camera:
-    camera.quadtree = new sigma.classes.quad();
+    camera.quadtree = new Sigma.classes.quad();
 
     // Add an edgequadtree to the camera:
-    if (sigma.classes.edgequad !== undefined) {
-      camera.edgequadtree = new sigma.classes.edgequad();
+    if (Sigma.classes.edgequad !== undefined) {
+      camera.edgequadtree = new Sigma.classes.edgequad();
     }
 
     camera.bind("coordinatesUpdated", () =>
@@ -268,7 +301,7 @@ class sigma extends Dispatcher {
    * This method kills a camera, and every renderer attached to it.
    *
    * @param  {string|camera} v The camera to kill or its ID.
-   * @return {sigma}           Returns the instance.
+   * @return {Sigma}           Returns the instance.
    */
   public killCamera(v: string | Camera) {
     const camera: Camera =
@@ -350,13 +383,13 @@ class sigma extends Dispatcher {
       );
 
     // Find the good constructor:
-    fn = typeof o.type === "function" ? o.type : sigma.renderers[o.type];
-    fn = fn || sigma.renderers.def;
+    fn = typeof o.type === "function" ? o.type : Sigma.renderers[o.type];
+    fn = fn || Sigma.renderers.def;
 
     // Find the good camera:
     const findGoodCamera = () => {
       if ("camera" in o) {
-        if (o.camera instanceof sigma.classes.camera) {
+        if (o.camera instanceof Sigma.classes.camera) {
           return o.camera;
         }
         return this.cameras[o.camera] || this.addCamera(o.camera);
@@ -428,7 +461,7 @@ class sigma extends Dispatcher {
    * This method kills a renderer.
    *
    * @param  {string|renderer} v The renderer to kill or its ID.
-   * @return {sigma}             Returns the instance.
+   * @return {Sigma}             Returns the instance.
    */
   public killRenderer(v) {
     v = typeof v === "string" ? this.renderers[v] : v;
@@ -450,7 +483,7 @@ class sigma extends Dispatcher {
    *
    * @param  {?object}  options Eventually some options to give to the refresh
    *                            method.
-   * @return {sigma}            Returns the instance itself.
+   * @return {Sigma}            Returns the instance itself.
    *
    * Recognized parameters:
    * **********************
@@ -489,7 +522,7 @@ class sigma extends Dispatcher {
         this.renderersPerCamera[cam.id] &&
         this.renderersPerCamera[cam.id].length
       )
-        sigma.middlewares.rescale.call(
+        Sigma.middlewares.rescale.call(
           this,
           middlewares.length ? "ready:" : "",
           cam.readPrefix,
@@ -499,7 +532,7 @@ class sigma extends Dispatcher {
           }
         );
       else
-        sigma.middlewares.copy.call(
+        Sigma.middlewares.copy.call(
           this,
           middlewares.length ? "ready:" : "",
           cam.readPrefix
@@ -507,7 +540,7 @@ class sigma extends Dispatcher {
 
       if (!options.skipIndexation) {
         // Find graph boundaries:
-        bounds = sigma.utils.geom.getBoundaries(this.graph, cam.readPrefix);
+        bounds = Sigma.utils.geom.getBoundaries(this.graph, cam.readPrefix);
 
         // Refresh quadtree:
         cam.quadtree.index(this.graph.nodes(), {
@@ -567,7 +600,7 @@ class sigma extends Dispatcher {
   /**
    * This method calls the "render" method of each renderer.
    *
-   * @return {sigma} Returns the instance itself.
+   * @return {Sigma} Returns the instance itself.
    */
   public render() {
     this._forEachRenderer("render");
@@ -583,7 +616,7 @@ class sigma extends Dispatcher {
    * @param  {sigma.classes.camera} camera The camera to render.
    * @param  {?boolean}             force  If true, will render the camera
    *                                       directly.
-   * @return {sigma}                       Returns the instance itself.
+   * @return {Sigma}                       Returns the instance itself.
    */
   public renderCamera(camera: Camera, force?: boolean) {
     let i;
@@ -668,6 +701,46 @@ class sigma extends Dispatcher {
   public static instances(id?: string) {
     return arguments.length ? __instances[id] : { ...__instances };
   }
+
+  public static register(packageName: string, item: any) {
+    const parentPath = packageName.substring(0, packageName.lastIndexOf("."));
+    const itemName = packageName.substring(packageName.lastIndexOf(".") + 1);
+    const pkg = getPackageObject(parentPath);
+    pkg[itemName] = pkg[itemName] || item;
+  }
 }
 
-export default sigma;
+/**
+ * Takes a package name as parameter and checks at each lebel if it exists,
+ * and if it does not, creates it.
+ *
+ * Example:
+ * ********
+ *  > pkg('a.b.c');
+ *  > a.b.c;
+ *  > // Object {};
+ *  >
+ *  > pkg('a.b.d');
+ *  > a.b;
+ *  > // Object { c: {}, d: {} };
+ *
+ * @param  {string} pkgName The name of the package to create/find.
+ * @return {object}         The related package.
+ */
+function getPackageObject(pkgName: string) {
+  const getPackage = (levels: string[], root: { [key: string]: any }) => {
+    return levels.reduce((context, objName) => {
+      if (!context[objName]) {
+        context[objName] = {};
+      }
+      return context[objName];
+    }, root);
+  };
+  const levels = (pkgName || "").split(".");
+  if (levels[0] !== "sigma") {
+    throw new Error(`package root must start with sigma.`);
+  }
+  return getPackage(levels.slice(1), Sigma);
+}
+
+export default Sigma;

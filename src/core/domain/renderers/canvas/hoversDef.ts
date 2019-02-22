@@ -1,3 +1,5 @@
+import { SigmaLibrary } from "../../../sigma.core";
+
 /**
  * This hover renderer will basically display the label with a background.
  *
@@ -5,7 +7,7 @@
  * @param  {CanvasRenderingContext2D} context  The canvas context.
  * @param  {configurable}             settings The settings function.
  */
-export default sigma =>
+export default (sigma: SigmaLibrary) =>
   function hoversDef(node, context, settings) {
     let x;
     let y;

@@ -20,32 +20,32 @@ describe("The Sigma Library", () => {
 
     s = new sigma();
     expect(Object.keys(s.renderers).length).toEqual(
-      0,
-      '"new sigma()" instantiate sigma without any renderer.'
+      0
+      //'"new sigma()" instantiate sigma without any renderer.'
     );
 
     s = new sigma("abc");
     expect(s.renderers[0].options).toEqual(
       {
         container: dom
-      },
-      '"new sigma("abc")" instantiate the default renderer in the div #abc.'
+      }
+      //'"new sigma("abc")" instantiate the default renderer in the div #abc.'
     );
 
     s = new sigma(["abc"]);
     expect(s.renderers[0].options).toEqual(
       {
         container: dom
-      },
-      '"new sigma(["abc"])" instantiate the default renderer in the div #abc.'
+      }
+      //'"new sigma(["abc"])" instantiate the default renderer in the div #abc.'
     );
 
     s = new sigma(document.getElementById("abc"));
     expect(s.renderers[0].options).toEqual(
       {
         container: dom
-      },
-      '"new sigma(document.getElementById("abc"))" instantiate the default renderer in the div #abc.'
+      }
+      //'"new sigma(document.getElementById("abc"))" instantiate the default renderer in the div #abc.'
     );
 
     s = new sigma({
@@ -54,8 +54,8 @@ describe("The Sigma Library", () => {
     expect(s.renderers[0].options).toEqual(
       {
         container: dom
-      },
-      '"new sigma({ container: "abc" })" instantiate the default renderer in the div #abc.'
+      }
+      //'"new sigma({ container: "abc" })" instantiate the default renderer in the div #abc.'
     );
 
     s = new sigma({
@@ -64,14 +64,14 @@ describe("The Sigma Library", () => {
     expect(s.renderers[0].options).toEqual(
       {
         container: dom
-      },
-      '"new sigma({ container: document.getElementById("abc") })" instantiate the default renderer in the div #abc.'
+      }
+      //'"new sigma({ container: document.getElementById("abc") })" instantiate the default renderer in the div #abc.'
     );
 
     s = new sigma(["abc", "abc"]);
     expect([s.renderers[0].options, s.renderers[1].options]).toEqual(
-      [{ container: dom }, { container: dom }],
-      '"new sigma(["abc", "abc"])" instantiate the default renderer in the div #abc twice.'
+      [{ container: dom }, { container: dom }]
+      //'"new sigma(["abc", "abc"])" instantiate the default renderer in the div #abc twice.'
     );
 
     s = new sigma({
@@ -84,8 +84,8 @@ describe("The Sigma Library", () => {
     expect(s.renderers[0].options).toEqual(
       {
         container: dom
-      },
-      '"new sigma({ renderers: [{ container: document.getElementById("abc") }] })" instantiate the default renderer in the div #abc.'
+      }
+      //'"new sigma({ renderers: [{ container: document.getElementById("abc") }] })" instantiate the default renderer in the div #abc.'
     );
 
     // Restore previous state:
@@ -95,8 +95,8 @@ describe("The Sigma Library", () => {
     expect(() => {
       s = new sigma("abcd");
     }).toThrow(
-      /Container not found./,
-      "Trying to instantiate sigma with a string that is not the ID of an HTMLElement will throw an error."
+      /Container not found./
+      //"Trying to instantiate sigma with a string that is not the ID of an HTMLElement will throw an error."
     );
   });
 
@@ -110,8 +110,8 @@ describe("The Sigma Library", () => {
     document.body.appendChild(dom);
 
     expect([Object.keys(s.renderers), Object.keys(s.cameras)]).toEqual(
-      [[], []],
-      "A sigma instance created without configuration has no camera nor renderer."
+      [[], []]
+      //"A sigma instance created without configuration has no camera nor renderer."
     );
 
     // Adding and killing cameras and renderers:
@@ -122,30 +122,30 @@ describe("The Sigma Library", () => {
     s.addRenderer({ container: dom, camera: c2, id: "2" });
 
     expect([Object.keys(s.renderers), Object.keys(s.cameras)]).toEqual(
-      [["0", "1", "2"], ["0", "1"]],
-      "The cameras/renderers indexes are updated when adding cameras/renderers."
+      [["0", "1", "2"], ["0", "1"]]
+      //"The cameras/renderers indexes are updated when adding cameras/renderers."
     );
 
     s.killRenderer("2");
     expect(Object.keys(s.renderers)).toEqual(
-      ["0", "1"],
-      "The renderers indexes are updated when killing renderers."
+      ["0", "1"]
+      //"The renderers indexes are updated when killing renderers."
     );
 
     s.killCamera("1");
     expect([Object.keys(s.renderers), Object.keys(s.cameras)]).toEqual(
-      [["0"], ["0"]],
-      "The cameras/renderers indexes are updated when killing cameras."
+      [["0"], ["0"]]
+      //"The cameras/renderers indexes are updated when killing cameras."
     );
 
     expect(() => s.killCamera("42")).toThrow(
-      /The camera is undefined./,
-      "Killing a camera that does not exist throws an error."
+      /The camera is undefined./
+      //"Killing a camera that does not exist throws an error."
     );
 
     expect(() => s.killRenderer("42")).toThrow(
-      /The renderer is undefined./,
-      "Killing a renderer that does not exist throws an error."
+      /The renderer is undefined./
+      //"Killing a renderer that does not exist throws an error."
     );
 
     s.killCamera("0");
@@ -155,20 +155,20 @@ describe("The Sigma Library", () => {
 
     s.addRenderer({ camera: c, container: dom, id: "myRenderer" });
     expect([Object.keys(s.renderers), Object.keys(s.cameras)]).toEqual(
-      [["myRenderer"], ["myCamera"]],
-      "The cameras/renderers adders work well with custom IDs."
+      [["myRenderer"], ["myCamera"]]
+      //"The cameras/renderers adders work well with custom IDs."
     );
 
     expect(() => s.addCamera("myCamera")).toThrow(
-      /The camera "myCamera" already exists./,
-      "Adding a camera with an already existing ID throws an error."
+      /The camera "myCamera" already exists./
+      //"Adding a camera with an already existing ID throws an error."
     );
 
     expect(() =>
       s.addRenderer({ camera: c, container: dom, id: "myRenderer" })
     ).toThrow(
-      /The renderer "myRenderer" already exists./,
-      "Adding a renderer with an already existing ID throws an error."
+      /The renderer "myRenderer" already exists./
+      //"Adding a renderer with an already existing ID throws an error."
     );
 
     // And check also some crazy side cases:
@@ -179,8 +179,8 @@ describe("The Sigma Library", () => {
     s.killCamera(id);
 
     expect(() => s.addRenderer({ camera: c, container: dom })).toThrow(
-      /The camera is not properly referenced./,
-      "Adding a renderer with camera that is not referenced anymore throws an error."
+      /The camera is not properly referenced./
+      //"Adding a renderer with camera that is not referenced anymore throws an error."
     );
 
     // Restore previous state:

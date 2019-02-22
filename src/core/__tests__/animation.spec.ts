@@ -82,8 +82,8 @@ describe("Animation", () => {
                   x: -approx(Math.SQRT1_2) / 3,
                   y: -approx(Math.SQRT1_2) / 3
                 }
-              ],
-              "Animation's middle gives the good values."
+              ]
+              //"Animation's middle gives the good values."
             );
             hasTestedFrame = true;
           }
@@ -113,8 +113,8 @@ describe("Animation", () => {
                 y: 0.5,
                 size: approx(0.5 ** camera.settings("nodesPowRatio"))
               }
-            ],
-            "Animation's end gives the good values and custom easings work well."
+            ]
+            //"Animation's end gives the good values and custom easings work well."
           );
           done();
         }

@@ -3,6 +3,7 @@ import conrad from "conrad";
 import Dispatcher from "../../classes/Dispatcher";
 import id from "../../utils/misc/id";
 import getPixelRatio from "../../utils/events/getPixelRatio";
+import { SigmaLibrary } from "../../../sigma.core";
 
 /**
  * This function is the constructor of the canvas sigma's renderer.
@@ -14,7 +15,7 @@ import getPixelRatio from "../../utils/events/getPixelRatio";
  * @param  {object}                 object   The options object.
  * @return {Canvas}          The renderer instance.
  */
-export default sigma => {
+export default (sigma: SigmaLibrary) => {
   function CanvasRenderer(graph, camera, settings, options) {
     if (typeof options !== "object")
       throw new Error("Canvas: Wrong arguments.");
