@@ -2,7 +2,7 @@ import scale from "../utils/matrices/scale";
 import rotation from "../utils/matrices/rotation";
 import translation from "../utils/matrices/translation";
 import multiply from "../utils/matrices/multiply";
-import Dispatcher from "./Dispatcher";
+import Dispatcher from "./DispatcherClass";
 
 /**
  * The camera constructor. It just initializes its attributes and methods.
@@ -13,36 +13,26 @@ import Dispatcher from "./Dispatcher";
  * @param  {?object}      options  Eventually some overriding options.
  * @return {camera}                Returns the fresh new camera instance.
  */
-export default class Camera {
+export default class Camera extends Dispatcher {
   public x = 0;
   public y = 0;
   public ratio = 1;
   public angle = 0;
   public isAnimated = false;
+  public isMoving = false;
   public settings: any;
-  public prefix = "";
-  public readPrefix = "";
+  public prefix: string;
+  public readPrefix: string;
 
   constructor(
     public id: string,
     public graph: any,
     settings: any,
-    options: any
+    options?: any
   ) {
-    Dispatcher.extend(this);
-
-    Object.defineProperty(this, "graph", {
-      value: graph
-    });
-    Object.defineProperty(this, "id", {
-      value: id
-    });
-    Object.defineProperty(this, "readPrefix", {
-      value: `read_cam${id}:`
-    });
-    Object.defineProperty(this, "prefix", {
-      value: `cam${id}:`
-    });
+    super();
+    this.readPrefix = `read_cam${id}:`;
+    this.prefix = `cam${id}:`;
 
     this.settings =
       typeof options === "object" && options
@@ -68,7 +58,7 @@ export default class Camera {
         else throw new Error(`Value for "${key}" is not a number.`);
       }
     });
-    keys.forEach(() => (this as any).dispatchEvent("coordinatesUpdated"));
+    keys.forEach(() => this.dispatchEvent("coordinatesUpdated"));
     return this;
   };
 
@@ -96,9 +86,6 @@ export default class Camera {
     read = read !== undefined ? read : this.readPrefix;
     const nodes = options.nodes || this.graph.nodes();
     const edges = options.edges || this.graph.edges();
-    let i;
-    let l;
-    let node;
     const relCos = Math.cos(this.angle) / this.ratio;
     const relSin = Math.sin(this.angle) / this.ratio;
     const nodeRatio = this.ratio ** this.settings("nodesPowRatio");
@@ -108,8 +95,7 @@ export default class Camera {
     const yOffset =
       (options.height || 0) / 2 - this.y * relCos + this.x * relSin;
 
-    for (i = 0, l = nodes.length; i < l; i++) {
-      node = nodes[i];
+    nodes.forEach(node => {
       node[`${write}x`] =
         (node[`${read}x`] || 0) * relCos +
         (node[`${read}y`] || 0) * relSin +
@@ -119,11 +105,11 @@ export default class Camera {
         (node[`${read}x`] || 0) * relSin +
         yOffset;
       node[`${write}size`] = (node[`${read}size`] || 0) / nodeRatio;
-    }
+    });
 
-    for (i = 0, l = edges.length; i < l; i++) {
-      edges[i][`${write}size`] = (edges[i][`${read}size`] || 0) / edgeRatio;
-    }
+    edges.forEach(edge => {
+      edge[`${write}size`] = (edge[`${read}size`] || 0) / edgeRatio;
+    });
 
     return this;
   };
