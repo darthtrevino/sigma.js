@@ -1,41 +1,10 @@
-import Dispatcher from "./domain/classes/Dispatcher";
-import Camera from "./domain/classes/Camera";
-import Graph from "./domain/classes/Graph";
-import { Settings } from "./domain/classes/Configurable";
+import Dispatcher from "./Dispatcher";
+import Camera from "./Camera";
+import Graph from "./Graph";
+import { Settings } from "./Configurable";
+import { SigmaConfiguration, Keyed } from "../../interfaces";
 
 const __instances = {};
-
-export interface Keyed<T> {
-  [key: string]: T;
-}
-export interface SigmaConfiguration {
-  renderers?: Array<string | HTMLElement>;
-  settings?: Keyed<any>;
-  id?: string;
-  [key: string]: any;
-}
-
-export interface SigmaLibrary {
-  new (item?: any): Sigma;
-
-  instances(id?: string): Sigma | { [key: string]: Sigma };
-  register(packageName: string, item: any);
-
-  classes: { [key: string]: Function };
-  settings: { [key: string]: any };
-
-  renderers: { [key: string]: Function };
-  middlewares: { [key: string]: any };
-  utils: { [key: string]: any };
-  misc: { [key: string]: any };
-  captors: { [key: string]: any };
-  plugins: { [key: string]: any };
-
-  // Renderer Utils
-  canvas: { [key: string]: any };
-  svg: { [key: string]: any };
-  webgl: { [key: string]: any };
-}
 
 // Little shortcut:
 // ****************

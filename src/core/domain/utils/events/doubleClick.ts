@@ -1,4 +1,4 @@
-import { SigmaLibrary } from "../../../sigma.core";
+import { SigmaLibrary } from "../../../interfaces";
 
 /**
  * Simulates a "double click" event.

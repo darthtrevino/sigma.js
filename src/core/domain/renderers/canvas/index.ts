@@ -3,7 +3,7 @@ import conrad from "conrad";
 import Dispatcher from "../../classes/Dispatcher";
 import id from "../../utils/misc/id";
 import getPixelRatio from "../../utils/events/getPixelRatio";
-import { SigmaLibrary } from "../../../sigma.core";
+import { SigmaLibrary } from "../../../interfaces";
 
 /**
  * This function is the constructor of the canvas sigma's renderer.

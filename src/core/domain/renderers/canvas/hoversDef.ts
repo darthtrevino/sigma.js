@@ -1,4 +1,4 @@
-import { SigmaLibrary } from "../../../sigma.core";
+import { SigmaLibrary } from "../../../interfaces";
 
 /**
  * This hover renderer will basically display the label with a background.

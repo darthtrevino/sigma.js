@@ -4,8 +4,8 @@
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "outDir": "lib/core",
-    "declaration": true,
-    "strict": true
+    "declaration": true
+    //"strict": true
   },
   "files": ["src/core/index.ts"]
 }
