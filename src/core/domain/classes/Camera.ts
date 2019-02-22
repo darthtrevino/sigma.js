@@ -3,6 +3,8 @@ import rotation from "../utils/matrices/rotation";
 import translation from "../utils/matrices/translation";
 import multiply from "../utils/matrices/multiply";
 import Dispatcher from "./Dispatcher";
+import Quad from "./Quad";
+import EdgeQuad from "./EdgeQuad";
 
 /**
  * The camera constructor. It just initializes its attributes and methods.
@@ -23,6 +25,9 @@ export default class Camera extends Dispatcher {
   public settings: any;
   public prefix: string;
   public readPrefix: string;
+  public kill?: Function;
+  public quadtree?: Quad;
+  public edgequadtree?: EdgeQuad;
 
   constructor(
     public id: string,

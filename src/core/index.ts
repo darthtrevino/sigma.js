@@ -1,4 +1,3 @@
-import "./polyfills";
 import sigma from "./sigma.core";
 import register from "./register";
 import settings from "./sigma.settings";

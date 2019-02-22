@@ -1,5 +1,9 @@
 type ConfigMap = { [key: string]: any };
 
+export interface Settings {
+  (a1: string | ConfigMap, a2?: any): any;
+  embedObjects(...eoArgs: ConfigMap[]): any;
+}
 /**
  * This utils aims to facilitate the manipulation of each instance setting.
  * Using a function instead of an object brings two main advantages: First,
@@ -9,7 +13,7 @@ type ConfigMap = { [key: string]: any };
  *
  * @return {configurable} The "settings" function.
  */
-export default function Configurable(...args: any) {
+export default function configurable(...args: any): Settings {
   const data: ConfigMap = {};
   const datas = Array.prototype.slice.call(args, 0);
 
@@ -83,7 +87,7 @@ export default function Configurable(...args: any) {
       .concat(data)
       .concat(Array.prototype.splice.call(eoArgs, 0));
 
-    return Configurable.apply({}, callArgs);
+    return configurable.apply({}, callArgs);
   };
 
   // Initialize
