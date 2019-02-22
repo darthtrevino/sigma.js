@@ -224,9 +224,7 @@ function _quadRetrievePoint(point, quad) {
  * @return {array}                       An array of elements contained in the
  *                                       area.
  */
-function _quadRetrieveArea(rectData, quad, collisionFunc, els) {
-  els = els || {};
-
+function _quadRetrieveArea(rectData, quad, collisionFunc, els: any = {}) {
   if (quad.level < quad.maxLevel) {
     const indexes = collisionFunc(rectData, quad.corners);
 
@@ -254,116 +252,119 @@ function _quadRetrieveArea(rectData, quad, collisionFunc, els) {
  * property {object} _tree  Property holding the quadtree object.
  * property {object} _cache Cache for the area method.
  */
-export default function Quad() {
-  this._tree = null;
-  this._cache = {
-    query: false,
-    result: false
+export default class Quad {
+  private tree = null;
+  private cache = {
+    query: "",
+    result: []
+  };
+
+  /**
+   * Index a graph by inserting its nodes into the quadtree.
+   *
+   * @param  {array}  nodes   An array of nodes to index.
+   * @param  {object} params  An object of parameters with at least the quad
+   *                          bounds.
+   * @return {object}         The quadtree object.
+   *
+   * Parameters:
+   * ----------
+   * bounds:      {object}   boundaries of the quad defined by its origin (x, y)
+   *                         width and heigth.
+   * prefix:      {string?}  a prefix for node geometric attributes.
+   * maxElements: {integer?} the max number of elements in a leaf node.
+   * maxLevel:    {integer?} the max recursion level of the tree.
+   */
+  public index = (nodes, params) => {
+    // Enforcing presence of boundaries
+    if (!params.bounds)
+      throw new Error("Quad.index: bounds information not given.");
+
+    // Prefix
+    const prefix = params.prefix || "";
+
+    // Building the tree
+    this.tree = _quadTree(
+      params.bounds,
+      0,
+      params.maxElements,
+      params.maxLevel
+    );
+
+    // Inserting graph nodes into the tree
+    for (let i = 0, l = nodes.length; i < l; i++) {
+      // Inserting node
+      _quadInsert(
+        nodes[i],
+        pointToSquare({
+          x: nodes[i][`${prefix}x`],
+          y: nodes[i][`${prefix}y`],
+          size: nodes[i][`${prefix}size`]
+        }),
+        this.tree
+      );
+    }
+
+    // Reset cache:
+    this.cache = {
+      query: "",
+      result: []
+    };
+
+    // remove?
+    return this.tree;
+  };
+
+  /**
+   * Retrieve every graph nodes held by the quadtree node containing the
+   * searched point.
+   *
+   * @param  {number} x of the point.
+   * @param  {number} y of the point.
+   * @return {array}  An array of nodes retrieved.
+   */
+  public point = (x, y) => {
+    return this.tree ? _quadRetrievePoint({ x, y }, this.tree) || [] : [];
+  };
+
+  /**
+   * Retrieve every graph nodes within a rectangular area. The methods keep the
+   * last area queried in cache for optimization reason and will act differently
+   * for the same reason if the area is axis-aligned or not.
+   *
+   * @param  {object} A rectangle defined by two top points (x1, y1), (x2, y2)
+   *                  and height.
+   * @return {array}  An array of nodes retrieved.
+   */
+  public area = rect => {
+    const serialized = JSON.stringify(rect);
+    let collisionFunc;
+    let rectData;
+
+    // Returning cache?
+    if (this.cache.query === serialized) return this.cache.result;
+
+    // Axis aligned ?
+    if (isAxisAligned(rect)) {
+      collisionFunc = _quadIndexes;
+      rectData = axisAlignedTopPoints(rect);
+    } else {
+      collisionFunc = _quadCollision;
+      rectData = rectangleCorners(rect);
+    }
+
+    // Retrieving nodes
+    const nodes = this.tree
+      ? _quadRetrieveArea(rectData, this.tree, collisionFunc)
+      : [];
+
+    // Object to array
+    const nodesArray = Object.keys(nodes).map(n => nodes[n]);
+
+    // Caching
+    this.cache.query = serialized;
+    this.cache.result = nodesArray;
+
+    return nodesArray;
   };
 }
-
-/**
- * Index a graph by inserting its nodes into the quadtree.
- *
- * @param  {array}  nodes   An array of nodes to index.
- * @param  {object} params  An object of parameters with at least the quad
- *                          bounds.
- * @return {object}         The quadtree object.
- *
- * Parameters:
- * ----------
- * bounds:      {object}   boundaries of the quad defined by its origin (x, y)
- *                         width and heigth.
- * prefix:      {string?}  a prefix for node geometric attributes.
- * maxElements: {integer?} the max number of elements in a leaf node.
- * maxLevel:    {integer?} the max recursion level of the tree.
- */
-Quad.prototype.index = function index(nodes, params) {
-  // Enforcing presence of boundaries
-  if (!params.bounds)
-    throw new Error("Quad.index: bounds information not given.");
-
-  // Prefix
-  const prefix = params.prefix || "";
-
-  // Building the tree
-  this._tree = _quadTree(params.bounds, 0, params.maxElements, params.maxLevel);
-
-  // Inserting graph nodes into the tree
-  for (let i = 0, l = nodes.length; i < l; i++) {
-    // Inserting node
-    _quadInsert(
-      nodes[i],
-      pointToSquare({
-        x: nodes[i][`${prefix}x`],
-        y: nodes[i][`${prefix}y`],
-        size: nodes[i][`${prefix}size`]
-      }),
-      this._tree
-    );
-  }
-
-  // Reset cache:
-  this._cache = {
-    query: false,
-    result: false
-  };
-
-  // remove?
-  return this._tree;
-};
-
-/**
- * Retrieve every graph nodes held by the quadtree node containing the
- * searched point.
- *
- * @param  {number} x of the point.
- * @param  {number} y of the point.
- * @return {array}  An array of nodes retrieved.
- */
-Quad.prototype.point = function point(x, y) {
-  return this._tree ? _quadRetrievePoint({ x, y }, this._tree) || [] : [];
-};
-
-/**
- * Retrieve every graph nodes within a rectangular area. The methods keep the
- * last area queried in cache for optimization reason and will act differently
- * for the same reason if the area is axis-aligned or not.
- *
- * @param  {object} A rectangle defined by two top points (x1, y1), (x2, y2)
- *                  and height.
- * @return {array}  An array of nodes retrieved.
- */
-Quad.prototype.area = function area(rect) {
-  const serialized = JSON.stringify(rect);
-
-  let collisionFunc;
-
-  let rectData;
-
-  // Returning cache?
-  if (this._cache.query === serialized) return this._cache.result;
-
-  // Axis aligned ?
-  if (isAxisAligned(rect)) {
-    collisionFunc = _quadIndexes;
-    rectData = axisAlignedTopPoints(rect);
-  } else {
-    collisionFunc = _quadCollision;
-    rectData = rectangleCorners(rect);
-  }
-
-  // Retrieving nodes
-  const nodes = this._tree
-    ? _quadRetrieveArea(rectData, this._tree, collisionFunc)
-    : [];
-
-  // Object to array
-  const nodesArray = Object.keys(nodes).map(n => nodes[n]);
-
-  // Caching
-  this._cache.query = serialized;
-  this._cache.result = nodesArray;
-
-  return nodesArray;
-};
