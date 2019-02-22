@@ -121,7 +121,7 @@ function sigma(conf) {
   __instances[this.id] = this;
 
   // Initialize settings function:
-  this.settings = new sigma.classes.configurable(
+  this.settings = sigma.classes.configurable(
     sigma.settings,
     _conf.settings || {}
   );

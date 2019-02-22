@@ -102,7 +102,7 @@ class Graph {
   public outNeighborsCount = Object.create(null);
   public allNeighborsCount = Object.create(null);
 
-  constructor(settings) {
+  constructor(settings?: any) {
     this.settings = settings || _defaultSettingsFunction;
     this.addNode = this.addNode.bind(this);
     this.addEdge = this.addEdge.bind(this);
@@ -512,7 +512,7 @@ class Graph {
    * @param  {?(string|array)} v Eventually one id, an array of ids.
    * @return {object|array}      The related node or array of nodes.
    */
-  public nodes(v: string | string[]) {
+  public nodes(v?: string | string[]) {
     // Clone the array of nodes and return it:
     if (!arguments.length) return this.nodesArray.slice(0);
 
@@ -591,7 +591,7 @@ class Graph {
    * @param  {?(string|array)} v Eventually one id, an array of ids.
    * @return {object|array}      The related edge or array of edges.
    */
-  public edges(v: string | string[]) {
+  public edges(v?: string | string[]) {
     // Clone the array of edges and return it:
     if (!arguments.length) return this.edgesArray.slice(0);
 

@@ -11,7 +11,7 @@ describe("Plugin: sigma.statistics.HITS", () => {
 
   it("Stats computation", () => {
     const opts = {};
-    const settings = new sigma.classes.configurable(opts);
+    const settings = sigma.classes.configurable(opts);
 
     const graph1 = {
       nodes: [{ id: "n1" }],

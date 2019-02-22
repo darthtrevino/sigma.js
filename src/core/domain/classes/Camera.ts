@@ -80,7 +80,7 @@ export default class Camera extends Dispatcher {
    *                           - A height.
    * @return {camera}        Returns the camera.
    */
-  public applyView = (read: string, write: string, options: any) => {
+  public applyView = (read: string, write: string, options?: any) => {
     options = options || {};
     write = write !== undefined ? write : this.prefix;
     read = read !== undefined ? read : this.readPrefix;
@@ -124,7 +124,7 @@ export default class Camera extends Dispatcher {
    *                    camera.
    * @return {object}   The point coordinates in the frame of the graph.
    */
-  public graphPosition = (x, y, vector) => {
+  public graphPosition = (x: number, y: number, vector?: boolean) => {
     let X = 0;
     let Y = 0;
     const cos = Math.cos(this.angle);
@@ -152,7 +152,7 @@ export default class Camera extends Dispatcher {
    *                    graph.
    * @return {object}   The point coordinates in the frame of the camera.
    */
-  public cameraPosition = (x, y, vector) => {
+  public cameraPosition = (x: number, y: number, vector?: boolean) => {
     let X = 0;
     let Y = 0;
     const cos = Math.cos(this.angle);
