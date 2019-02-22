@@ -1,9 +1,11 @@
+// @ts-ignore
 import conrad from "conrad";
 import id from "../../utils/misc/id";
 import Dispatcher from "../../classes/Dispatcher";
 import getPixelRatio from "../../utils/events/getPixelRatio";
 import multiply from "../../utils/matrices/multiply";
 import translation from "../../utils/matrices/translation";
+import { SigmaLibrary } from "../../../sigma.core";
 
 /**
  * This function is the constructor of the canvas sigma's renderer.
@@ -15,7 +17,7 @@ import translation from "../../utils/matrices/translation";
  * @param  {object}                 object   The options object.
  * @return {sigma.renderers.canvas}          The renderer instance.
  */
-export default sigma => {
+export default (sigma: SigmaLibrary) => {
   function WebGLRenderer(graph, camera, settings, options) {
     if (typeof options !== "object")
       throw new Error("WebGLRenderer: Wrong arguments.");

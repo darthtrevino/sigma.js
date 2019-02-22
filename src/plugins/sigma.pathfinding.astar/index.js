@@ -24,7 +24,7 @@ export default function extend(sigma) {
     destId,
     settings
   ) {
-    const currentSettings = new sigma.classes.configurable(
+    const currentSettings = sigma.classes.configurable(
       // Default settings
       {
         // Graph is directed, affects which edges are taken into account

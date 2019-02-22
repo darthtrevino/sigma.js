@@ -1,6 +1,4 @@
-<!-- START SIGMA IMPORTS -->
 <script src="../build/sigma.umd.js"></script>
-<!-- END SIGMA IMPORTS -->
 <script src="../build/plugins/sigma.renderers.edgeDots.js"></script>
 <div id="container">
   <style>
@@ -56,6 +54,7 @@
     });
 
   // Instantiate sigma:
+  sigma.canvas.edges.useDotCurves();
   s = new sigma({
     graph: g,
     renderer: {

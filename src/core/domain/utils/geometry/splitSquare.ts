@@ -1,4 +1,4 @@
-import { Boundaries, Point } from "./interfaces";
+import { Boundaries, QuadTreeRectangle } from "./interfaces";
 
 /**
  * Split a square defined by its boundaries into four.
@@ -7,14 +7,7 @@ import { Boundaries, Point } from "./interfaces";
  * @return {array}  An array containing the four new squares, themselves
  *                  defined by an array of their four corners (x, y).
  */
-export default function splitSquare(
-  b: Boundaries
-): [
-  [Point, Point, Point, Point],
-  [Point, Point, Point, Point],
-  [Point, Point, Point, Point],
-  [Point, Point, Point, Point]
-] {
+export default function splitSquare(b: Boundaries): QuadTreeRectangle {
   return [
     [
       { x: b.x, y: b.y },

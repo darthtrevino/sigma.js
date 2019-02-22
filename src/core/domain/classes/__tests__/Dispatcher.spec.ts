@@ -8,22 +8,22 @@ describe("The Dispatcher Class", () => {
 
     instance.dispatchEvent("myEvent");
     expect(dispatched).toEqual(
-      0,
-      "Dispatching an event with no listener does nothing."
+      0
+      //      "Dispatching an event with no listener does nothing."
     );
 
     instance.bind("myEvent", listener);
     instance.dispatchEvent("myEvent");
     expect(dispatched).toEqual(
-      1,
-      "Dispatching an event with a listener executes the listener."
+      1
+      //      "Dispatching an event with a listener executes the listener."
     );
 
     instance.unbind("myEvent", listener);
     instance.dispatchEvent("myEvent");
     expect(dispatched).toEqual(
-      1,
-      "Dispatching an event with a listener than has been unbound does nothing."
+      1
+      //      "Dispatching an event with a listener than has been unbound does nothing."
     );
   });
 
@@ -35,35 +35,35 @@ describe("The Dispatcher Class", () => {
     instance.bind("myEvent", listener);
     instance.unbind("myEvent", listener);
     instance.dispatchEvent("myEvent");
-    expect(dispatched).toEqual(0, "unbind(event, handler) works.");
+    expect(dispatched).toEqual(0); //, "unbind(event, handler) works.");
 
     instance.bind("myEvent", listener);
     instance.unbind("myEvent anotherEvent", listener);
     instance.dispatchEvent("myEvent");
-    expect(dispatched).toEqual(0, 'unbind("event1 event2", handler) works.');
+    expect(dispatched).toEqual(0); //, 'unbind("event1 event2", handler) works.');
 
     instance.bind("myEvent", listener);
     instance.unbind("  myEvent   anotherEvent  ", listener);
     instance.dispatchEvent("myEvent");
     expect(dispatched).toEqual(
-      0,
-      'unbind("  event1   event2  ", handler) works.'
+      0
+      //      'unbind("  event1   event2  ", handler) works.'
     );
 
     instance.bind("myEvent", listener);
     instance.unbind(["myEvent", "anotherEvent"], listener);
     instance.dispatchEvent("myEvent");
-    expect(dispatched).toEqual(0, "unbind(event, handler) works.");
+    expect(dispatched).toEqual(0); //, "unbind(event, handler) works.");
 
     instance.bind("myEvent", listener);
     instance.unbind("myEvent");
     instance.dispatchEvent("myEvent");
-    expect(dispatched).toEqual(0, "unbind(event) works.");
+    expect(dispatched).toEqual(0); //, "unbind(event) works.");
 
     instance.bind("myEvent", listener);
     instance.unbind();
     instance.dispatchEvent("myEvent");
-    expect(dispatched).toEqual(0, "unbind() works.");
+    expect(dispatched).toEqual(0); //, "unbind() works.");
   });
 
   describe("respects bind polymorphism", () => {
@@ -76,14 +76,14 @@ describe("The Dispatcher Class", () => {
 
     instance.bind("myEvent1", listener1);
     instance.dispatchEvent("myEvent1");
-    expect(dispatched1).toEqual(1, "bind(event, handler) works.");
+    expect(dispatched1).toEqual(1); //, "bind(event, handler) works.");
     instance.unbind("myEvent1");
     dispatched1 = 0;
 
     instance.bind("myEvent1 myEvent2", listener1);
     instance.dispatchEvent("myEvent1");
     instance.dispatchEvent("myEvent2");
-    expect(dispatched1).toEqual(2, 'bind("event1 event2", handler) works.');
+    expect(dispatched1).toEqual(2); //, 'bind("event1 event2", handler) works.');
     instance.unbind("myEvent1 myEvent2");
     dispatched1 = 0;
 
@@ -91,8 +91,8 @@ describe("The Dispatcher Class", () => {
     instance.dispatchEvent("myEvent1");
     instance.dispatchEvent("myEvent2");
     expect(dispatched1).toEqual(
-      2,
-      'bind("  event1   event2  ", handler) works.'
+      2
+      //'bind("  event1   event2  ", handler) works.'
     );
     instance.unbind("myEvent1 myEvent2");
     dispatched1 = 0;
@@ -101,8 +101,8 @@ describe("The Dispatcher Class", () => {
     instance.dispatchEvent("myEvent1");
     instance.dispatchEvent("myEvent2");
     expect(dispatched1).toEqual(
-      2,
-      'bind(["event1", "event2"], handler) works.'
+      2
+      //      'bind(["event1", "event2"], handler) works.'
     );
     instance.unbind("myEvent1 myEvent2");
     dispatched1 = 0;
@@ -111,8 +111,8 @@ describe("The Dispatcher Class", () => {
     instance.dispatchEvent("myEvent1");
     instance.dispatchEvent("myEvent2");
     expect([dispatched1, dispatched2]).toEqual(
-      [1, 1],
-      "bind({ event1: listener1, event2: listener2, }, handler) works."
+      [1, 1]
+      //      "bind({ event1: listener1, event2: listener2, }, handler) works."
     );
     instance.unbind("myEvent1 myEvent2");
     dispatched1 = 0;

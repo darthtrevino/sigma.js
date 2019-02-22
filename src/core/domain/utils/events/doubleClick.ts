@@ -1,3 +1,5 @@
+import { SigmaLibrary } from "../../../sigma.core";
+
 /**
  * Simulates a "double click" event.
  *
@@ -5,7 +7,7 @@
  * @param  {string}      type     The event type.
  * @param  {function}    callback The callback to execute.
  */
-export default sigma =>
+export default (sigma: SigmaLibrary) =>
   function doubleClick(target: HTMLElement, type: string, callback) {
     let clicks = 0;
     (target as any)._doubleClickHandler =
@@ -22,7 +24,7 @@ export default sigma =>
       } else if (clicks === 1) {
         setTimeout(() => {
           clicks = 0;
-        }, sigma.settings.doubleClickTimeout);
+        }, (sigma.settings as any).doubleClickTimeout);
       }
     });
 

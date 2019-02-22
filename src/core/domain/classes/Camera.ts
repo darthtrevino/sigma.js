@@ -2,7 +2,9 @@ import scale from "../utils/matrices/scale";
 import rotation from "../utils/matrices/rotation";
 import translation from "../utils/matrices/translation";
 import multiply from "../utils/matrices/multiply";
-import Dispatcher from "./DispatcherClass";
+import Dispatcher from "./Dispatcher";
+import Quad from "./Quad";
+import EdgeQuad from "./EdgeQuad";
 
 /**
  * The camera constructor. It just initializes its attributes and methods.
@@ -23,6 +25,9 @@ export default class Camera extends Dispatcher {
   public settings: any;
   public prefix: string;
   public readPrefix: string;
+  public kill?: Function;
+  public quadtree?: Quad;
+  public edgequadtree?: EdgeQuad;
 
   constructor(
     public id: string,
@@ -80,7 +85,7 @@ export default class Camera extends Dispatcher {
    *                           - A height.
    * @return {camera}        Returns the camera.
    */
-  public applyView = (read: string, write: string, options: any) => {
+  public applyView = (read: string, write: string, options?: any) => {
     options = options || {};
     write = write !== undefined ? write : this.prefix;
     read = read !== undefined ? read : this.readPrefix;
@@ -124,7 +129,7 @@ export default class Camera extends Dispatcher {
    *                    camera.
    * @return {object}   The point coordinates in the frame of the graph.
    */
-  public graphPosition = (x, y, vector) => {
+  public graphPosition = (x: number, y: number, vector?: boolean) => {
     let X = 0;
     let Y = 0;
     const cos = Math.cos(this.angle);
@@ -152,7 +157,7 @@ export default class Camera extends Dispatcher {
    *                    graph.
    * @return {object}   The point coordinates in the frame of the camera.
    */
-  public cameraPosition = (x, y, vector) => {
+  public cameraPosition = (x: number, y: number, vector?: boolean) => {
     let X = 0;
     let Y = 0;
     const cos = Math.cos(this.angle);

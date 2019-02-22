@@ -1,4 +1,10 @@
-export default function getBoundaries(graph, prefix, doEdges) {
+import Graph from "../../classes/Graph";
+
+export default function getBoundaries(
+  graph: Graph,
+  prefix: string,
+  doEdges?: boolean
+) {
   const edges = graph.edges();
   const nodes = graph.nodes();
   let weightMax = -Infinity;

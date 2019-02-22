@@ -11,16 +11,16 @@ import getBoundaries from "../utils/geometry/getBoundaries";
  * @param {?string} writePrefix The write prefix.
  * @param {object}  options     The parameters.
  */
-export default function rescale(readPrefix, writePrefix, options) {
-  let i;
-  let l;
+export default function rescale(
+  readPrefix: string,
+  writePrefix: string,
+  options?: any
+) {
   let a;
   let b;
   let c;
   let d;
-  let scale;
-  const n = this.graph.nodes();
-  const e = this.graph.edges();
+  let scale: number;
   const settings = this.settings.embedObjects(options || {});
   const bounds =
     settings("bounds") || getBoundaries(this.graph, readPrefix, true);
@@ -31,7 +31,6 @@ export default function rescale(readPrefix, writePrefix, options) {
   const h = settings("height") || 1;
 
   let rescaleSettings = settings("autoRescale");
-
   const validSettings = {
     nodePosition: 1,
     nodeSize: 1,
@@ -41,14 +40,14 @@ export default function rescale(readPrefix, writePrefix, options) {
   /**
    * What elements should we rescale?
    */
-  if (!(rescaleSettings instanceof Array))
+  if (!(rescaleSettings instanceof Array)) {
     rescaleSettings = ["nodePosition", "nodeSize", "edgeSize"];
+  }
 
-  for (i = 0, l = rescaleSettings.length; i < l; i++)
-    if (!validSettings[rescaleSettings[i]])
-      throw new Error(
-        `The rescale setting "${rescaleSettings[i]}" is not recognized.`
-      );
+  rescaleSettings.forEach(setting => {
+    if (!validSettings[setting])
+      throw new Error(`The rescale setting "${setting}" is not recognized.`);
+  });
 
   const np = ~rescaleSettings.indexOf("nodePosition");
   const ns = ~rescaleSettings.indexOf("nodeSize");
@@ -111,16 +110,17 @@ export default function rescale(readPrefix, writePrefix, options) {
   }
 
   // Rescale the nodes and edges:
-  for (i = 0, l = e.length; i < l; i++)
-    e[i][`${writePrefix}size`] =
-      e[i][`${readPrefix}size`] * (es ? c : 1) + (es ? d : 0);
+  this.graph.edges().forEach(edge => {
+    edge[`${writePrefix}size`] =
+      edge[`${readPrefix}size`] * (es ? c : 1) + (es ? d : 0);
+  });
 
-  for (i = 0, l = n.length; i < l; i++) {
-    n[i][`${writePrefix}size`] =
-      n[i][`${readPrefix}size`] * (ns ? a : 1) + (ns ? b : 0);
-    n[i][`${writePrefix}x`] =
-      (n[i][`${readPrefix}x`] - (maxX + minX) / 2) * (np ? scale : 1);
-    n[i][`${writePrefix}y`] =
-      (n[i][`${readPrefix}y`] - (maxY + minY) / 2) * (np ? scale : 1);
-  }
+  this.graph.nodes().forEach(node => {
+    node[`${writePrefix}size`] =
+      node[`${readPrefix}size`] * (ns ? a : 1) + (ns ? b : 0);
+    node[`${writePrefix}x`] =
+      (node[`${readPrefix}x`] - (maxX + minX) / 2) * (np ? scale : 1);
+    node[`${writePrefix}y`] =
+      (node[`${readPrefix}y`] - (maxY + minY) / 2) * (np ? scale : 1);
+  });
 }

@@ -11,7 +11,7 @@ export default function loadShader(
   gl: WebGLRenderingContext,
   shaderSource: string,
   shaderType: number,
-  error: (err: Error) => void
+  error?: (err: Error) => void
 ) {
   const shader = gl.createShader(shaderType);
 

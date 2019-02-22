@@ -1,3 +1,5 @@
+import { SigmaLibrary } from "../../../sigma.core";
+
 /**
  * The default renderer for hovered edge extremities. It renders the edge
  * extremities as hovered.
@@ -8,7 +10,7 @@
  * @param  {CanvasRenderingContext2D} context      The canvas context.
  * @param  {configurable}             settings     The settings function.
  */
-export default sigma =>
+export default (sigma: SigmaLibrary) =>
   function extremitiesDef(edge, source, target, context, settings) {
     // Source Node:
     (sigma.canvas.hovers[source.type] || sigma.canvas.hovers.def)(

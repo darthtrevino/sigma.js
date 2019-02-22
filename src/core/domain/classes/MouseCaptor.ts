@@ -1,4 +1,4 @@
-import Dispatcher from "./DispatcherClass";
+import Dispatcher from "./Dispatcher";
 import unbindDoubleClick from "../utils/events/unbindDoubleClick";
 import mouseCoords from "../utils/events/mouseCoords";
 import getX from "../utils/events/getX";
@@ -6,8 +6,9 @@ import getY from "../utils/events/getY";
 import getCenter from "../utils/events/getCenter";
 import getDelta from "../utils/events/getDelta";
 import Camera from "./Camera";
+import { SigmaLibrary } from "../../sigma.core";
 
-export default sigma => {
+export default (sigma: SigmaLibrary) => {
   /**
    * The user inputs default captor. It deals with mouse events, keyboards
    * events and touch events.
