@@ -1,3 +1,13 @@
+export interface QuadTree {
+  level: number;
+  bounds: Boundaries;
+  corners: QuadTreeRectangle;
+  maxElements: number;
+  maxLevel: number;
+  elements: any[];
+  nodes: any[];
+}
+
 export interface Point {
   x: number;
   y: number;
@@ -22,6 +32,12 @@ export interface Rectangle extends Line {
 }
 
 export type RectangleCorners = [Point, Point, Point, Point];
+export type QuadTreeRectangle = [
+  RectangleCorners,
+  RectangleCorners,
+  RectangleCorners,
+  RectangleCorners
+];
 
 export interface Edge extends Line {
   size: number;

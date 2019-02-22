@@ -4,6 +4,14 @@ import pointToSquare from "../utils/geometry/pointToSquare";
 import isAxisAligned from "../utils/geometry/isAxisAligned";
 import axisAlignedTopPoints from "../utils/geometry/axisAlignedTopPoints";
 import rectangleCorners from "../utils/geometry/rectangleCorners";
+import {
+  Boundaries,
+  Rectangle,
+  RectangleCorners,
+  QuadTree,
+  QuadTreeRectangle,
+  Point
+} from "../utils/geometry/interfaces";
 
 /**
  * Creates the quadtree object itself.
@@ -15,7 +23,12 @@ import rectangleCorners from "../utils/geometry/rectangleCorners";
  * @param  {integer}  maxLevel     The max recursion level of the tree.
  * @return {object}                The quadtree object.
  */
-function _quadTree(bounds, level, maxElements, maxLevel) {
+function createQuadTree(
+  bounds: Boundaries,
+  level: number,
+  maxElements: number,
+  maxLevel: number
+): QuadTree {
   return {
     level: level || 0,
     bounds,
@@ -51,7 +64,7 @@ function _quadTree(bounds, level, maxElements, maxLevel) {
  * @param  {object}  quadBounds Boundaries of the quad (x, y, width, heigth).
  * @return {integer}            The index of the node containing the point.
  */
-function _quadIndex(point, quadBounds) {
+function quadIndex(point: Point, quadBounds: Boundaries): number {
   const xmp = quadBounds.x + quadBounds.width / 2;
   const ymp = quadBounds.y + quadBounds.height / 2;
   const top = point.y < ymp;
@@ -74,7 +87,10 @@ function _quadIndex(point, quadBounds) {
  * @return {array}               An array of indexes containing one to
  *                               four integers.
  */
-function _quadIndexes(rectangle, quadCorners) {
+function quadIndexes(
+  rectangle: Rectangle,
+  quadCorners: RectangleCorners
+): number[] {
   const indexes = [];
 
   // Iterating through quads
@@ -99,7 +115,10 @@ function _quadIndexes(rectangle, quadCorners) {
  * @return {array}               An array of indexes containing one to
  *                               four integers.
  */
-function _quadCollision(corners, quadCorners) {
+function quadCollision(
+  corners: RectangleCorners,
+  quadCorners: QuadTreeRectangle
+): number[] {
   const indexes = [];
 
   // Iterating through quads
@@ -117,10 +136,10 @@ function _quadCollision(corners, quadCorners) {
  * @param  {object}   quad  The quad object to subdivide.
  * @return {object}         A new quad representing the node created.
  */
-function _quadSubdivide(index, quad) {
+function quadSubdivide(index: number, quad: QuadTree): QuadTree {
   const next = quad.level + 1;
-  const subw = Math.round(quad.bounds.width / 2);
-  const subh = Math.round(quad.bounds.height / 2);
+  const width = Math.round(quad.bounds.width / 2);
+  const height = Math.round(quad.bounds.height / 2);
   const qx = Math.round(quad.bounds.x);
   const qy = Math.round(quad.bounds.y);
   let x;
@@ -132,23 +151,23 @@ function _quadSubdivide(index, quad) {
       y = qy;
       break;
     case 1:
-      x = qx + subw;
+      x = qx + width;
       y = qy;
       break;
     case 2:
       x = qx;
-      y = qy + subh;
+      y = qy + height;
       break;
     case 3:
-      x = qx + subw;
-      y = qy + subh;
+      x = qx + width;
+      y = qy + height;
       break;
     default:
       throw new Error(`invalid quad index ${index}`);
   }
 
-  return _quadTree(
-    { x, y, width: subw, height: subh },
+  return createQuadTree(
+    { x, y, width, height },
     next,
     quad.maxElements,
     quad.maxLevel
@@ -166,19 +185,19 @@ function _quadSubdivide(index, quad) {
  * @param  {object}  quad       The quad in which to insert the element.
  * @return {undefined}          The function does not return anything.
  */
-function _quadInsert(el, sizedPoint, quad) {
+function quadInsert(el, sizedPoint: Rectangle, quad) {
   if (quad.level < quad.maxLevel) {
     // Searching appropriate quads
-    const indexes = _quadIndexes(sizedPoint, quad.corners);
+    const indexes = quadIndexes(sizedPoint, quad.corners);
 
     // Iterating
     for (let i = 0, l = indexes.length; i < l; i++) {
       // Subdividing if necessary
       if (quad.nodes[indexes[i]] === undefined)
-        quad.nodes[indexes[i]] = _quadSubdivide(indexes[i], quad);
+        quad.nodes[indexes[i]] = quadSubdivide(indexes[i], quad);
 
       // Recursion
-      _quadInsert(el, sizedPoint, quad.nodes[indexes[i]]);
+      quadInsert(el, sizedPoint, quad.nodes[indexes[i]]);
     }
   } else {
     // Pushing the element in a leaf node
@@ -195,13 +214,13 @@ function _quadInsert(el, sizedPoint, quad) {
  * @return {array}         An array of elements contained in the relevant
  *                         node.
  */
-function _quadRetrievePoint(point, quad) {
+function quadRetrievePoint(point: Point, quad: QuadTree) {
   if (quad.level < quad.maxLevel) {
-    const index = _quadIndex(point, quad.bounds);
+    const index = quadIndex(point, quad.bounds);
 
     // If node does not exist we return an empty list
     if (quad.nodes[index] !== undefined) {
-      return _quadRetrievePoint(point, quad.nodes[index]);
+      return quadRetrievePoint(point, quad.nodes[index]);
     }
     return [];
   }
@@ -224,13 +243,13 @@ function _quadRetrievePoint(point, quad) {
  * @return {array}                       An array of elements contained in the
  *                                       area.
  */
-function _quadRetrieveArea(rectData, quad, collisionFunc, els: any = {}) {
+function quadRetrieveArea(rectData, quad, collisionFunc, els: any = {}) {
   if (quad.level < quad.maxLevel) {
     const indexes = collisionFunc(rectData, quad.corners);
 
     for (let i = 0, l = indexes.length; i < l; i++)
       if (quad.nodes[indexes[i]] !== undefined)
-        _quadRetrieveArea(rectData, quad.nodes[indexes[i]], collisionFunc, els);
+        quadRetrieveArea(rectData, quad.nodes[indexes[i]], collisionFunc, els);
   } else
     for (let j = 0, m = quad.elements.length; j < m; j++)
       if (els[quad.elements[j].id] === undefined)
@@ -275,7 +294,7 @@ export default class Quad {
    * maxElements: {integer?} the max number of elements in a leaf node.
    * maxLevel:    {integer?} the max recursion level of the tree.
    */
-  public index = (nodes, params) => {
+  public index = (nodes: any[], params: any) => {
     // Enforcing presence of boundaries
     if (!params.bounds)
       throw new Error("Quad.index: bounds information not given.");
@@ -284,7 +303,7 @@ export default class Quad {
     const prefix = params.prefix || "";
 
     // Building the tree
-    this.tree = _quadTree(
+    this.tree = createQuadTree(
       params.bounds,
       0,
       params.maxElements,
@@ -294,7 +313,7 @@ export default class Quad {
     // Inserting graph nodes into the tree
     for (let i = 0, l = nodes.length; i < l; i++) {
       // Inserting node
-      _quadInsert(
+      quadInsert(
         nodes[i],
         pointToSquare({
           x: nodes[i][`${prefix}x`],
@@ -323,8 +342,8 @@ export default class Quad {
    * @param  {number} y of the point.
    * @return {array}  An array of nodes retrieved.
    */
-  public point = (x, y) => {
-    return this.tree ? _quadRetrievePoint({ x, y }, this.tree) || [] : [];
+  public point = (x: number, y: number) => {
+    return this.tree ? quadRetrievePoint({ x, y }, this.tree) || [] : [];
   };
 
   /**
@@ -346,16 +365,16 @@ export default class Quad {
 
     // Axis aligned ?
     if (isAxisAligned(rect)) {
-      collisionFunc = _quadIndexes;
+      collisionFunc = quadIndexes;
       rectData = axisAlignedTopPoints(rect);
     } else {
-      collisionFunc = _quadCollision;
+      collisionFunc = quadCollision;
       rectData = rectangleCorners(rect);
     }
 
     // Retrieving nodes
     const nodes = this.tree
-      ? _quadRetrieveArea(rectData, this.tree, collisionFunc)
+      ? quadRetrieveArea(rectData, this.tree, collisionFunc)
       : [];
 
     // Object to array

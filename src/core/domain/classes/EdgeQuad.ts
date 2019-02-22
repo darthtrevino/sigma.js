@@ -7,6 +7,14 @@ import lineToSquare from "../utils/geometry/lineToSquare";
 import isAxisAligned from "../utils/geometry/isAxisAligned";
 import axisAlignedTopPoints from "../utils/geometry/axisAlignedTopPoints";
 import rectangleCorners from "../utils/geometry/rectangleCorners";
+import {
+  QuadTree,
+  Rectangle,
+  RectangleCorners,
+  QuadTreeRectangle,
+  Point,
+  Boundaries
+} from "../utils/geometry/interfaces";
 
 /**
  * Sigma Quadtree Module for edges
@@ -27,7 +35,7 @@ import rectangleCorners from "../utils/geometry/rectangleCorners";
  * @param  {integer}  maxLevel     The max recursion level of the tree.
  * @return {object}                The quadtree object.
  */
-function _quadTree(bounds, level, maxElements, maxLevel) {
+function createQuadTree(bounds, level, maxElements, maxLevel): QuadTree {
   return {
     level: level || 0,
     bounds,
@@ -63,7 +71,7 @@ function _quadTree(bounds, level, maxElements, maxLevel) {
  * @param  {object}  quadBounds Boundaries of the quad (x, y, width, heigth).
  * @return {integer}            The index of the node containing the point.
  */
-function _quadIndex(point, quadBounds) {
+function quadIndex(point: Point, quadBounds: Boundaries) {
   const xmp = quadBounds.x + quadBounds.width / 2;
   const ymp = quadBounds.y + quadBounds.height / 2;
   const top = point.y < ymp;
@@ -86,7 +94,7 @@ function _quadIndex(point, quadBounds) {
  * @return {array}               An array of indexes containing one to
  *                               four integers.
  */
-function _quadIndexes(rectangle, quadCorners) {
+function quadIndexes(rectangle: Rectangle, quadCorners: RectangleCorners) {
   const indexes = [];
 
   // Iterating through quads
@@ -111,7 +119,10 @@ function _quadIndexes(rectangle, quadCorners) {
  * @return {array}               An array of indexes containing one to
  *                               four integers.
  */
-function _quadCollision(corners, quadCorners) {
+function _quadCollision(
+  corners: RectangleCorners,
+  quadCorners: QuadTreeRectangle
+) {
   const indexes = [];
 
   // Iterating through quads
@@ -129,7 +140,7 @@ function _quadCollision(corners, quadCorners) {
  * @param  {object}   quad  The quad object to subdivide.
  * @return {object}         A new quad representing the node created.
  */
-function _quadSubdivide(index, quad) {
+function quadSubdivide(index: number, quad: QuadTree): QuadTree {
   const next = quad.level + 1;
   const subw = Math.round(quad.bounds.width / 2);
   const subh = Math.round(quad.bounds.height / 2);
@@ -159,7 +170,7 @@ function _quadSubdivide(index, quad) {
       throw new Error(`invalid quad index ${index}`);
   }
 
-  return _quadTree(
+  return createQuadTree(
     { x, y, width: subw, height: subh },
     next,
     quad.maxElements,
@@ -178,19 +189,19 @@ function _quadSubdivide(index, quad) {
  * @param  {object}  quad       The quad in which to insert the element.
  * @return {undefined}          The function does not return anything.
  */
-function _quadInsert(el, sizedPoint, quad) {
+function quadInsert(el, sizedPoint, quad) {
   if (quad.level < quad.maxLevel) {
     // Searching appropriate quads
-    const indexes = _quadIndexes(sizedPoint, quad.corners);
+    const indexes = quadIndexes(sizedPoint, quad.corners);
 
     // Iterating
     for (let i = 0, l = indexes.length; i < l; i++) {
       // Subdividing if necessary
       if (quad.nodes[indexes[i]] === undefined)
-        quad.nodes[indexes[i]] = _quadSubdivide(indexes[i], quad);
+        quad.nodes[indexes[i]] = quadSubdivide(indexes[i], quad);
 
       // Recursion
-      _quadInsert(el, sizedPoint, quad.nodes[indexes[i]]);
+      quadInsert(el, sizedPoint, quad.nodes[indexes[i]]);
     }
   } else {
     // Pushing the element in a leaf node
@@ -207,13 +218,13 @@ function _quadInsert(el, sizedPoint, quad) {
  * @return {array}         An array of elements contained in the relevant
  *                         node.
  */
-function _quadRetrievePoint(point, quad) {
+function quadRetrievePoint(point: Point, quad: QuadTree) {
   if (quad.level < quad.maxLevel) {
-    const index = _quadIndex(point, quad.bounds);
+    const index = quadIndex(point, quad.bounds);
 
     // If node does not exist we return an empty list
     if (quad.nodes[index] !== undefined) {
-      return _quadRetrievePoint(point, quad.nodes[index]);
+      return quadRetrievePoint(point, quad.nodes[index]);
     }
     return [];
   }
@@ -236,15 +247,13 @@ function _quadRetrievePoint(point, quad) {
  * @return {array}                       An array of elements contained in the
  *                                       area.
  */
-function _quadRetrieveArea(rectData, quad, collisionFunc, els) {
-  els = els || {};
-
+function quadRetrieveArea(rectData, quad, collisionFunc, els: any[] = []) {
   if (quad.level < quad.maxLevel) {
     const indexes = collisionFunc(rectData, quad.corners);
 
     for (let i = 0, l = indexes.length; i < l; i++)
       if (quad.nodes[indexes[i]] !== undefined)
-        _quadRetrieveArea(rectData, quad.nodes[indexes[i]], collisionFunc, els);
+        quadRetrieveArea(rectData, quad.nodes[indexes[i]], collisionFunc, els);
   } else
     for (let j = 0, m = quad.elements.length; j < m; j++)
       if (els[quad.elements[j].id] === undefined)
@@ -262,148 +271,152 @@ function _quadRetrieveArea(rectData, quad, collisionFunc, els) {
 /**
  * The edgequad core that will become the sigma interface with the quadtree.
  *
- * property {object} _tree     Property holding the quadtree object.
- * property {object} _cache    Cache for the area method.
- * property {boolean} _enabled Can index and retreive elements.
+ * property {object} tree     Property holding the quadtree object.
+ * property {object} cache    Cache for the area method.
+ * property {boolean} enabled Can index and retreive elements.
  */
-export default function EdgeQuad() {
-  this._tree = null;
-  this._cache = {
-    query: false,
-    result: false
+export default class EdgeQuad {
+  private tree = null;
+  private cache = {
+    query: "",
+    result: []
   };
-  this._enabled = true;
-}
+  private enabled = true;
 
-/**
- * Index a graph by inserting its edges into the quadtree.
- *
- * @param  {object} graph   A graph instance.
- * @param  {object} params  An object of parameters with at least the quad
- *                          bounds.
- * @return {object}         The quadtree object.
- *
- * Parameters:
- * ----------
- * bounds:      {object}   boundaries of the quad defined by its origin (x, y)
- *                         width and heigth.
- * prefix:      {string?}  a prefix for edge geometric attributes.
- * maxElements: {integer?} the max number of elements in a leaf node.
- * maxLevel:    {integer?} the max recursion level of the tree.
- */
-EdgeQuad.prototype.index = function index(graph, params) {
-  if (!this._enabled) return this._tree;
+  /**
+   * Index a graph by inserting its edges into the quadtree.
+   *
+   * @param  {object} graph   A graph instance.
+   * @param  {object} params  An object of parameters with at least the quad
+   *                          bounds.
+   * @return {object}         The quadtree object.
+   *
+   * Parameters:
+   * ----------
+   * bounds:      {object}   boundaries of the quad defined by its origin (x, y)
+   *                         width and heigth.
+   * prefix:      {string?}  a prefix for edge geometric attributes.
+   * maxElements: {integer?} the max number of elements in a leaf node.
+   * maxLevel:    {integer?} the max recursion level of the tree.
+   */
+  public index = (graph, params: any) => {
+    if (!this.enabled) return this.tree;
 
-  // Enforcing presence of boundaries
-  if (!params.bounds)
-    throw new Error("EdgeQuad.index: bounds information not given.");
+    // Enforcing presence of boundaries
+    if (!params.bounds)
+      throw new Error("EdgeQuad.index: bounds information not given.");
 
-  // Prefix
-  const prefix = params.prefix || "";
-  let cp;
-  let source;
-  let target;
-  let n;
-  let e;
+    // Prefix
+    const prefix = params.prefix || "";
+    let cp;
+    let source;
+    let target;
+    let n;
+    let e;
 
-  // Building the tree
-  this._tree = _quadTree(params.bounds, 0, params.maxElements, params.maxLevel);
+    // Building the tree
+    this.tree = createQuadTree(
+      params.bounds,
+      0,
+      params.maxElements,
+      params.maxLevel
+    );
 
-  const edges = graph.edges();
+    const edges = graph.edges();
 
-  // Inserting graph edges into the tree
-  for (let i = 0, l = edges.length; i < l; i++) {
-    source = graph.nodes(edges[i].source);
-    target = graph.nodes(edges[i].target);
-    e = {
-      x1: source[`${prefix}x`],
-      y1: source[`${prefix}y`],
-      x2: target[`${prefix}x`],
-      y2: target[`${prefix}y`],
-      size: edges[i][`${prefix}size`] || 0
+    // Inserting graph edges into the tree
+    for (let i = 0, l = edges.length; i < l; i++) {
+      source = graph.nodes(edges[i].source);
+      target = graph.nodes(edges[i].target);
+      e = {
+        x1: source[`${prefix}x`],
+        y1: source[`${prefix}y`],
+        x2: target[`${prefix}x`],
+        y2: target[`${prefix}y`],
+        size: edges[i][`${prefix}size`] || 0
+      };
+
+      // Inserting edge
+      if (edges[i].type === "curve" || edges[i].type === "curvedArrow") {
+        if (source.id === target.id) {
+          n = {
+            x: source[`${prefix}x`],
+            y: source[`${prefix}y`],
+            size: source[`${prefix}size`] || 0
+          };
+          quadInsert(edges[i], selfLoopToSquare(n), this.tree);
+        } else {
+          cp = getQuadraticControlPoint(e.x1, e.y1, e.x2, e.y2);
+          quadInsert(edges[i], quadraticCurveToSquare(e, cp), this.tree);
+        }
+      } else {
+        quadInsert(edges[i], lineToSquare(e), this.tree);
+      }
+    }
+
+    // Reset cache:
+    this.cache = {
+      query: "",
+      result: []
     };
 
-    // Inserting edge
-    if (edges[i].type === "curve" || edges[i].type === "curvedArrow") {
-      if (source.id === target.id) {
-        n = {
-          x: source[`${prefix}x`],
-          y: source[`${prefix}y`],
-          size: source[`${prefix}size`] || 0
-        };
-        _quadInsert(edges[i], selfLoopToSquare(n), this._tree);
-      } else {
-        cp = getQuadraticControlPoint(e.x1, e.y1, e.x2, e.y2);
-        _quadInsert(edges[i], quadraticCurveToSquare(e, cp), this._tree);
-      }
-    } else {
-      _quadInsert(edges[i], lineToSquare(e), this._tree);
-    }
-  }
-
-  // Reset cache:
-  this._cache = {
-    query: false,
-    result: false
+    // remove?
+    return this.tree;
   };
 
-  // remove?
-  return this._tree;
-};
+  /**
+   * Retrieve every graph edges held by the quadtree node containing the
+   * searched point.
+   *
+   * @param  {number} x of the point.
+   * @param  {number} y of the point.
+   * @return {array}  An array of edges retrieved.
+   */
+  public point = (x: number, y: number) => {
+    if (!this.enabled) return [];
+    return this.tree ? quadRetrievePoint({ x, y }, this.tree) || [] : [];
+  };
 
-/**
- * Retrieve every graph edges held by the quadtree node containing the
- * searched point.
- *
- * @param  {number} x of the point.
- * @param  {number} y of the point.
- * @return {array}  An array of edges retrieved.
- */
-EdgeQuad.prototype.point = function point(x, y) {
-  if (!this._enabled) return [];
+  /**
+   * Retrieve every graph edges within a rectangular area. The methods keep the
+   * last area queried in cache for optimization reason and will act differently
+   * for the same reason if the area is axis-aligned or not.
+   *
+   * @param  {object} A rectangle defined by two top points (x1, y1), (x2, y2)
+   *                  and height.
+   * @return {array}  An array of edges retrieved.
+   */
+  public area = (rect: Rectangle) => {
+    if (!this.enabled) return [];
 
-  return this._tree ? _quadRetrievePoint({ x, y }, this._tree) || [] : [];
-};
+    const serialized = JSON.stringify(rect);
+    let collisionFunc;
+    let rectData;
 
-/**
- * Retrieve every graph edges within a rectangular area. The methods keep the
- * last area queried in cache for optimization reason and will act differently
- * for the same reason if the area is axis-aligned or not.
- *
- * @param  {object} A rectangle defined by two top points (x1, y1), (x2, y2)
- *                  and height.
- * @return {array}  An array of edges retrieved.
- */
-EdgeQuad.prototype.area = function area(rect) {
-  if (!this._enabled) return [];
+    // Returning cache?
+    if (this.cache.query === serialized) return this.cache.result;
 
-  const serialized = JSON.stringify(rect);
-  let collisionFunc;
-  let rectData;
+    // Axis aligned ?
+    if (isAxisAligned(rect)) {
+      collisionFunc = quadIndexes;
+      rectData = axisAlignedTopPoints(rect);
+    } else {
+      collisionFunc = _quadCollision;
+      rectData = rectangleCorners(rect);
+    }
 
-  // Returning cache?
-  if (this._cache.query === serialized) return this._cache.result;
+    // Retrieving edges
+    const edges = this.tree
+      ? quadRetrieveArea(rectData, this.tree, collisionFunc)
+      : [];
 
-  // Axis aligned ?
-  if (isAxisAligned(rect)) {
-    collisionFunc = _quadIndexes;
-    rectData = axisAlignedTopPoints(rect);
-  } else {
-    collisionFunc = _quadCollision;
-    rectData = rectangleCorners(rect);
-  }
+    // Object to array
+    const edgesArray = Object.keys(edges).map(e => edges[e]);
 
-  // Retrieving edges
-  const edges = this._tree
-    ? _quadRetrieveArea(rectData, this._tree, collisionFunc)
-    : [];
+    // Caching
+    this.cache.query = serialized;
+    this.cache.result = edgesArray;
 
-  // Object to array
-  const edgesArray = Object.keys(edges).map(e => edges[e]);
-
-  // Caching
-  this._cache.query = serialized;
-  this._cache.result = edgesArray;
-
-  return edgesArray;
-};
+    return edgesArray;
+  };
+}
