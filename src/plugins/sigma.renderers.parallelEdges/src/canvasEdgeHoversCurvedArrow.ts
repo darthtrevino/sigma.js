@@ -15,7 +15,7 @@ export default sigma => {
     const defaultNodeColor = settings("defaultNodeColor");
     const defaultEdgeColor = settings("defaultEdgeColor");
 
-    let cp = {};
+    let cp: any = {};
     const size = settings("edgeHoverSizeRatio") * (edge[`${prefix}size`] || 1);
     const count = edge.count || 0;
     const tSize = target[`${prefix}size`];

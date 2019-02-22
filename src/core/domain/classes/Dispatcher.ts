@@ -15,7 +15,6 @@ export default class Dispatcher {
     this.bind = this.bind.bind(this);
     this.unbind = this.unbind.bind(this);
     this.dispatchEvent = this.dispatchEvent.bind(this);
-    this.getEvent = this.getEvent.bind(this);
   }
 
   /**
@@ -141,13 +140,13 @@ export default class Dispatcher {
    * @param  {?object} data   The content of the event (optional).
    * @return {object}         Returns the instance itself.
    */
-  public getEvent(event: string, data?: any) {
+  private getEvent = (event: string, data?: any) => {
     return {
       type: event,
       data: data || {},
       target: this
     };
-  }
+  };
 
   /**
    * Augments an object with dispatching power
@@ -155,7 +154,7 @@ export default class Dispatcher {
   public static extend(target: any) {
     const instance = new Dispatcher();
     target.__dispatcher = instance;
-    ["dispatchEvent", "getEvent", "bind", "unbind"].forEach(method => {
+    ["dispatchEvent", "bind", "unbind"].forEach(method => {
       if (target["method"]) {
         throw new Error(
           `dispatcher method ${method} is already defined on target`

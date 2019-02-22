@@ -176,7 +176,7 @@ describe("Plugin: sigma.statistics.HITS", () => {
 
     stats = myGraph.HITS(true);
 
-    expect(stats.n1.authority).toEqual(0.5, "test 2");
+    expect(stats.n1.authority).toEqual(0.5); //, "test 2");
 
     myGraph.clear();
     myGraph.read(graph3);
@@ -191,8 +191,8 @@ describe("Plugin: sigma.statistics.HITS", () => {
 
     stats = myGraph.HITS(true);
 
-    expect(stats.n1.hub).toEqual(0.19999999999999998, "test 4.1");
-    expect(stats.n5.authority).toEqual(0.19999999999999998, "test 4.2");
+    expect(stats.n1.hub).toEqual(0.19999999999999998); //, "test 4.1");
+    expect(stats.n5.authority).toEqual(0.19999999999999998); //, "test 4.2");
 
     myGraph.clear();
     myGraph.read(graph5);
@@ -214,38 +214,38 @@ describe("Plugin: sigma.statistics.HITS", () => {
 
     stats = myGraph.HITS();
 
-    expect(stats.n1.hub).toEqual(0.3333333333333333, "test 7.1");
-    expect(stats.n4.hub).toEqual(0, "test 7.2");
-    expect(stats.n2.authority).toEqual(0, "test 7.3");
-    expect(stats.n5.authority).toEqual(0.5, "test 7.4");
+    expect(stats.n1.hub).toEqual(0.3333333333333333); //, "test 7.1");
+    expect(stats.n4.hub).toEqual(0); //, "test 7.2");
+    expect(stats.n2.authority).toEqual(0); //, "test 7.3");
+    expect(stats.n5.authority).toEqual(0.5); //, "test 7.4");
 
     myGraph.clear();
     myGraph.read(graph8);
 
     stats = myGraph.HITS();
 
-    expect(stats.n1.hub).toEqual(1, "test 8.1");
-    expect(stats.n1.authority).toEqual(0, "test 8.2");
-    expect(stats.n3.hub).toEqual(0, "test 8.3");
-    expect(stats.n3.authority).toEqual(0.2, "test 8.4");
+    expect(stats.n1.hub).toEqual(1); //, "test 8.1");
+    expect(stats.n1.authority).toEqual(0); //, "test 8.2");
+    expect(stats.n3.hub).toEqual(0); //, "test 8.3");
+    expect(stats.n3.authority).toEqual(0.2); //, "test 8.4");
 
     myGraph.clear();
     myGraph.read(graph9);
 
     stats = myGraph.HITS();
 
-    expect(stats.n3.hub).toEqual(stats.n5.hub, "test 9.1");
+    expect(stats.n3.hub).toEqual(stats.n5.hub); //, "test 9.1");
     expect(stats.n3.hub > stats.n2.hub).toBeTruthy();
     expect(stats.n1.authority > stats.n6.authority).toBeTruthy();
-    expect(stats.n6.hub).toEqual(0, "test 9.4");
-    expect(stats.n3.authority).toEqual(0, "test 9.5");
+    expect(stats.n6.hub).toEqual(0); //, "test 9.4");
+    expect(stats.n3.authority).toEqual(0); //, "test 9.5");
 
     myGraph.clear();
     myGraph.read(graph10);
 
     stats = myGraph.HITS();
 
-    expect(stats.n1.hub).toEqual(stats.n3.hub, "test 10.1");
+    expect(stats.n1.hub).toEqual(stats.n3.hub); //, "test 10.1");
     expect(stats.n1.hub > stats.n5.hub).toBeTruthy();
     expect(stats.n5.authority > stats.n6.authority).toBeTruthy();
   });

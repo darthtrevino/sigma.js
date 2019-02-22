@@ -17,7 +17,7 @@ export default sigma => {
     const defaultNodeColor = settings("defaultNodeColor");
     const defaultEdgeColor = settings("defaultEdgeColor");
 
-    let cp = {};
+    let cp: any = {};
     const sSize = source[`${prefix}size`];
     const sX = source[`${prefix}x`];
     const sY = source[`${prefix}y`];

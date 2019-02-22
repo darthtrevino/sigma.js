@@ -27,7 +27,7 @@ export default sigma => {
    */
   function Node(properties) {
     // Possible Properties
-    const node = {
+    const node: any = {
       id: properties.id,
       label: properties.label
     };
@@ -48,7 +48,7 @@ export default sigma => {
    */
   function Edge(properties) {
     // Possible Properties
-    const edge = {
+    const edge: any = {
       id: properties.id,
       type: properties.type || "undirected",
       label: properties.label || "",
@@ -73,7 +73,7 @@ export default sigma => {
    * @return {object}     The parsed graph.
    */
   function Graph(xml) {
-    const _xml = {};
+    const _xml: any = {};
 
     // Basic Properties
     //------------------
@@ -99,7 +99,7 @@ export default sigma => {
 
     // Meta Data
     function _metaData() {
-      const metas = {};
+      const metas: any = {};
       if (!_xml.els.meta) return metas;
 
       // Last modified date
@@ -121,7 +121,7 @@ export default sigma => {
       if (_xml.els.model[cls])
         _helpers.nodeListEach(_xml.els.model[cls], attr => {
           // Properties
-          const properties = {
+          const properties: any = {
             id: attr.getAttribute("id") || attr.getAttribute("for"),
             type: attr.getAttribute("type") || "string",
             title: attr.getAttribute("title") || ""
@@ -147,7 +147,7 @@ export default sigma => {
 
       // Getting Node Indicated Attributes
       const ah = _helpers.nodeListToHash(attValuesEls, el => {
-        const attributes = _helpers.namedNodeMapToObject(el.attributes);
+        const attributes: any = _helpers.namedNodeMapToObject(el.attributes);
         const key = attributes.id || attributes.for;
 
         // Returning object
@@ -173,7 +173,7 @@ export default sigma => {
       // Iteration through nodes
       _helpers.nodeListEach(_xml.els.nodes, n => {
         // Basic properties
-        const properties = {
+        const properties: any = {
           id: n.getAttribute("id"),
           label: n.getAttribute("label") || ""
         };
@@ -193,7 +193,7 @@ export default sigma => {
 
     // Viz information from nodes
     function _nodeViz(node) {
-      const viz = {};
+      const viz: any = {};
 
       // Color
       const colorEl = _helpers.getFirstElementByTagNS(node, "viz", "color");
@@ -231,7 +231,7 @@ export default sigma => {
       // Iteration through edges
       _helpers.nodeListEach(_xml.els.edges, e => {
         // Creating the edge
-        const properties = _helpers.namedNodeMapToObject(e.attributes);
+        const properties: any = _helpers.namedNodeMapToObject(e.attributes);
         if (!("type" in properties)) {
           properties.type = defaultType;
         }
@@ -250,7 +250,7 @@ export default sigma => {
 
     // Viz information from edges
     function _edgeViz(edge) {
-      const viz = {};
+      const viz: any = {};
 
       // Color
       const colorEl = _helpers.getFirstElementByTagNS(edge, "viz", "color");
@@ -276,7 +276,7 @@ export default sigma => {
     const nodeModel = _model("node");
     const edgeModel = _model("edge");
 
-    const graph = {
+    const graph: any = {
       version: _xml.version,
       mode: _xml.mode,
       defaultEdgeType: _xml.defaultEdgetype,
@@ -344,7 +344,7 @@ export default sigma => {
     if (typeof callback === "function") {
       return fetch(gexfUrl, gexf => callback(Graph(gexf)));
     }
-    return Graph(fetch(gexfUrl));
+    return Graph((fetch as any)(gexfUrl));
   }
 
   return {

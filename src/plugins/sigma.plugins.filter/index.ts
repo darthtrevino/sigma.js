@@ -57,7 +57,7 @@ export default function extend(sigma) {
   // chain of wrapped filters
 
   let _keysIndex = Object.create(null);
-  const Processors = {}; // available predicate processors
+  const Processors: any = {}; // available predicate processors
 
   /**
    * Library of processors

@@ -12,7 +12,7 @@ export default function Worker() {
   /**
    * Worker settings and properties
    */
-  const W = {
+  const W: any = {
     // Properties
     ppn: 10,
     ppe: 3,
@@ -883,7 +883,7 @@ export default function Worker() {
         e = document.createEvent("Event");
         e.initEvent("newCoords", true, false);
       } else {
-        e = document.createEventObject();
+        e = (document as any).createEventObject();
         e.eventType = "newCoords";
       }
 
@@ -896,7 +896,9 @@ export default function Worker() {
   } else {
     // From a WebWorker
     sendNewCoords = function sendCoordsFromWebWorker() {
-      self.postMessage({ nodes: NodeMatrix.buffer }, [NodeMatrix.buffer]);
+      self.postMessage({ nodes: NodeMatrix.buffer }, [
+        NodeMatrix.buffer
+      ] as any);
     };
   }
 

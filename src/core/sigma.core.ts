@@ -29,6 +29,7 @@ export interface SigmaLibrary {
   utils: { [key: string]: any };
   misc: { [key: string]: any };
   captors: { [key: string]: any };
+  plugins: { [key: string]: any };
 
   // Renderer Utils
   canvas: { [key: string]: any };
@@ -161,6 +162,7 @@ class Sigma extends Dispatcher {
   };
   public static misc: { [key: string]: any };
   public static captors: { [key: string]: any };
+  public static plugins: { [key: string]: any };
 
   // Renderer Utils
   public static canvas: { [key: string]: any };

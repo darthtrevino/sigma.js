@@ -53,13 +53,13 @@ describe("Plugin: sigma.plugins.filter", () => {
     });
 
     expect(myGraph.adjacentNodes("n0")).toEqual(
-      [myGraph.nodes("n1")],
-      '"adjacentNodes" returns the adjacent nodes of a specified node'
+      [myGraph.nodes("n1")]
+      //'"adjacentNodes" returns the adjacent nodes of a specified node'
     );
 
     expect(myGraph.adjacentEdges("n0")).toEqual(
-      [myGraph.edges("e0")],
-      '"adjacentEdges" returns the adjacent edges of a specified node'
+      [myGraph.edges("e0")]
+      //'"adjacentEdges" returns the adjacent edges of a specified node'
     );
   });
 
@@ -154,29 +154,29 @@ describe("Plugin: sigma.plugins.filter", () => {
     filter.nodesBy(degreePredicate, "degree");
 
     expect(hiddenNodes()).toEqual(
-      [],
-      'A "nodesBy" filter is not applied automatically'
+      []
+      //'A "nodesBy" filter is not applied automatically'
     );
 
     // Apply the filter
     filter.apply();
 
     expect(hiddenNodes()).toEqual(
-      [s.graph.nodes("n4")],
-      '"apply" applies a nodesBy filter'
+      [s.graph.nodes("n4")]
+      //'"apply" applies a nodesBy filter'
     );
 
     // Undo this filter
     filter.undo("degree").apply();
 
-    expect(hiddenNodes()).toEqual([], '"undo(a)" undoes the specified filter');
+    expect(hiddenNodes()).toEqual([]); //, '"undo(a)" undoes the specified filter');
 
     // Register another filter
     filter.neighborsOf("n0").apply();
 
     expect(hiddenNodes()).toEqual(
-      [s.graph.nodes("n2"), s.graph.nodes("n3"), s.graph.nodes("n4")],
-      '"neighborsOf" hides all nodes which are not linked to the specified node'
+      [s.graph.nodes("n2"), s.graph.nodes("n3"), s.graph.nodes("n4")]
+      //'"neighborsOf" hides all nodes which are not linked to the specified node'
     );
 
     // Undo all filters
@@ -186,8 +186,8 @@ describe("Plugin: sigma.plugins.filter", () => {
     filter.edgesBy(myEdgeAttrPredicate).apply();
 
     expect(hiddenEdges()).toEqual(
-      [s.graph.edges("e0"), s.graph.edges("e1"), s.graph.edges("e3")],
-      '"apply" applies an edgesBy filter'
+      [s.graph.edges("e0"), s.graph.edges("e1"), s.graph.edges("e3")]
+      //'"apply" applies an edgesBy filter'
     );
 
     // Register two filters and apply them
@@ -200,8 +200,8 @@ describe("Plugin: sigma.plugins.filter", () => {
     filter.undo().apply();
 
     expect(hiddenNodes().concat(hiddenEdges())).toEqual(
-      [],
-      "All filters are undone at once"
+      []
+      //"All filters are undone at once"
     );
 
     // Register two filters and apply them
@@ -211,14 +211,14 @@ describe("Plugin: sigma.plugins.filter", () => {
       .apply();
 
     expect(filter.export().map(o => o.key)).toEqual(
-      ["degree", "attr"],
-      "The filters chain is exported"
+      ["degree", "attr"]
+      //"The filters chain is exported"
     );
 
     // Clear the filters chain
     filter.clear();
 
-    expect(filter.export()).toEqual([], "The filters chain is cleared");
+    expect(filter.export()).toEqual([]); //"The filters chain is cleared");
     // Undo all filters
     filter.undo().apply();
 
@@ -232,16 +232,16 @@ describe("Plugin: sigma.plugins.filter", () => {
       .apply();
 
     expect(hiddenNodes()).toEqual(
-      [s.graph.nodes("n4")],
-      '"undo" undoes the filters before it in the chain, and not the filters after it'
+      [s.graph.nodes("n4")]
+      //'"undo" undoes the filters before it in the chain, and not the filters after it'
     );
 
     // Call "apply" multiple times
     filter.apply().apply();
 
     expect(hiddenNodes()).toEqual(
-      [s.graph.nodes("n4")],
-      '"apply" is called multiple times'
+      [s.graph.nodes("n4")]
+      //'"apply" is called multiple times'
     );
 
     // Call "undo" with multiple arguments
@@ -251,14 +251,14 @@ describe("Plugin: sigma.plugins.filter", () => {
       .apply();
 
     expect(hiddenNodes()).toEqual(
-      [],
-      '"undo" is called with multiple arguments'
+      []
+      //'"undo" is called with multiple arguments'
     );
 
     // Import an empty chain
     filter.import([]);
 
-    expect(filter.export().length).toEqual(0, "The empty chain is imported");
+    expect(filter.export().length).toEqual(0); //"The empty chain is imported");
 
     // Import a chain of filters
     const chain = [
@@ -284,8 +284,8 @@ describe("Plugin: sigma.plugins.filter", () => {
           predicate: degreePredicate.toString(),
           processor: "filter.processors.nodes"
         }
-      ],
-      "The filters chain is imported"
+      ]
+      //"The filters chain is imported"
     );
 
     // export > import > export
@@ -306,22 +306,21 @@ describe("Plugin: sigma.plugins.filter", () => {
           predicate: o.predicate.toString(),
           processor: o.processor
         };
-      }),
-      "The exported filters chain is imported"
+      })
+      //"The exported filters chain is imported"
     );
 
     // check chain duplication
     filter.clear();
 
     expect(dumpedChain.length).toEqual(
-      1,
-      "The exported chain is a deep copy of the internal chain"
+      1
+      //"The exported chain is a deep copy of the internal chain"
     );
 
     // check chain duplication
     filter.import(chain);
     chain.length = 0;
-    degreePredicate = null;
 
     expect(
       filter.export().map(o => {
@@ -342,35 +341,35 @@ describe("Plugin: sigma.plugins.filter", () => {
             .replace(/\s+/g, " "),
           processor: "filter.processors.nodes"
         }
-      ],
-      "The internal chain is a deep copy of the imported chain"
+      ]
+      //"The internal chain is a deep copy of the imported chain"
     );
 
     function noop() {}
 
     expect(() => filter.nodesBy(noop, 5)).toThrow(
-      /The filter key "5" must be a string./,
-      '"nodesBy" with a wrong key type throws an error.'
+      /The filter key "5" must be a string./
+      //'"nodesBy" with a wrong key type throws an error.'
     );
 
     expect(() => filter.edgesBy(noop, "")).toThrow(
-      /The filter key must be a non-empty string./,
-      '"edgesBy" with a wrong key type throws an error.'
+      /The filter key must be a non-empty string./
+      //'"edgesBy" with a wrong key type throws an error.'
     );
 
     expect(() => filter.neighborsOf(0)).toThrow(
-      /The node id "0" must be a string./,
-      '"neighborsOf" with a wrong node id type throws an error.'
+      /The node id "0" must be a string./
+      //'"neighborsOf" with a wrong node id type throws an error.'
     );
 
     expect(() => filter.neighborsOf("")).toThrow(
-      /The node id must be a non-empty string./,
-      '"neighborsOf" with a wrong node id type throws an error.'
+      /The node id must be a non-empty string./
+      //'"neighborsOf" with a wrong node id type throws an error.'
     );
 
     expect(() => filter.nodesBy(noop, "a").edgesBy(noop, "a")).toThrow(
-      /The filter "a" already exists./,
-      "Registering two filters with the same key throws an error."
+      /The filter "a" already exists./
+      //"Registering two filters with the same key throws an error."
     );
   });
 });

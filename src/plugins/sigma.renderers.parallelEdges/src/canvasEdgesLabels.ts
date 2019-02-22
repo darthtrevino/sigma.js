@@ -31,7 +31,7 @@ export default sigma => {
     const dX = tX - sX;
     const dY = tY - sY;
     const sign = sX < tX ? 1 : -1;
-    let cp = {};
+    let cp: any = {};
     let c;
     let angle;
     const t = 0.5; // length of the curve

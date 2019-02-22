@@ -50,7 +50,7 @@ export default function extend(sigma) {
     // Add center. It has to be cloned to add it the "center" attribute
     // without altering the current graph:
     const node = this.nodes(centerId);
-    const center = {};
+    const center: any = {};
     center.center = true;
     Object.keys(node).forEach(k => {
       center[k] = node[k];
