@@ -488,8 +488,8 @@ class Graph {
    * @return {object}   The graph instance.
    */
   public read(g) {
-    (g.nodes || []).forEach(this.addNode);
-    (g.edges || []).forEach(this.addEdge);
+    (g.nodes || []).forEach(n => this.addNode(n));
+    (g.edges || []).forEach(e => this.addEdge(e));
     return this;
   }
 
