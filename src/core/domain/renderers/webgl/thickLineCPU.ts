@@ -1,6 +1,8 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This will render edges as thick lines using four points translated
@@ -18,7 +20,15 @@ import loadProgram from "../../utils/webgl/loadProgram";
 export default {
   POINTS: 4,
   ATTRIBUTES: 3,
-  addEdge(edge, source, target, data, i, prefix, settings) {
+  addEdge(
+    edge: Edge,
+    source: Node,
+    target: Node,
+    data: ArrayBuffer,
+    i: number,
+    prefix: string,
+    settings: Settings
+  ) {
     const thickness = (edge[`${prefix}size`] || 1) / 2;
     const x1 = source[`${prefix}x`];
     const y1 = source[`${prefix}y`];
@@ -90,7 +100,7 @@ export default {
 
     return indices;
   },
-  render(gl, program, data, params) {
+  render(gl: WebGLRenderingContext, program: WebGLProgram, data, params) {
     // Define attributes:
     const positionLocation = gl.getAttribLocation(program, "a_position");
     const colorLocation = gl.getAttribLocation(program, "a_color");

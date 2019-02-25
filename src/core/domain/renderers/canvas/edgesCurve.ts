@@ -1,6 +1,8 @@
 import getSelfLoopControlPoints from "../../utils/geometry/getSelfLoopControlPoints";
 import getQuadraticControlPoint from "../../utils/geometry/getQuadraticControlPoint";
 import { Line, Point } from "../../utils/geometry/interfaces";
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This edge renderer will display edges as curves.
@@ -11,7 +13,13 @@ import { Line, Point } from "../../utils/geometry/interfaces";
  * @param  {CanvasRenderingContext2D} context      The canvas context.
  * @param  {configurable}             settings     The settings function.
  */
-export default function edgesCurve(edge, source, target, context, settings) {
+export default function edgesCurve(
+  edge: Edge,
+  source: Node,
+  target: Node,
+  context: CanvasRenderingContext2D,
+  settings: Settings
+) {
   let { color } = edge;
 
   const prefix = settings("prefix") || "";

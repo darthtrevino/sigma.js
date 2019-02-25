@@ -389,15 +389,20 @@ export interface Event<T> {
 
 export interface Node {
   id: string;
-  hidden?: boolean;
   type: string;
   size: number;
+  color: string;
+  label: string;
+  hidden?: boolean;
 }
 
 export interface Edge {
   id: string;
-  hidden?: boolean;
   source: string;
   target: string;
   type: string;
+  color: string;
+  hidden?: boolean;
+  hover?: boolean;
+  hover_color?: string;
 }

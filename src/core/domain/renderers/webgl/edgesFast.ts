@@ -1,6 +1,8 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadProgram from "../../utils/webgl/loadProgram";
 import loadShader from "../../utils/webgl/loadShader";
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This edge renderer will display edges as lines with the gl.LINES display
@@ -11,7 +13,15 @@ import loadShader from "../../utils/webgl/loadShader";
 export default {
   POINTS: 2,
   ATTRIBUTES: 3,
-  addEdge(edge, source, target, data, i, prefix, settings) {
+  addEdge(
+    edge: Edge,
+    source: Node,
+    target: Node,
+    data,
+    i: number,
+    prefix: string,
+    settings: Settings
+  ) {
     const x1 = source[`${prefix}x`];
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
@@ -42,7 +52,7 @@ export default {
     data[i++] = y2;
     data[i++] = color;
   },
-  render(gl, program, data, params) {
+  render(gl: WebGLRenderingContext, program: WebGLProgram, data, params) {
     // Define attributes:
     const colorLocation = gl.getAttribLocation(program, "a_color");
     const positionLocation = gl.getAttribLocation(program, "a_position");

@@ -1,3 +1,6 @@
+import { Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * This label renderer will just display the label on the right of the node.
  *
@@ -5,7 +8,11 @@
  * @param  {CanvasRenderingContext2D} context  The canvas context.
  * @param  {configurable}             settings The settings function.
  */
-export default function labelsDef(node, context, settings) {
+export default function labelsDef(
+  node: Node,
+  context: CanvasRenderingContext2D,
+  settings: Settings
+) {
   const prefix = settings("prefix") || "";
   const size = node[`${prefix}size`];
 

@@ -1,3 +1,6 @@
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * This hover renderer will display the edge with a different color or size.
  *
@@ -7,7 +10,13 @@
  * @param  {CanvasRenderingContext2D} context      The canvas context.
  * @param  {configurable}             settings     The settings function.
  */
-export default function edgeHoversDef(edge, source, target, context, settings) {
+export default function edgeHoversDef(
+  edge: Edge,
+  source: Node,
+  target: Node,
+  context: CanvasRenderingContext2D,
+  settings: Settings
+) {
   let { color } = edge;
   const prefix = settings("prefix") || "";
   let size = edge[`${prefix}size`] || 1;

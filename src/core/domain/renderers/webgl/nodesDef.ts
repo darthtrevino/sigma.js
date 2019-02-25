@@ -1,6 +1,7 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
+import { Node } from "../../../interfaces";
 
 /**
  * This node renderer will display nodes as discs, shaped in triangles with
@@ -16,7 +17,7 @@ import loadProgram from "../../utils/webgl/loadProgram";
 export default {
   POINTS: 3,
   ATTRIBUTES: 5,
-  addNode(node, data, i, prefix, settings) {
+  addNode(node: Node, data, i: number, prefix: string, settings) {
     const color = floatColor(node.color || settings("defaultNodeColor"));
 
     data[i++] = node[`${prefix}x`];
@@ -37,25 +38,18 @@ export default {
     data[i++] = color;
     data[i++] = (4 * Math.PI) / 3;
   },
-  render(gl, program, data, params) {
+  render(gl: WebGLRenderingContext, program: WebGLProgram, data, params) {
     // Define attributes:
     const positionLocation = gl.getAttribLocation(program, "a_position");
-
     const sizeLocation = gl.getAttribLocation(program, "a_size");
-
     const colorLocation = gl.getAttribLocation(program, "a_color");
-
     const angleLocation = gl.getAttribLocation(program, "a_angle");
-
     const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
-
     const matrixLocation = gl.getUniformLocation(program, "u_matrix");
-
     const ratioLocation = gl.getUniformLocation(program, "u_ratio");
-
     const scaleLocation = gl.getUniformLocation(program, "u_scale");
-
     const buffer = gl.createBuffer();
+
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
 

@@ -1,6 +1,8 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This will render edges as thick lines using four points translated
@@ -18,7 +20,15 @@ import loadProgram from "../../utils/webgl/loadProgram";
 export default {
   POINTS: 4,
   ATTRIBUTES: 6,
-  addEdge(edge, source, target, data, i, prefix, settings) {
+  addEdge(
+    edge: Edge,
+    source: Node,
+    target: Node,
+    data,
+    i: number,
+    prefix: string,
+    settings: Settings
+  ) {
     const thickness = edge[`${prefix}size`] || 1;
     const x1 = source[`${prefix}x`];
     const y1 = source[`${prefix}y`];
@@ -44,9 +54,7 @@ export default {
 
     // Computing normals:
     const dx = x2 - x1;
-
     const dy = y2 - y1;
-
     let len = dx * dx + dy * dy;
 
     let normals;

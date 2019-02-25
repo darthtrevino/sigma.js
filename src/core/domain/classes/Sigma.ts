@@ -173,35 +173,47 @@ class Sigma extends Dispatcher {
   constructor(conf: any = {}) {
     super();
     this.conf = unpackConf(conf);
-    // Local variables:
-    let i;
-    let l;
-    let a;
 
     // Register the instance:
     this.id = determineId(conf);
     __instances[this.id] = this;
 
-    // Initialize settings function:
+    // Initialize locked attributes:
+    this.initializeSettings();
+    this.initializeGraphInstance();
+    this.initializeRenderers();
+    this.initializeMiddleware();
+    this.initializeGraphData();
+
+    // Deal with resize:
+    window.addEventListener("resize", () => this.settings && this.refresh());
+  }
+
+  private initializeSettings() {
     this.settings = Sigma.classes.configurable(
       Sigma.settings,
       this.conf.settings || {}
     );
+  }
 
-    // Initialize locked attributes:
+  private initializeGraphInstance() {
     this.graph = new Sigma.classes.graph(this.settings);
+  }
 
-    // Initialize renderers:
-    a = this.conf.renderers || [];
-    for (i = 0, l = a.length; i < l; i++) this.addRenderer(a[i]);
+  private initializeMiddleware() {
+    const middlewares = this.conf.middlewares || [];
+    middlewares.forEach(item => {
+      const mw = item === "string" ? Sigma.middlewares[item] : item;
+      this.middlewares.push(mw);
+    });
+  }
 
-    // Initialize middlewares:
-    a = this.conf.middlewares || [];
-    for (i = 0, l = a.length; i < l; i++)
-      this.middlewares.push(
-        typeof a[i] === "string" ? Sigma.middlewares[a[i]] : a[i]
-      );
+  private initializeRenderers() {
+    const renderers = this.conf.renderers || [];
+    renderers.forEach(r => this.addRenderer(r));
+  }
 
+  private initializeGraphData() {
     // Check if there is already a graph to fill in:
     if (typeof this.conf.graph === "object" && this.conf.graph) {
       this.graph.read(this.conf.graph);
@@ -210,11 +222,6 @@ class Sigma extends Dispatcher {
       // directly called:
       this.refresh();
     }
-
-    // Deal with resize:
-    window.addEventListener("resize", () => {
-      if (this.settings) this.refresh();
-    });
   }
 
   // Add a custom handler, to redispatch events from renderers:

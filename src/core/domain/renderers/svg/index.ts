@@ -1,6 +1,9 @@
 import id from "../../utils/misc/id";
 import Dispatcher from "../../classes/Dispatcher";
 import { SigmaLibrary } from "../../../interfaces";
+import Graph from "../../classes/Graph";
+import Camera from "../../classes/Camera";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This function is the constructor of the svg sigma's renderer.
@@ -13,7 +16,12 @@ import { SigmaLibrary } from "../../../interfaces";
  * @return {SvgRenderer}             The renderer instance.
  */
 export default (sigma: SigmaLibrary) => {
-  function SvgRenderer(graph, camera, settings, options) {
+  function SvgRenderer(
+    graph: Graph,
+    camera: Camera,
+    settings: Settings,
+    options
+  ) {
     if (typeof options !== "object")
       throw new Error("SvgRenderer: Wrong options arguments.");
 

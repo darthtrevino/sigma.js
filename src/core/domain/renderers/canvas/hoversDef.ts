@@ -1,4 +1,5 @@
-import { SigmaLibrary } from "../../../interfaces";
+import { SigmaLibrary, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This hover renderer will basically display the label with a background.
@@ -8,7 +9,11 @@ import { SigmaLibrary } from "../../../interfaces";
  * @param  {configurable}             settings The settings function.
  */
 export default (sigma: SigmaLibrary) =>
-  function hoversDef(node, context, settings) {
+  function hoversDef(
+    node: Node,
+    context: CanvasRenderingContext2D,
+    settings: Settings
+  ) {
     let x;
     let y;
     let w;

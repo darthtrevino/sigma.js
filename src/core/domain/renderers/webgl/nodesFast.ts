@@ -1,6 +1,8 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
+import { Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This node renderer will display nodes in the fastest way: Nodes are basic
@@ -22,13 +24,19 @@ import loadProgram from "../../utils/webgl/loadProgram";
 export default {
   POINTS: 1,
   ATTRIBUTES: 4,
-  addNode(node, data, i, prefix, settings) {
+  addNode(
+    node: Node,
+    data: ArrayBuffer,
+    i: number,
+    prefix: string,
+    settings: Settings
+  ) {
     data[i++] = node[`${prefix}x`];
     data[i++] = node[`${prefix}y`];
     data[i++] = node[`${prefix}size`];
     data[i++] = floatColor(node.color || settings("defaultNodeColor"));
   },
-  render(gl, program, data, params) {
+  render(gl: WebGLRenderingContext, program: WebGLProgram, data, params) {
     // Define attributes:
     const positionLocation = gl.getAttribLocation(program, "a_position");
     const sizeLocation = gl.getAttribLocation(program, "a_size");
@@ -85,7 +93,7 @@ export default {
       params.count || data.length / this.ATTRIBUTES
     );
   },
-  initProgram(gl) {
+  initProgram(gl: WebGLRenderingContext) {
     const vertexShader = loadShader(
       gl,
       [
