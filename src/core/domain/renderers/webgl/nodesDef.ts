@@ -2,6 +2,7 @@ import floatColor from "../../utils/misc/floatColor";
 import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
 import { Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This node renderer will display nodes as discs, shaped in triangles with
@@ -17,7 +18,7 @@ import { Node } from "../../../interfaces";
 export default {
   POINTS: 3,
   ATTRIBUTES: 5,
-  addNode(node: Node, data, i: number, prefix: string, settings) {
+  addNode(node: Node, data, i: number, prefix: string, settings: Settings) {
     const color = floatColor(node.color || settings("defaultNodeColor"));
 
     data[i++] = node[`${prefix}x`];

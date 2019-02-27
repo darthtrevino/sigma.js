@@ -47,7 +47,6 @@ export default (sigma: SigmaLibrary) => {
       private settings: any
     ) {
       super();
-
       sigma.utils.events.doubleClick(target, "click", this.doubleClickHandler);
       target.addEventListener(
         "DOMMouseScroll",
@@ -232,7 +231,7 @@ export default (sigma: SigmaLibrary) => {
      *
      * @param {event} e A mouse event.
      */
-    private clickHandler = e => {
+    private clickHandler = (e: MouseEvent) => {
       if (this.settings("mouseEnabled")) {
         const event = mouseCoords(e);
         (event as any).isDragging =
@@ -253,7 +252,7 @@ export default (sigma: SigmaLibrary) => {
      *
      * @param {event} e A mouse event.
      */
-    private doubleClickHandler = e => {
+    private doubleClickHandler = (e: MouseEvent) => {
       let pos;
       let ratio;
       let animation;
@@ -295,7 +294,7 @@ export default (sigma: SigmaLibrary) => {
      *
      * @param {event} e A mouse event.
      */
-    private wheelHandler = e => {
+    private wheelHandler = (e: MouseEvent) => {
       let pos;
       let ratio;
       let animation;

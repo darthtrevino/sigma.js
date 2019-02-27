@@ -406,3 +406,11 @@ export interface Edge {
   hover?: boolean;
   hover_color?: string;
 }
+
+export interface Renderer {
+  render(params?: any): Renderer;
+  initDOM(tag: string, elementId: string, webgl?: boolean);
+  resize(w?: number, h?: number): Renderer;
+  clear(): Renderer;
+  kill();
+}
