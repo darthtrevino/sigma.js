@@ -1,8 +1,19 @@
 import Dispatcher from "./Dispatcher";
-import Camera from "./Camera";
+import Camera, { CameraLocation } from "./Camera";
 import Graph from "./Graph";
 import { Settings } from "./Configurable";
-import { SigmaConfiguration, Keyed, SigmaSettings } from "../../interfaces";
+import {
+  SigmaConfiguration,
+  Keyed,
+  SigmaSettings,
+  Renderer,
+  SigmaUtils,
+  SigmaMisc,
+  SigmaWebGLUtilities,
+  SigmaSvgUtils,
+  SigmaCanvasUtils,
+  Killable
+} from "../../interfaces";
 
 const __instances = {};
 
@@ -124,19 +135,17 @@ class Sigma extends Dispatcher {
   public static version = "1.2.1";
 
   // utility namespaces
-  public static renderers: { [key: string]: Function };
-  public static middlewares: { [key: string]: any };
-  public static utils: { [key: string]: any } = {
-    pkg: getPackageObject
-  };
-  public static misc: { [key: string]: any };
-  public static captors: { [key: string]: any };
+  public static renderers: Keyed<any> = {};
   public static plugins: { [key: string]: any };
-
-  // Renderer Utils
-  public static canvas: { [key: string]: any };
-  public static svg: { [key: string]: any };
-  public static webgl: { [key: string]: any };
+  public static middlewares: { [key: string]: any };
+  public static utils: SigmaUtils = {
+    pkg: getPackageObject
+  } as any;
+  public static misc: SigmaMisc = {} as any;
+  public static captors: Keyed<Killable> = {};
+  public static canvas: SigmaCanvasUtils = {} as any;
+  public static svg: SigmaSvgUtils = {} as any;
+  public static webgl: SigmaWebGLUtilities = {} as any;
 
   // Instance Data
   public events = [
@@ -167,7 +176,7 @@ class Sigma extends Dispatcher {
   public middlewares: Function[] = [];
   public cameras: Keyed<Camera> = {};
   public renderers: Keyed<any> = {};
-  public renderersPerCamera: Keyed<any[]> = {};
+  public renderersPerCamera: Keyed<Renderer[]> = {};
   public cameraFrames: Keyed<any> = {};
 
   constructor(conf: any = {}) {
@@ -250,7 +259,7 @@ class Sigma extends Dispatcher {
    * @param  {?string}              id Eventually the camera id.
    * @return {sigma.classes.camera}    The fresh new camera instance.
    */
-  public addCamera(id = this.nextCameraId()) {
+  public addCamera(id: string = this.nextCameraId()) {
     if (this.cameras[id]) {
       throw new Error(`sigma.addCamera: The camera "${id}" already exists.`);
     }
@@ -326,7 +335,7 @@ class Sigma extends Dispatcher {
    *   {?(camera|string)}   camera Eventually the renderer camera or its
    *                               id.
    */
-  public addRenderer(options) {
+  public addRenderer(options?: any) {
     let id;
     let fn;
     let o = options || {};
@@ -440,14 +449,26 @@ class Sigma extends Dispatcher {
    * @param  {string|renderer} v The renderer to kill or its ID.
    * @return {Sigma}             Returns the instance.
    */
-  public killRenderer(v) {
-    v = typeof v === "string" ? this.renderers[v] : v;
-    if (!v) throw new Error("sigma.killRenderer: The renderer is undefined.");
-    const a = this.renderersPerCamera[v.camera.id];
-    const i = a.indexOf(v);
-    if (i >= 0) a.splice(i, 1);
-    if (v.kill) v.kill();
-    delete this.renderers[v.id];
+  public killRenderer(v: string | Renderer) {
+    const renderer: Renderer = typeof v === "string" ? this.renderers[v] : v;
+    if (!renderer) {
+      throw new Error("sigma.killRenderer: The renderer is undefined.");
+    }
+
+    // Remove the renderer from attached cameras
+    const cameraRenderers = this.renderersPerCamera[renderer.camera.id];
+    const rendererIndex = cameraRenderers.indexOf(renderer);
+    if (rendererIndex >= 0) {
+      cameraRenderers.splice(rendererIndex, 1);
+    }
+
+    // Kill the Renderer
+    if (renderer.kill) {
+      renderer.kill();
+    }
+
+    // Remove the renderer from Sigma
+    delete this.renderers[renderer.id];
     return this;
   }
 
@@ -687,23 +708,6 @@ class Sigma extends Dispatcher {
   }
 }
 
-/**
- * Takes a package name as parameter and checks at each lebel if it exists,
- * and if it does not, creates it.
- *
- * Example:
- * ********
- *  > pkg('a.b.c');
- *  > a.b.c;
- *  > // Object {};
- *  >
- *  > pkg('a.b.d');
- *  > a.b;
- *  > // Object { c: {}, d: {} };
- *
- * @param  {string} pkgName The name of the package to create/find.
- * @return {object}         The related package.
- */
 function getPackageObject(pkgName: string) {
   const getPackage = (levels: string[], root: { [key: string]: any }) => {
     return levels.reduce((context, objName) => {

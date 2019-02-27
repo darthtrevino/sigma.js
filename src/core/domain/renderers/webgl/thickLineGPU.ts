@@ -1,8 +1,6 @@
-import floatColor from "../../utils/misc/floatColor";
-import loadShader from "../../utils/webgl/loadShader";
-import loadProgram from "../../utils/webgl/loadProgram";
-import { Edge, Node } from "../../../interfaces";
+import { Edge, Node, SigmaLibrary } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
+import { getColor } from "./utils";
 
 /**
  * This will render edges as thick lines using four points translated
@@ -18,7 +16,7 @@ import { Settings } from "../../classes/Configurable";
  * the handled array buffer heavier but sparing costly computation to the
  * CPU side.
  */
-export default {
+export default (sigma: SigmaLibrary) => ({
   POINTS: 4,
   ATTRIBUTES: 7,
   addEdge(
@@ -35,23 +33,11 @@ export default {
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
     const y2 = target[`${prefix}y`];
-    let { color } = edge;
-
-    if (!color)
-      switch (settings("edgeColor")) {
-        case "source":
-          color = source.color || settings("defaultNodeColor");
-          break;
-        case "target":
-          color = target.color || settings("defaultNodeColor");
-          break;
-        default:
-          color = settings("defaultEdgeColor");
-          break;
-      }
 
     // Normalize color:
-    color = floatColor(color);
+    const color = sigma.utils.floatColor(
+      getColor(edge, source, target, settings)
+    );
 
     // First point
     data[i++] = x1;
@@ -191,7 +177,7 @@ export default {
     );
   },
   initProgram(gl) {
-    const vertexShader = loadShader(
+    const vertexShader = sigma.webgl.loadShader(
       gl,
       [
         "attribute vec2 a_position1;",
@@ -231,7 +217,7 @@ export default {
       error => console.log(error)
     );
 
-    const fragmentShader = loadShader(
+    const fragmentShader = sigma.webgl.loadShader(
       gl,
       [
         "precision mediump float;",
@@ -245,7 +231,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = sigma.webgl.loadProgram(gl, [vertexShader, fragmentShader]);
     return program;
   }
-};
+});

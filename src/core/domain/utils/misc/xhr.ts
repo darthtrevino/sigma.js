@@ -1,4 +1,3 @@
-// XHR polyfill:
 export default function xhr(global = window) {
   if ((global as any).XMLHttpRequest) {
     return new XMLHttpRequest();

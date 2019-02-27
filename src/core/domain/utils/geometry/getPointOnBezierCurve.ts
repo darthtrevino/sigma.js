@@ -1,21 +1,5 @@
 import { Point } from "./interfaces";
 
-/**
- * Compute the coordinates of the point positioned
- * at length t in the cubic bezier curve.
- *
- * @param  {number} t  In [0,1] the step percentage to reach
- *                     the point in the curve from the context point.
- * @param  {number} x1 The X coordinate of the context point.
- * @param  {number} y1 The Y coordinate of the context point.
- * @param  {number} x2 The X coordinate of the end point.
- * @param  {number} y2 The Y coordinate of the end point.
- * @param  {number} cx The X coordinate of the first control point.
- * @param  {number} cy The Y coordinate of the first control point.
- * @param  {number} dx The X coordinate of the second control point.
- * @param  {number} dy The Y coordinate of the second control point.
- * @return {object}    {x,y} The point at t.
- */
 export default function getPointOnBezierCurve(
   t: number,
   x1: number,

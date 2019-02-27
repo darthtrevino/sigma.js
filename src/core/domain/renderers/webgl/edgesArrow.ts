@@ -4,6 +4,7 @@ import loadShader from "../../utils/webgl/loadShader";
 import rotation from "../../utils/matrices/rotation";
 import { Edge, Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
+import { getColor } from "./utils";
 
 /**
  * This edge renderer will display edges as arrows going from the source node
@@ -32,23 +33,9 @@ export default {
     const x2 = target[`${prefix}x`];
     const y2 = target[`${prefix}y`];
     const targetSize = target[`${prefix}size`];
-    let { color } = edge;
-
-    if (!color)
-      switch (settings("edgeColor")) {
-        case "source":
-          color = source.color || settings("defaultNodeColor");
-          break;
-        case "target":
-          color = target.color || settings("defaultNodeColor");
-          break;
-        default:
-          color = settings("defaultEdgeColor");
-          break;
-      }
 
     // Normalize color:
-    color = floatColor(color);
+    const color = floatColor(getColor(edge, source, target, settings));
     data[i++] = x1;
     data[i++] = y1;
     data[i++] = x2;
@@ -302,7 +289,7 @@ export default {
       params.count || data.length / this.ATTRIBUTES
     );
   },
-  initProgram(gl) {
+  initProgram(gl: WebGLRenderingContext) {
     const vertexShader = loadShader(
       gl,
       [

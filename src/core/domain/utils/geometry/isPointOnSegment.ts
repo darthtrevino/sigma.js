@@ -1,18 +1,5 @@
 import getDistance from "./getDistance";
 
-/**
- * Check if a point is on a line segment.
- *
- * @param  {number} x       The X coordinate of the point to check.
- * @param  {number} y       The Y coordinate of the point to check.
- * @param  {number} x1      The X coordinate of the line start point.
- * @param  {number} y1      The Y coordinate of the line start point.
- * @param  {number} x2      The X coordinate of the line end point.
- * @param  {number} y2      The Y coordinate of the line end point.
- * @param  {number} epsilon The precision (consider the line thickness).
- * @return {boolean}        True if point is "close to" the line
- *                          segment, false otherwise.
- */
 export default function isPointOnSegment(
   x: number,
   y: number,

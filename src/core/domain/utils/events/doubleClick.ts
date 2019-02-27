@@ -1,12 +1,5 @@
 import { SigmaLibrary } from "../../../interfaces";
 
-/**
- * Simulates a "double click" event.
- *
- * @param  {HTMLElement} target   The event target.
- * @param  {string}      type     The event type.
- * @param  {function}    callback The callback to execute.
- */
 export default (sigma: SigmaLibrary) =>
   function doubleClick(target: HTMLElement, type: string, callback) {
     let clicks = 0;

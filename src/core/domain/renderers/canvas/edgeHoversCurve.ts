@@ -3,15 +3,6 @@ import getQuadraticControlPoint from "../../utils/geometry/getQuadraticControlPo
 import { Edge, Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 
-/**
- * This hover renderer will display the edge with a different color or size.
- *
- * @param  {object}                   edge         The edge object.
- * @param  {object}                   source node  The edge source node.
- * @param  {object}                   target node  The edge target node.
- * @param  {CanvasRenderingContext2D} context      The canvas context.
- * @param  {configurable}             settings     The settings function.
- */
 export default function edgeHoversCurve(
   edge: Edge,
   source: Node,

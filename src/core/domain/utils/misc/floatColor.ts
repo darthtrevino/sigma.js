@@ -1,17 +1,6 @@
-/**
- * This function takes an hexa color (for instance "#ffcc00" or "#fc0") or a
- * rgb / rgba color (like "rgb(255,255,12)" or "rgba(255,255,12,1)") and
- * returns an integer equal to "r * 255 * 255 + g * 255 + b", to gain some
- * memory in the data given to WebGL shaders.
- *
- * Note that the function actually caches its results for better performance.
- *
- * @param  {string} val The hexa or rgba color.
- * @return {number}     The number value.
- */
-const floatColorCache = {};
+const floatColorCache: { [key: string]: number } = {};
 
-export default function floatColor(input: string) {
+export default function floatColor(input: string): number {
   let val = input;
 
   // Is the color already computed?
@@ -49,6 +38,5 @@ export default function floatColor(input: string) {
 
   // Caching the color
   floatColorCache[original] = color;
-
   return color;
 }

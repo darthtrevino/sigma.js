@@ -13,14 +13,25 @@ export interface Settings {
  *
  * @return {configurable} The "settings" function.
  */
-export default function configurable(...args: any): Settings {
+export default function configurable(...args: any[]): Settings {
   const data: ConfigMap = {};
-  const datas = Array.prototype.slice.call(args, 0);
+  const datas = [...args];
 
+  function getData(key: string) {
+    if (data[key] !== undefined) {
+      return data[key];
+    }
+    for (let i = 0; i < datas.length; i++) {
+      if (datas[i][key] !== undefined) {
+        return datas[i][key];
+      }
+    }
+    return undefined;
+  }
   /**
    * The method to use to set or get any property of this instance.
    *
-   * @param  {string|object}    a1 If it is a string and if a2 is undefined,
+   * @param  {string|object}    arg1 If it is a string and if a2 is undefined,
    *                               then it will return the corresponding
    *                               property. If it is a string and if a2 is
    *                               set, then it will set a2 as the property
@@ -28,7 +39,7 @@ export default function configurable(...args: any): Settings {
    *                               it is an object, then each pair string +
    *                               object(or any other type) will be set as a
    *                               property.
-   * @param  {*?}               a2 The new property corresponding to a1 if a1
+   * @param  {*?}               arg2 The new property corresponding to a1 if a1
    *                               is a string.
    * @return {*|configurable}      Returns itself or the corresponding
    *                               property.
@@ -49,24 +60,20 @@ export default function configurable(...args: any): Settings {
    *  > settings({mySetting: 'abc'}, 'mySetting');  // Logs: 'abc'
    *  > settings({hisSetting: 'abc'}, 'mySetting'); // Logs: 456
    */
-  function settings(a1: string | ConfigMap, a2?: any) {
-    if (arguments.length === 1 && typeof a1 === "string") {
-      if (data[a1] !== undefined) {
-        return data[a1];
-      }
-      for (let i = 0; i < datas.length; i++) {
-        if (datas[i][a1] !== undefined) {
-          return datas[i][a1];
-        }
-      }
-      return undefined;
+  function settings(arg1: string | ConfigMap, arg2?: any) {
+    // single argument, (string) form: access the data item
+    if (arguments.length === 1 && typeof arg1 === "string") {
+      return getData(arg1);
     }
-    if (typeof a1 === "object" && typeof a2 === "string") {
-      return (a1 || {})[a2] !== undefined ? a1[a2] : settings(a2);
+    // two arguments: (object, string) form: augmented lookup
+    if (typeof arg1 === "object" && typeof arg2 === "string") {
+      return (arg1 || {})[arg2] !== undefined ? arg1[arg2] : getData(arg2);
     }
-    const o = typeof a1 === "object" && a2 === undefined ? a1 : {};
-    if (typeof a1 === "string") {
-      o[a1] = a2;
+
+    // Extend current sestings
+    const o = typeof arg1 === "object" && arg2 === undefined ? arg1 : {};
+    if (typeof arg1 === "string") {
+      o[arg1] = arg2;
     }
 
     Object.keys(o).forEach(key => {

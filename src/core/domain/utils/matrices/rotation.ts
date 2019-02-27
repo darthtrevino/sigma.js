@@ -1,10 +1,3 @@
-/**
- * The returns a 3x3 or 2x2 rotation matrix.
- *
- * @param  {number}  angle The rotation angle.
- * @param  {boolean} m2    If true, the function will return a 2x2 matrix.
- * @return {array}         Returns the matrix.
- */
 export default function rotation(angle: number, m2?: boolean) {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);

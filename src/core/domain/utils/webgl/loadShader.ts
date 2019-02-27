@@ -1,12 +1,3 @@
-/**
- * Loads a WebGL shader and returns it.
- *
- * @param  {WebGLContext}           gl           The WebGLContext to use.
- * @param  {string}                 shaderSource The shader source.
- * @param  {number}                 shaderType   The type of shader.
- * @param  {function(string): void} error        Callback for errors.
- * @return {WebGLShader}                         The created shader.
- */
 export default function loadShader(
   gl: WebGLRenderingContext,
   shaderSource: string,

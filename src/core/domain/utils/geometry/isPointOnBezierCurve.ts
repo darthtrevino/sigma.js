@@ -1,23 +1,6 @@
 import getDistance from "./getDistance";
 import getPointOnBezierCurve from "./getPointOnBezierCurve";
 
-/**
- * Check if a point is on a cubic bezier curve segment with a thickness.
- *
- * @param  {number} x       The X coordinate of the point to check.
- * @param  {number} y       The Y coordinate of the point to check.
- * @param  {number} x1      The X coordinate of the curve start point.
- * @param  {number} y1      The Y coordinate of the curve start point.
- * @param  {number} x2      The X coordinate of the curve end point.
- * @param  {number} y2      The Y coordinate of the curve end point.
- * @param  {number} cpx1    The X coordinate of the 1st curve control point.
- * @param  {number} cpy1    The Y coordinate of the 1st curve control point.
- * @param  {number} cpx2    The X coordinate of the 2nd curve control point.
- * @param  {number} cpy2    The Y coordinate of the 2nd curve control point.
- * @param  {number} epsilon The precision (consider the line thickness).
- * @return {boolean}        True if (x,y) is on the curve segment,
- *                          false otherwise.
- */
 export default function isPointOnBezierCurve(
   x: number,
   y: number,

@@ -9,8 +9,8 @@ import EdgeQuad from "./EdgeQuad";
 export interface CameraLocation {
   x: number;
   y: number;
-  ratio: number;
-  angle: number;
+  ratio?: number;
+  angle?: number;
 }
 
 /**

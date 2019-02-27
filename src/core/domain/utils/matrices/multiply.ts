@@ -1,12 +1,3 @@
-/**
- * The returns a 3x3 or 2x2 homothetic transformation matrix.
- *
- * @param  {array}   a  The first matrix.
- * @param  {array}   b  The second matrix.
- * @param  {boolean} m2 If true, the function will assume both matrices are
- *                      2x2.
- * @return {array}      Returns the matrix.
- */
 export default function multiply(a: number[], b: number[], m2?: boolean) {
   const l = m2 ? 2 : 3;
   const a00 = a[0 * l + 0];

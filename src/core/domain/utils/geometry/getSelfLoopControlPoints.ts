@@ -1,15 +1,5 @@
 import { Line } from "./interfaces";
 
-/**
- * Return the coordinates of the two control points for a self loop (i.e.
- * where the start point is also the end point) computed as a cubic bezier
- * curve.
- *
- * @param  {number} x    The X coordinate of the node.
- * @param  {number} y    The Y coordinate of the node.
- * @param  {number} size The node size.
- * @return {x1,y1,x2,y2} The coordinates of the two control points.
- */
 export default function getSelfLoopControlPoints(
   x: number,
   y: number,

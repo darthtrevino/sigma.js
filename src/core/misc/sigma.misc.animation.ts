@@ -14,31 +14,6 @@ export default function configure(sigma: SigmaLibrary) {
     };
   })();
 
-  /**
-   * This function animates a camera. It has to be called with the camera to
-   * animate, the values of the coordinates to reach and eventually some
-   * options. It returns a number id, that you can use to kill the animation,
-   * with the method sigma.misc.animation.kill(id).
-   *
-   * The available options are:
-   *
-   *   {?number}            duration   The duration of the animation.
-   *   {?function}          onNewFrame A callback to execute when the animation
-   *                                   enter a new frame.
-   *   {?function}          onComplete A callback to execute when the animation
-   *                                   is completed or killed.
-   *   {?(string|function)} easing     The name of a function from the package
-   *                                   sigma.utils.easings, or a custom easing
-   *                                   function.
-   *
-   * @param  {camera}  camera  The camera to animate.
-   * @param  {object}  target  The coordinates to reach.
-   * @param  {?object} options Eventually an object to specify some options to
-   *                           the function. The available options are
-   *                           presented in the description of the function.
-   * @return {number}          The animation id, to make it easy to kill
-   *                           through the method "sigma.misc.animation.kill".
-   */
   function animationCamera(camera: Camera, val: CameraLocation, options?: any) {
     if (
       !(camera instanceof sigma.classes.camera) ||
@@ -139,12 +114,6 @@ export default function configure(sigma: SigmaLibrary) {
     return id;
   }
 
-  /**
-   * Kills a running animation. It triggers the eventual onComplete callback.
-   *
-   * @param  {number} id  The id of the animation to kill.
-   * @return {object}     Returns the sigma.misc.animation package.
-   */
   function kill(id: number) {
     if (arguments.length !== 1 || typeof id !== "number")
       throw new Error("animation.kill: Wrong arguments.");
@@ -165,16 +134,6 @@ export default function configure(sigma: SigmaLibrary) {
     return this;
   }
 
-  /**
-   * Kills every running animations, or only the one with the specified type,
-   * if a string parameter is given.
-   *
-   * @param  {?(string|object)} filter A string to filter the animations to kill
-   *                                   on their type (example: "camera"), or an
-   *                                   object to filter on their target.
-   * @return {number}                  Returns the number of animations killed
-   *                                   that way.
-   */
   function killAll(filter?: string | object) {
     let o;
     let count = 0;
@@ -204,16 +163,6 @@ export default function configure(sigma: SigmaLibrary) {
     return count;
   }
 
-  /**
-   * Returns "true" if any animation that is currently still running matches
-   * the filter given to the function.
-   *
-   * @param  {string|object} filter A string to filter the animations to kill
-   *                                on their type (example: "camera"), or an
-   *                                object to filter on their target.
-   * @return {boolean}              Returns true if any running animation
-   *                                matches.
-   */
   function has(filter: string | object) {
     const type = typeof filter === "string" ? filter : null;
     const target = typeof filter === "object" ? filter : null;

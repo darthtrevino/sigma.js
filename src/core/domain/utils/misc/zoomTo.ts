@@ -1,26 +1,5 @@
 import Camera from "../../classes/Camera";
 
-/**
- * Perform a zoom into a camera, with or without animation, to the
- * coordinates indicated using a specified ratio.
- *
- * Recognized parameters:
- * **********************
- * Here is the exhaustive list of every accepted parameters in the animation
- * object:
- *
- *   {?number} duration     An amount of time that means the duration of the
- *                          animation. If this parameter doesn't exist the
- *                          zoom will be performed without animation.
- *   {?function} onComplete A function to perform it after the animation. It
- *                          will be performed even if there is no duration.
- *
- * @param {camera}     The camera where perform the zoom.
- * @param {x}          The X coordiantion where the zoom goes.
- * @param {y}          The Y coordiantion where the zoom goes.
- * @param {ratio}      The ratio to apply it to the current camera ratio.
- * @param {?animation} A dictionary with options for a possible animation.
- */
 export default function zoomTo(sigma) {
   return (
     camera: Camera,

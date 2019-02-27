@@ -12,6 +12,8 @@ import { Settings } from "../../classes/Configurable";
 
 export default (sigma: SigmaLibrary) => {
   return class WebGLRenderer extends Dispatcher implements Renderer {
+    public id = "__ID_NOT_SET__";
+
     // Conrad Properties
     private jobs = {};
     private conradId = id();
@@ -28,8 +30,8 @@ export default (sigma: SigmaLibrary) => {
     private container: HTMLElement;
     // TODO: create captor type
     private captors: any[];
-    private width: number = 0;
-    private height: number = 0;
+    public width: number = 0;
+    public height: number = 0;
 
     // Rendering attributes
     private nodePrograms = {};
@@ -425,7 +427,7 @@ export default (sigma: SigmaLibrary) => {
       });
 
       if (drawLabels) {
-        const o = key => {
+        const o = (key: string) => {
           return self.settings(
             {
               prefix: self.camera.prefix
@@ -438,7 +440,11 @@ export default (sigma: SigmaLibrary) => {
           if (!a[i].hidden)
             (sigma.canvas.labels[
               a[i].type || this.settings(options, "defaultNodeType")
-            ] || sigma.canvas.labels.def)(a[i], this.contexts.labels, o);
+            ] || sigma.canvas.labels.def)(
+              a[i],
+              this.contexts.labels,
+              o as Settings
+            );
       }
 
       this.dispatchEvent("render");

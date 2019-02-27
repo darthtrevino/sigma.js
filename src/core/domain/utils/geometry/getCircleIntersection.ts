@@ -1,20 +1,5 @@
 /* eslint-disable camelcase, @typescript-eslint/camelcase */
 
-/**
- * Return the coordinates of the intersection points of two circles.
- *
- * @param  {number} x0  The X coordinate of center location of the first
- *                      circle.
- * @param  {number} y0  The Y coordinate of center location of the first
- *                      circle.
- * @param  {number} r0  The radius of the first circle.
- * @param  {number} x1  The X coordinate of center location of the second
- *                      circle.
- * @param  {number} y1  The Y coordinate of center location of the second
- *                      circle.
- * @param  {number} r1  The radius of the second circle.
- * @return {xi,yi}      The coordinates of the intersection points.
- */
 export default function getCircleIntersection(
   x0: number,
   y0: number,

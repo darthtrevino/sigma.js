@@ -3,7 +3,7 @@ import loadProgram from "../../utils/webgl/loadProgram";
 import loadShader from "../../utils/webgl/loadShader";
 import { Edge, Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
-
+import { getColor } from "./utils";
 /**
  * This edge renderer will display edges as lines with the gl.LINES display
  * mode. Since this mode does not support well thickness, edges are all drawn
@@ -26,23 +26,8 @@ export default {
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
     const y2 = target[`${prefix}y`];
-    let { color } = edge;
-
-    if (!color)
-      switch (settings("edgeColor")) {
-        case "source":
-          color = source.color || settings("defaultNodeColor");
-          break;
-        case "target":
-          color = target.color || settings("defaultNodeColor");
-          break;
-        default:
-          color = settings("defaultEdgeColor");
-          break;
-      }
-
     // Normalize color:
-    color = floatColor(color);
+    const color = floatColor(getColor(edge, source, target, settings));
 
     data[i++] = x1;
     data[i++] = y1;
