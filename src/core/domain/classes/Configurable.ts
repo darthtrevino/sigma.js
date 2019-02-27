@@ -2,7 +2,7 @@ type ConfigMap = { [key: string]: any };
 
 export interface Settings {
   (a1: string | ConfigMap, a2?: any): any;
-  embedObjects(...eoArgs: ConfigMap[]): any;
+  embedObjects(...eoArgs: ConfigMap[]): Settings;
 }
 /**
  * This utils aims to facilitate the manipulation of each instance setting.
@@ -89,12 +89,8 @@ export default function configurable(...args: any[]): Settings {
    * @return {function} Returns the function. Check its documentation to know
    *                    more about how it works.
    */
-  settings.embedObjects = function embedObjects(...eoArgs: ConfigMap[]) {
-    const callArgs = datas
-      .concat(data)
-      .concat(Array.prototype.splice.call(eoArgs, 0));
-
-    return configurable.apply({}, callArgs);
+  settings.embedObjects = function embedObjects(...extraData: ConfigMap[]) {
+    return configurable([data, datas, ...extraData]);
   };
 
   // Initialize

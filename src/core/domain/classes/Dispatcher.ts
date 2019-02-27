@@ -1,3 +1,5 @@
+import { Dispatchable } from "../../interfaces";
+
 export interface EventHandler {
   handler: Function;
   one?: boolean;
@@ -8,7 +10,7 @@ export interface EventHandler {
  *
  * @return {dispatcher} The new dispatcher instance.
  */
-export default class Dispatcher {
+export default class Dispatcher implements Dispatchable {
   private handlers: { [key: string]: EventHandler[] } = {};
 
   constructor() {

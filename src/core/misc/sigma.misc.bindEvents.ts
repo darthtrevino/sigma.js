@@ -1,4 +1,4 @@
-import { SigmaLibrary, Edge, Node } from "../interfaces";
+import { SigmaLibrary, Edge, Node, Renderer } from "../interfaces";
 
 export default function configure(sigma: SigmaLibrary) {
   /**
@@ -6,9 +6,8 @@ export default function configure(sigma: SigmaLibrary) {
    * to its captors, to properly dispatch the good events to the sigma instance
    * to manage clicking, hovering etc...
    *
-   * It has to be called in the scope of the related renderer.
    */
-  function bindEvents(this: any, prefix: string) {
+  function bindEvents(this: Renderer, prefix: string) {
     let mX: number;
     let mY: number;
     const self = this;

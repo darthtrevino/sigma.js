@@ -3,7 +3,7 @@ import conrad from "conrad";
 import Dispatcher from "../../classes/Dispatcher";
 import id from "../../utils/misc/id";
 import getPixelRatio from "../../utils/events/getPixelRatio";
-import { SigmaLibrary, Renderer } from "../../../interfaces";
+import { SigmaLibrary, Renderer, Captor } from "../../../interfaces";
 import Camera from "../../classes/Camera";
 import Graph from "../../classes/Graph";
 import { Settings } from "../../classes/Configurable";
@@ -12,11 +12,11 @@ export default (sigma: SigmaLibrary) => {
   return class CanvasRenderer extends Dispatcher implements Renderer {
     public id = "__ID_NOT_SET__";
     private container: HTMLElement;
-    private contexts: { [key: string]: CanvasRenderingContext2D } = {};
+    public contexts: { [key: string]: CanvasRenderingContext2D } = {};
     private domElements: { [key: string]: HTMLElement } = {};
     private nodesOnScreen = [];
     private edgesOnScreen = [];
-    private captors: any[] = [];
+    public captors: Captor[] = [];
     public width = 0;
     public height = 0;
 

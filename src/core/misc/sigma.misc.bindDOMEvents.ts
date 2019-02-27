@@ -1,14 +1,12 @@
-import { SigmaLibrary } from "../interfaces";
+import { SigmaLibrary, Renderer } from "../interfaces";
 
 export default function configure(sigma: SigmaLibrary) {
   /**
    * This helper will bind any DOM renderer (for instance svg)
    * to its captors, to properly dispatch the good events to the sigma instance
    * to manage clicking, hovering etc...
-   *
-   * It has to be called in the scope of the related renderer.
    */
-  function bindDOMEvents(this: any, container: HTMLElement) {
+  function bindDOMEvents(this: Renderer, container: HTMLElement) {
     const self = this;
     const { graph } = this;
 

@@ -6,8 +6,6 @@ import Dispatcher from "./domain/classes/Dispatcher";
 import configurable, { Settings } from "./domain/classes/Configurable";
 import EdgeQuad from "./domain/classes/EdgeQuad";
 import Quad from "./domain/classes/Quad";
-import edgeHoversArrow from "./domain/renderers/canvas/edgeHoversArrow";
-import { hide } from "./domain/renderers/svg/utils";
 
 export interface Keyed<T> {
   [key: string]: T;
@@ -370,6 +368,8 @@ export interface SigmaConfiguration {
   [key: string]: any;
 }
 
+export interface Captor extends Killable, Dispatchable {}
+
 export interface SigmaLibrary {
   new (item?: any): Sigma;
 
@@ -379,7 +379,7 @@ export interface SigmaLibrary {
   classes: SigmaClasses;
   renderers: Keyed<any>;
   utils: SigmaUtils;
-  captors: Keyed<Killable>;
+  captors: Keyed<any>;
 
   settings: Keyed<any>;
   misc: SigmaMisc;
@@ -420,17 +420,61 @@ export interface Killable {
   kill();
 }
 
-export interface Renderer extends Killable {
+export interface Renderer extends Killable, Dispatchable {
   id: string;
   camera: Camera;
   graph: Graph;
   width: number;
   height: number;
+  settings: Settings;
+  captors: Captor[];
+  contexts?: {
+    [key: string]: CanvasRenderingContext2D | WebGLRenderingContext;
+  };
 
   render(params?: any): Renderer;
   initDOM(tag: string, elementId: string, webgl?: boolean);
   resize(w?: number, h?: number): Renderer;
   clear(): Renderer;
+}
+
+export interface Dispatchable {
+  /**
+   * Will execute the handler everytime that the indicated event (or the
+   * indicated events) will be triggered.
+   *
+   * @param  {string}           events  The name of the event (or the events
+   *                                    separated by spaces).
+   * @param  {function(Object)} handler The handler to bind.
+   * @return {dispatcher}               Returns the instance itself.
+   */
+  bind(
+    events: { [key: string]: Function } | string[] | string,
+    handler?: Function
+  ): Dispatchable;
+
+  /**
+   * Removes the handler from a specified event (or specified events).
+   *
+   * @param  {?string}           events  The name of the event (or the events
+   *                                     separated by spaces). If undefined,
+   *                                     then all handlers are removed.
+   * @param  {?function(object)} handler The handler to unbind. If undefined,
+   *                                     each handler bound to the event or the
+   *                                     events will be removed.
+   * @return {dispatcher}                Returns the instance itself.
+   */
+  unbind(events?: string | string[], handler?: Function): Dispatchable;
+
+  /**
+   * Executes each handler bound to the event
+   *
+   * @param  {string}     events The name of the event (or the events separated
+   *                             by spaces).
+   * @param  {?object}    data   The content of the event (optional).
+   * @return {dispatcher}        Returns the instance itself.
+   */
+  dispatchEvent(events: string | string[], data?: any): Dispatchable;
 }
 
 export interface SigmaUtils extends Keyed<any> {
@@ -1160,7 +1204,6 @@ export interface SigmaMisc extends Keyed<any> {
    * The goal is to make any node label readable with the mouse, and to
    * highlight hovered nodes and edges.
    *
-   * It has to be called in the scope of the related renderer.
    */
   drawHovers(prefix: string): void;
 
@@ -1169,7 +1212,6 @@ export interface SigmaMisc extends Keyed<any> {
    * to its captors, to properly dispatch the good events to the sigma instance
    * to manage clicking, hovering etc...
    *
-   * It has to be called in the scope of the related renderer.
    */
   bindEvents(prefix: string): void;
 
@@ -1178,7 +1220,6 @@ export interface SigmaMisc extends Keyed<any> {
    * to its captors, to properly dispatch the good events to the sigma instance
    * to manage clicking, hovering etc...
    *
-   * It has to be called in the scope of the related renderer.
    */
   bindDOMEvents(container: HTMLElement): void;
 

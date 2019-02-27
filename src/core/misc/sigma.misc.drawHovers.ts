@@ -1,4 +1,4 @@
-import { Event, Node, Edge, SigmaLibrary } from "../interfaces";
+import { Event, Node, Edge, SigmaLibrary, Renderer } from "../interfaces";
 import Dispatcher from "../domain/classes/Dispatcher";
 import Sigma from "../domain/classes/Sigma";
 
@@ -8,30 +8,28 @@ export default function configure(sigma: SigmaLibrary) {
    * events from a renderer and renders the nodes differently on the top layer.
    * The goal is to make any node label readable with the mouse, and to
    * highlight hovered nodes and edges.
-   *
-   * It has to be called in the scope of the related renderer.
    */
-  function drawHovers(this: any, prefix: string) {
+  function drawHovers(this: Renderer, prefix: string) {
     //TODO: this type should be renderer
-    const self = this;
     const hoveredNodes: { [key: string]: Node } = {};
     const hoveredEdges: { [key: string]: Edge } = {};
 
-    function draw() {
+    const draw = () => {
       let source;
       let target;
       let hoveredNode;
       let hoveredEdge;
-      const c = self.contexts.hover.canvas;
-      const defaultNodeType = self.settings("defaultNodeType");
-      const defaultEdgeType = self.settings("defaultEdgeType");
+      const c = this.contexts.hover.canvas;
+      const defaultNodeType = this.settings("defaultNodeType");
+      const defaultEdgeType = this.settings("defaultEdgeType");
       const nodeRenderers = sigma.canvas.hovers;
       const edgeRenderers = sigma.canvas.edgehovers;
       const extremitiesRenderers = sigma.canvas.extremities;
-      const embedSettings = self.settings.embedObjects({ prefix });
+      const embedSettings = this.settings.embedObjects({ prefix });
+      const hoverContext = this.contexts.hover as CanvasRenderingContext2D;
 
-      // Clear self.contexts.hover:
-      self.contexts.hover.clearRect(0, 0, c.width, c.height);
+      // Clear this.contexts.hover:
+      hoverContext.clearRect(0, 0, c.width, c.height);
 
       // Node render: single hover
       if (
@@ -42,7 +40,7 @@ export default function configure(sigma: SigmaLibrary) {
         hoveredNode = hoveredNodes[Object.keys(hoveredNodes)[0]];
         (nodeRenderers[hoveredNode.type] ||
           nodeRenderers[defaultNodeType] ||
-          nodeRenderers.def)(hoveredNode, self.contexts.hover, embedSettings);
+          nodeRenderers.def)(hoveredNode, hoverContext, embedSettings);
       }
 
       // Node render: multiple hover
@@ -50,11 +48,7 @@ export default function configure(sigma: SigmaLibrary) {
         Object.keys(hoveredNodes).forEach(k => {
           (nodeRenderers[hoveredNodes[k].type] ||
             nodeRenderers[defaultNodeType] ||
-            nodeRenderers.def)(
-            hoveredNodes[k],
-            self.contexts.hover,
-            embedSettings
-          );
+            nodeRenderers.def)(hoveredNodes[k], hoverContext, embedSettings);
         });
 
       // Edge render: single hover
@@ -64,8 +58,8 @@ export default function configure(sigma: SigmaLibrary) {
         Object.keys(hoveredEdges).length
       ) {
         hoveredEdge = hoveredEdges[Object.keys(hoveredEdges)[0]];
-        source = self.graph.nodes(hoveredEdge.source);
-        target = self.graph.nodes(hoveredEdge.target);
+        source = this.graph.nodes(hoveredEdge.source);
+        target = this.graph.nodes(hoveredEdge.target);
 
         if (!hoveredEdge.hidden) {
           (edgeRenderers[hoveredEdge.type] ||
@@ -74,7 +68,7 @@ export default function configure(sigma: SigmaLibrary) {
             hoveredEdge,
             source,
             target,
-            self.contexts.hover,
+            hoverContext,
             embedSettings
           );
 
@@ -84,19 +78,19 @@ export default function configure(sigma: SigmaLibrary) {
               hoveredEdge,
               source,
               target,
-              self.contexts.hover,
+              hoverContext,
               embedSettings
             );
           } else {
             // Avoid edges rendered over nodes:
             (sigma.canvas.nodes[source.type] || sigma.canvas.nodes.def)(
               source,
-              self.contexts.hover,
+              hoverContext,
               embedSettings
             );
             (sigma.canvas.nodes[target.type] || sigma.canvas.nodes.def)(
               target,
-              self.contexts.hover,
+              hoverContext,
               embedSettings
             );
           }
@@ -110,8 +104,8 @@ export default function configure(sigma: SigmaLibrary) {
       ) {
         Object.keys(hoveredEdges).forEach(k => {
           hoveredEdge = hoveredEdges[k];
-          source = self.graph.nodes(hoveredEdge.source);
-          target = self.graph.nodes(hoveredEdge.target);
+          source = this.graph.nodes(hoveredEdge.source);
+          target = this.graph.nodes(hoveredEdge.target);
 
           if (!hoveredEdge.hidden) {
             (edgeRenderers[hoveredEdge.type] ||
@@ -120,7 +114,7 @@ export default function configure(sigma: SigmaLibrary) {
               hoveredEdge,
               source,
               target,
-              self.contexts.hover,
+              hoverContext,
               embedSettings
             );
 
@@ -130,26 +124,26 @@ export default function configure(sigma: SigmaLibrary) {
                 hoveredEdge,
                 source,
                 target,
-                self.contexts.hover,
+                hoverContext,
                 embedSettings
               );
             } else {
               // Avoid edges rendered over nodes:
               (sigma.canvas.nodes[source.type] || sigma.canvas.nodes.def)(
                 source,
-                self.contexts.hover,
+                hoverContext,
                 embedSettings
               );
               (sigma.canvas.nodes[target.type] || sigma.canvas.nodes.def)(
                 target,
-                self.contexts.hover,
+                hoverContext,
                 embedSettings
               );
             }
           }
         });
       }
-    }
+    };
 
     this.bind("overNode", (event: Event<{ node: Node }>) => {
       const { node } = event.data;

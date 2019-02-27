@@ -5,7 +5,7 @@ import Dispatcher from "../../classes/Dispatcher";
 import getPixelRatio from "../../utils/events/getPixelRatio";
 import multiply from "../../utils/matrices/multiply";
 import translation from "../../utils/matrices/translation";
-import { SigmaLibrary, Renderer } from "../../../interfaces";
+import { SigmaLibrary, Renderer, Captor } from "../../../interfaces";
 import Graph from "../../classes/Graph";
 import Camera from "../../classes/Camera";
 import { Settings } from "../../classes/Configurable";
@@ -19,7 +19,7 @@ export default (sigma: SigmaLibrary) => {
     private conradId = id();
 
     // Main attributes
-    private contexts: {
+    public contexts: {
       labels?: CanvasRenderingContext2D;
       scene?: WebGLRenderingContext;
       nodes?: WebGLRenderingContext;
@@ -28,8 +28,7 @@ export default (sigma: SigmaLibrary) => {
     } = {};
     private domElements: { [key: string]: HTMLElement } = {};
     private container: HTMLElement;
-    // TODO: create captor type
-    private captors: any[];
+    public captors: Captor[];
     public width: number = 0;
     public height: number = 0;
 
@@ -427,28 +426,18 @@ export default (sigma: SigmaLibrary) => {
       });
 
       if (drawLabels) {
-        const o = (key: string) => {
-          return self.settings(
-            {
-              prefix: self.camera.prefix
-            },
-            key
-          );
-        };
+        const o = self.settings.embedObjects({
+          prefix: self.camera.prefix
+        });
 
         for (let i = 0; i < a.length; i++)
           if (!a[i].hidden)
             (sigma.canvas.labels[
               a[i].type || this.settings(options, "defaultNodeType")
-            ] || sigma.canvas.labels.def)(
-              a[i],
-              this.contexts.labels,
-              o as Settings
-            );
+            ] || sigma.canvas.labels.def)(a[i], this.contexts.labels, o);
       }
 
       this.dispatchEvent("render");
-
       return this;
     }
 

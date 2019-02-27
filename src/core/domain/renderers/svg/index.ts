@@ -1,6 +1,6 @@
 import id from "../../utils/misc/id";
 import Dispatcher from "../../classes/Dispatcher";
-import { SigmaLibrary, Renderer, Keyed } from "../../../interfaces";
+import { SigmaLibrary, Renderer, Keyed, Captor } from "../../../interfaces";
 import Graph from "../../classes/Graph";
 import Camera from "../../classes/Camera";
 import { Settings } from "../../classes/Configurable";
@@ -19,9 +19,10 @@ export default (sigma: SigmaLibrary) => {
     private measurementCanvas = null;
     private nodesOnScreen = [];
     private edgesOnScreen = [];
-    private captors: any[];
+    public captors: Captor[];
     public width = 0;
     public height = 0;
+    public contexts = {};
 
     //graph: null,
     // groups: {},
