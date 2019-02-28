@@ -507,30 +507,15 @@ class Graph {
    */
   public nodes(...ids: string[]): Node[] {
     // Clone the array of nodes and return it:
-    if (!arguments.length) return this.nodesArray.slice(0);
+    if (!ids.length) return this.nodesArray.slice(0);
 
-    // Return the related node:
-    if (
-      arguments.length === 1 &&
-      (typeof ids === "string" || typeof ids === "number")
-    )
-      return [this.nodesIndex[ids]];
-
-    // Return an array of the related node:
-    if (
-      arguments.length === 1 &&
-      Object.prototype.toString.call(ids) === "[object Array]"
-    ) {
-      return (ids as string[]).map(id => {
-        if (typeof id === "string" || typeof id === "number") {
-          return this.nodesIndex[id];
-        } else {
-          throw new Error("nodes: Wrong arguments.");
-        }
-      });
-    }
-
-    throw new Error("nodes: Wrong arguments.");
+    return (ids as string[]).map(id => {
+      if (typeof id === "string" || typeof id === "number") {
+        return this.nodesIndex[id];
+      } else {
+        throw new Error("nodes: Wrong arguments.");
+      }
+    });
   }
 
   /**
@@ -584,30 +569,15 @@ class Graph {
    */
   public edges(...ids: string[]): Edge[] {
     // Clone the array of edges and return it:
-    if (!arguments.length) return this.edgesArray.slice(0);
+    if (!ids.length) return this.edgesArray.slice(0);
 
-    // Return the related edge:
-    if (
-      arguments.length === 1 &&
-      (typeof ids === "string" || typeof ids === "number")
-    )
-      return [this.edgesIndex[ids]];
-
-    // Return an array of the related edge:
-    if (
-      arguments.length === 1 &&
-      Object.prototype.toString.call(ids) === "[object Array]"
-    ) {
-      return (ids as any[]).map(id => {
-        if (typeof id === "string" || typeof id === "number") {
-          return this.edgesIndex[id];
-        } else {
-          throw new Error("edges: Wrong arguments.");
-        }
-      });
-    }
-
-    throw new Error("edges: Wrong arguments.");
+    return (ids as any[]).map(id => {
+      if (typeof id === "string" || typeof id === "number") {
+        return this.edgesIndex[id];
+      } else {
+        throw new Error("edges: Wrong arguments.");
+      }
+    });
   }
 
   /**

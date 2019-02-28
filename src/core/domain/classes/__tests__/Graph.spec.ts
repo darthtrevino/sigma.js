@@ -490,7 +490,7 @@ describe("The Graph Class", () => {
 
     it("preserves object identity internally when clone is false", () => {
       const { graph, data } = createGraph(true, false);
-      expect(data.nodes[1]).toEqual(graph.nodes(data.nodes[1].id));
+      expect([data.nodes[1]]).toEqual(graph.nodes(data.nodes[1].id));
     });
 
     it("allows alteration to node ids when graphs are mutable", () => {
@@ -517,12 +517,12 @@ describe("The Graph Class", () => {
 
     it("returns undefined on node lookup of an unknown id", () => {
       const { graph } = createGraph(true, false);
-      expect(graph.nodes("unexisting_id")).toEqual(undefined);
+      expect(graph.nodes("unexisting_id")).toEqual([undefined]);
     });
 
     it("returns an array of nodes when an array of ids is passed into .nodes()", () => {
       const { graph, data } = createGraph(true, false);
-      expect(graph.nodes(["n0", "n1", "n0"])).toEqual([
+      expect(graph.nodes("n0", "n1", "n0")).toEqual([
         data.nodes[0],
         data.nodes[1],
         data.nodes[0]
@@ -531,7 +531,7 @@ describe("The Graph Class", () => {
 
     it("throws when invalid id arguments are used", () => {
       const { graph } = createGraph(true, false);
-      expect(() => graph.nodes(["n0", "n1", {} as string])).toThrow(
+      expect(() => graph.nodes("n0", "n1", {} as string)).toThrow(
         /nodes: Wrong arguments/
       );
     });
@@ -552,9 +552,9 @@ describe("The Graph Class", () => {
 
       // drop
       graph.dropNode("n1");
-      expect(graph.nodes("n1")).not.toBeDefined();
+      expect(graph.nodes("n1")).toEqual([undefined]);
       graph.dropNode("n2");
-      expect(graph.nodes("n2")).not.toBeDefined();
+      expect(graph.nodes("n2")).toEqual([undefined]);
     });
   });
 
@@ -573,7 +573,7 @@ describe("The Graph Class", () => {
 
     it("does not create new objects when clone is set to false", () => {
       const { graph, data } = createGraph(true, true);
-      expect(data.edges[1]).toEqual(graph.edges(data.edges[1].id));
+      expect([data.edges[1]]).toEqual(graph.edges(data.edges[1].id));
     });
 
     it("throws if an edge is altered when immutable is set to true", () => {
@@ -624,20 +624,17 @@ describe("The Graph Class", () => {
 
       it("does not throw an error when an unknown id is used", () => {
         const { graph } = createGraph(false, true);
-        expect(graph.edges("unexisting_id")).toEqual(undefined);
+        expect(graph.edges("unexisting_id")).toEqual([undefined]);
       });
 
       it("returns an array of edges when an id array is used", () => {
         const { graph, data } = createGraph(false, true);
-        expect(graph.edges(["e0", "e0"])).toEqual([
-          data.edges[0],
-          data.edges[0]
-        ]);
+        expect(graph.edges("e0", "e0")).toEqual([data.edges[0], data.edges[0]]);
       });
 
       it("throws when invalid id types are used", () => {
         const { graph } = createGraph(false, true);
-        expect(() => graph.edges(["e0", {} as string])).toThrow(
+        expect(() => graph.edges("e0", {} as string)).toThrow(
           /edges: Wrong arguments/
         );
       });

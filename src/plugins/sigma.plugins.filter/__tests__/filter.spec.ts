@@ -53,12 +53,12 @@ describe("Plugin: sigma.plugins.filter", () => {
     });
 
     expect(myGraph.adjacentNodes("n0")).toEqual(
-      [myGraph.nodes("n1")]
+      myGraph.nodes("n1")
       //'"adjacentNodes" returns the adjacent nodes of a specified node'
     );
 
     expect(myGraph.adjacentEdges("n0")).toEqual(
-      [myGraph.edges("e0")]
+      myGraph.edges("e0")
       //'"adjacentEdges" returns the adjacent edges of a specified node'
     );
   });
@@ -162,7 +162,7 @@ describe("Plugin: sigma.plugins.filter", () => {
     filter.apply();
 
     expect(hiddenNodes()).toEqual(
-      [s.graph.nodes("n4")]
+      s.graph.nodes("n4")
       //'"apply" applies a nodesBy filter'
     );
 
@@ -175,7 +175,7 @@ describe("Plugin: sigma.plugins.filter", () => {
     filter.neighborsOf("n0").apply();
 
     expect(hiddenNodes()).toEqual(
-      [s.graph.nodes("n2"), s.graph.nodes("n3"), s.graph.nodes("n4")]
+      s.graph.nodes("n2", "n3", "n4")
       //'"neighborsOf" hides all nodes which are not linked to the specified node'
     );
 
@@ -186,7 +186,7 @@ describe("Plugin: sigma.plugins.filter", () => {
     filter.edgesBy(myEdgeAttrPredicate).apply();
 
     expect(hiddenEdges()).toEqual(
-      [[s.graph.edges("e0")], [s.graph.edges("e1")], [s.graph.edges("e3")]]
+      s.graph.edges("e0", "e1", "e3")
       //'"apply" applies an edgesBy filter'
     );
 
@@ -199,7 +199,7 @@ describe("Plugin: sigma.plugins.filter", () => {
     // Undo all filters
     filter.undo().apply();
 
-    expect(hiddenNodes().concat(hiddenEdges())).toEqual(
+    expect([...hiddenNodes(), ...hiddenEdges()] as any[]).toEqual(
       []
       //"All filters are undone at once"
     );
@@ -232,7 +232,7 @@ describe("Plugin: sigma.plugins.filter", () => {
       .apply();
 
     expect(hiddenNodes()).toEqual(
-      [s.graph.nodes("n4")]
+      s.graph.nodes("n4")
       //'"undo" undoes the filters before it in the chain, and not the filters after it'
     );
 
@@ -240,7 +240,7 @@ describe("Plugin: sigma.plugins.filter", () => {
     filter.apply().apply();
 
     expect(hiddenNodes()).toEqual(
-      [s.graph.nodes("n4")]
+      s.graph.nodes("n4")
       //'"apply" is called multiple times'
     );
 
