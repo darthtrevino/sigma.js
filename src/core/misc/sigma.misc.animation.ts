@@ -1,4 +1,4 @@
-import { SigmaLibrary } from "../interfaces";
+import { SigmaLibrary, AnimationReference } from "../interfaces";
 import Camera, { CameraLocation } from "../domain/classes/Camera";
 
 export default function configure(sigma: SigmaLibrary) {
@@ -33,7 +33,7 @@ export default function configure(sigma: SigmaLibrary) {
       );
 
     let id: number;
-    let anim;
+    let anim: AnimationReference;
     const o = options || {};
     const start = sigma.utils.dateNow();
 

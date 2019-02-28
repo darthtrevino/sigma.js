@@ -3,6 +3,7 @@ import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
 import { Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
+import { shaders } from "./utils";
 
 /**
  * This node renderer will display nodes in the fastest way: Nodes are basic
@@ -160,7 +161,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
 
     return program;
   }

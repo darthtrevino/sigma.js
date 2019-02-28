@@ -3,6 +3,7 @@ import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
 import { Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
+import { shaders } from "./utils";
 
 /**
  * This node renderer will display nodes as discs, shaped in triangles with
@@ -106,7 +107,7 @@ export default {
       params.count || data.length / this.ATTRIBUTES
     );
   },
-  initProgram(gl) {
+  initProgram(gl: WebGLRenderingContext) {
     const vertexShader = loadShader(
       gl,
       [
@@ -178,7 +179,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
 
     return program;
   }

@@ -20,12 +20,12 @@ export default (sigma: SigmaLibrary) => {
 
     // Main attributes
     public contexts: {
-      labels?: CanvasRenderingContext2D;
-      scene?: WebGLRenderingContext;
-      nodes?: WebGLRenderingContext;
-      edges?: WebGLRenderingContext;
+      labels: CanvasRenderingContext2D;
+      scene: WebGLRenderingContext;
+      nodes: WebGLRenderingContext;
+      edges: WebGLRenderingContext;
       [key: string]: WebGLRenderingContext | CanvasRenderingContext2D;
-    } = {};
+    } = {} as any;
     private domElements: { [key: string]: HTMLElement } = {};
     private container: HTMLElement;
     public captors: Captor[];

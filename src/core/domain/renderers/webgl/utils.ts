@@ -23,3 +23,9 @@ export function getColor(
     }
   return color;
 }
+
+export function shaders(
+  ...items: Array<WebGLShader | undefined | null>
+): WebGLShader[] {
+  return items.filter(t => !!t) as WebGLShader[];
+}

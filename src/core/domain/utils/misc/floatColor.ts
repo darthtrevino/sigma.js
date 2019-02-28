@@ -29,9 +29,11 @@ export default function floatColor(input: string): number {
     const matches = val.match(
       /^ *rgba? *\( *([0-9]*) *, *([0-9]*) *, *([0-9]*) *(,.*)?\) *$/
     );
-    r = +matches[1];
-    g = +matches[2];
-    b = +matches[3];
+    if (matches) {
+      r = +matches[1];
+      g = +matches[2];
+      b = +matches[3];
+    }
   }
 
   const color = r * 256 * 256 + g * 256 + b;

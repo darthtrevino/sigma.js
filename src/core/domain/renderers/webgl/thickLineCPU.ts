@@ -3,8 +3,7 @@ import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
 import { Edge, Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
-
-import { getColor } from "./utils";
+import { getColor, shaders } from "./utils";
 
 /**
  * This will render edges as thick lines using four points translated
@@ -26,7 +25,7 @@ export default {
     edge: Edge,
     source: Node,
     target: Node,
-    data: ArrayBuffer,
+    data: Float32Array,
     i: number,
     prefix: string,
     settings: Settings
@@ -73,7 +72,7 @@ export default {
     data[i++] = y2 - normals[1];
     data[i++] = color;
   },
-  computeIndices(data) {
+  computeIndices(data: Float32Array) {
     const indices = new Uint16Array(data.length * 6);
     let c = 0;
     const l = data.length / this.ATTRIBUTES;
@@ -88,7 +87,12 @@ export default {
 
     return indices;
   },
-  render(gl: WebGLRenderingContext, program: WebGLProgram, data, params) {
+  render(
+    gl: WebGLRenderingContext,
+    program: WebGLProgram,
+    data: Float32Array,
+    params: any
+  ) {
     // Define attributes:
     const positionLocation = gl.getAttribLocation(program, "a_position");
     const colorLocation = gl.getAttribLocation(program, "a_color");
@@ -144,7 +148,7 @@ export default {
       params.start || 0
     );
   },
-  initProgram(gl) {
+  initProgram(gl: WebGLRenderingContext) {
     const vertexShader = loadShader(
       gl,
       [
@@ -192,7 +196,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
 };

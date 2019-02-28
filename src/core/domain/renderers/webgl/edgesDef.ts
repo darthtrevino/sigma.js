@@ -4,7 +4,7 @@ import loadShader from "../../utils/webgl/loadShader";
 import rotation from "../../utils/matrices/rotation";
 import { Edge, Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
-import { getColor } from "./utils";
+import { getColor, shaders } from "./utils";
 
 /**
  * This edge renderer will display edges as lines going from the source node
@@ -240,7 +240,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
 };

@@ -1,6 +1,7 @@
 import Camera from "../../classes/Camera";
+import { SigmaLibrary } from "../../../interfaces";
 
-export default function zoomTo(sigma) {
+export default function zoomTo(sigma: SigmaLibrary) {
   return (
     camera: Camera,
     x: number,

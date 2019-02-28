@@ -3,7 +3,8 @@ import loadProgram from "../../utils/webgl/loadProgram";
 import loadShader from "../../utils/webgl/loadShader";
 import { Edge, Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
-import { getColor } from "./utils";
+import { getColor, shaders } from "./utils";
+
 /**
  * This edge renderer will display edges as lines with the gl.LINES display
  * mode. Since this mode does not support well thickness, edges are all drawn
@@ -122,7 +123,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
 };

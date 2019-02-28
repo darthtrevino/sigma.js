@@ -1,17 +1,12 @@
-import { Dispatchable } from "../../interfaces";
-
-export interface EventHandler {
-  handler: Function;
-  one?: boolean;
-}
+import { SigmaDispatcher, SigmaEventHandler } from "../../interfaces";
 
 /*
  * Dispatcher constructor.
  *
  * @return {dispatcher} The new dispatcher instance.
  */
-export default class Dispatcher implements Dispatchable {
-  private handlers: { [key: string]: EventHandler[] } = {};
+export default class Dispatcher implements SigmaDispatcher {
+  private handlers: { [key: string]: SigmaEventHandler[] } = {};
 
   constructor() {
     this.bind = this.bind.bind(this);

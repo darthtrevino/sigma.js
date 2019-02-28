@@ -1,4 +1,11 @@
-import { SigmaLibrary, Edge, Node, Renderer, Captor } from "../interfaces";
+import {
+  SigmaLibrary,
+  Edge,
+  Node,
+  Renderer,
+  Captor,
+  SigmaDispatchedEvent as SigmaEvent
+} from "../interfaces";
 
 export default function configure(sigma: SigmaLibrary) {
   /**
@@ -12,7 +19,7 @@ export default function configure(sigma: SigmaLibrary) {
     let mY: number;
     const self = this;
 
-    function getNodes(e): Node[] {
+    function getNodes(e: any): Node[] {
       if (e) {
         mX = "x" in e.data ? e.data.x : mX;
         mY = "y" in e.data ? e.data.y : mY;
@@ -28,7 +35,7 @@ export default function configure(sigma: SigmaLibrary) {
       const modifiedX = mX + self.width / 2;
       const modifiedY = mY + self.height / 2;
       const point = self.camera.cameraPosition(mX, mY);
-      const nodes = self.camera.quadtree.point(point.x, point.y);
+      const nodes = self.camera.quadtree!.point(point.x, point.y);
 
       if (nodes.length)
         for (let i = 0; i < nodes.length; i++) {
@@ -101,7 +108,7 @@ export default function configure(sigma: SigmaLibrary) {
       let edges = [];
 
       if (isCanvas) {
-        const nodesOnScreen = self.camera.quadtree.area(
+        const nodesOnScreen = self.camera.quadtree!.area(
           self.camera.getRectangle(self.width, self.height)
         );
         for (a = nodesOnScreen, i = 0, l = a.length; i < l; i++)
@@ -145,33 +152,33 @@ export default function configure(sigma: SigmaLibrary) {
             !target.hidden &&
             (!isCanvas || (nodeIndex[edge.source] || nodeIndex[edge.target])) &&
             sigma.utils.geom.getDistance(
-              source[`${prefix}x`],
-              source[`${prefix}y`],
+              (source as any)[`${prefix}x`],
+              (source as any)[`${prefix}y`],
               modifiedX,
               modifiedY
-            ) > source[`${prefix}size`] &&
+            ) > (source as any)[`${prefix}size`] &&
             sigma.utils.geom.getDistance(
-              target[`${prefix}x`],
-              target[`${prefix}y`],
+              (target as any)[`${prefix}x`],
+              (target as any)[`${prefix}y`],
               modifiedX,
               modifiedY
-            ) > target[`${prefix}size`]
+            ) > (target as any)[`${prefix}size`]
           ) {
             if (edge.type === "curve" || edge.type === "curvedArrow") {
               if (source.id === target.id) {
                 cp = sigma.utils.getSelfLoopControlPoints(
-                  source[`${prefix}x`],
-                  source[`${prefix}y`],
-                  source[`${prefix}size`]
+                  (source as any)[`${prefix}x`],
+                  (source as any)[`${prefix}y`],
+                  (source as any)[`${prefix}size`]
                 );
                 if (
                   sigma.utils.geom.isPointOnBezierCurve(
                     modifiedX,
                     modifiedY,
-                    source[`${prefix}x`],
-                    source[`${prefix}y`],
-                    target[`${prefix}x`],
-                    target[`${prefix}y`],
+                    (source as any)[`${prefix}x`],
+                    (source as any)[`${prefix}y`],
+                    (target as any)[`${prefix}x`],
+                    (target as any)[`${prefix}y`],
                     cp.x1,
                     cp.y1,
                     cp.x2,
@@ -183,19 +190,19 @@ export default function configure(sigma: SigmaLibrary) {
                 }
               } else {
                 cp = sigma.utils.geom.getQuadraticControlPoint(
-                  source[`${prefix}x`],
-                  source[`${prefix}y`],
-                  target[`${prefix}x`],
-                  target[`${prefix}y`]
+                  (source as any)[`${prefix}x`],
+                  (source as any)[`${prefix}y`],
+                  (target as any)[`${prefix}x`],
+                  (target as any)[`${prefix}y`]
                 );
                 if (
                   sigma.utils.geom.isPointOnQuadraticCurve(
                     modifiedX,
                     modifiedY,
-                    source[`${prefix}x`],
-                    source[`${prefix}y`],
-                    target[`${prefix}x`],
-                    target[`${prefix}y`],
+                    (source as any)[`${prefix}x`],
+                    (source as any)[`${prefix}y`],
+                    (target as any)[`${prefix}x`],
+                    (target as any)[`${prefix}y`],
                     cp.x,
                     cp.y,
                     Math.max(s, maxEpsilon)
@@ -208,10 +215,10 @@ export default function configure(sigma: SigmaLibrary) {
               sigma.utils.geom.isPointOnSegment(
                 modifiedX,
                 modifiedY,
-                source[`${prefix}x`],
-                source[`${prefix}y`],
-                target[`${prefix}x`],
-                target[`${prefix}y`],
+                (source as any)[`${prefix}x`],
+                (source as any)[`${prefix}y`],
+                (target as any)[`${prefix}x`],
+                (target as any)[`${prefix}y`],
                 Math.max(s, maxEpsilon)
               )
             ) {
@@ -229,7 +236,7 @@ export default function configure(sigma: SigmaLibrary) {
       let overNodes: { [key: string]: Node } = {};
       let overEdges: { [key: string]: Edge } = {};
 
-      function onClick(e: any) {
+      function onClick(e: SigmaEvent) {
         if (!self.settings("eventsEnabled")) return;
 
         self.dispatchEvent("click", e.data);
@@ -257,7 +264,7 @@ export default function configure(sigma: SigmaLibrary) {
         } else self.dispatchEvent("clickStage", { captor: e.data });
       }
 
-      function onDoubleClick(e: any) {
+      function onDoubleClick(e: SigmaEvent) {
         if (!self.settings("eventsEnabled")) return;
 
         self.dispatchEvent("doubleClick", e.data);
@@ -286,7 +293,7 @@ export default function configure(sigma: SigmaLibrary) {
         } else self.dispatchEvent("doubleClickStage", { captor: e.data });
       }
 
-      function onRightClick(e: any) {
+      function onRightClick(e: SigmaEvent) {
         if (!self.settings("eventsEnabled")) return;
 
         self.dispatchEvent("rightClick", e.data);
@@ -315,7 +322,7 @@ export default function configure(sigma: SigmaLibrary) {
         } else self.dispatchEvent("rightClickStage", { captor: e.data });
       }
 
-      function onOut(e: any) {
+      function onOut(e: SigmaEvent) {
         if (!self.settings("eventsEnabled")) return;
 
         let i;
@@ -353,7 +360,7 @@ export default function configure(sigma: SigmaLibrary) {
           });
       }
 
-      function onMove(e: any) {
+      function onMove(e: SigmaEvent) {
         if (!self.settings("eventsEnabled")) return;
 
         nodes = getNodes(e);

@@ -11,6 +11,17 @@ export interface Keyed<T> {
   [key: string]: T;
 }
 
+export interface SigmaEventHandler {
+  handler: Function;
+  one?: boolean;
+}
+
+export interface SigmaDispatchedEvent {
+  type: string;
+  data: any;
+  target: SigmaDispatcher;
+}
+
 export interface SigmaSettings {
   // Graph Settings
 
@@ -368,13 +379,13 @@ export interface SigmaConfiguration {
   [key: string]: any;
 }
 
-export interface Captor extends Killable, Dispatchable {}
+export interface Captor extends Killable, SigmaDispatcher {}
 
 export interface SigmaLibrary {
   new (item?: any): Sigma;
 
   instances(id?: string): Sigma | { [key: string]: Sigma };
-  register(packageName: string, item: any);
+  register(packageName: string, item: any): void;
 
   classes: SigmaClasses;
   renderers: Keyed<any>;
@@ -417,10 +428,10 @@ export interface Edge {
 }
 
 export interface Killable {
-  kill();
+  kill(): void;
 }
 
-export interface Renderer extends Killable, Dispatchable {
+export interface Renderer extends Killable, SigmaDispatcher {
   id: string;
   camera: Camera;
   graph: Graph;
@@ -433,12 +444,12 @@ export interface Renderer extends Killable, Dispatchable {
   };
 
   render(params?: any): Renderer;
-  initDOM(tag: string, elementId: string, webgl?: boolean);
+  initDOM(tag: string, elementId: string, webgl?: boolean): void;
   resize(w?: number, h?: number): Renderer;
   clear(): Renderer;
 }
 
-export interface Dispatchable {
+export interface SigmaDispatcher {
   /**
    * Will execute the handler everytime that the indicated event (or the
    * indicated events) will be triggered.
@@ -451,7 +462,7 @@ export interface Dispatchable {
   bind(
     events: { [key: string]: Function } | string[] | string,
     handler?: Function
-  ): Dispatchable;
+  ): SigmaDispatcher;
 
   /**
    * Removes the handler from a specified event (or specified events).
@@ -464,7 +475,7 @@ export interface Dispatchable {
    *                                     events will be removed.
    * @return {dispatcher}                Returns the instance itself.
    */
-  unbind(events?: string | string[], handler?: Function): Dispatchable;
+  unbind(events?: string | string[], handler?: Function): SigmaDispatcher;
 
   /**
    * Executes each handler bound to the event
@@ -474,7 +485,7 @@ export interface Dispatchable {
    * @param  {?object}    data   The content of the event (optional).
    * @return {dispatcher}        Returns the instance itself.
    */
-  dispatchEvent(events: string | string[], data?: any): Dispatchable;
+  dispatchEvent(events: string | string[], data?: any): SigmaDispatcher;
 }
 
 export interface SigmaUtils extends Keyed<any> {
@@ -1154,7 +1165,12 @@ export interface SigmaSvgUtils extends Keyed<any> {
 interface WebGLDrawer {
   POINTS: number;
   ATTRIBUTES: number;
-  render(gl: WebGLRenderingContext, program: WebGLProgram, data, params): void;
+  render(
+    gl: WebGLRenderingContext,
+    program: WebGLProgram,
+    data: Float32Array,
+    params: any
+  ): void;
   initProgram(gl: WebGLRenderingContext): WebGLProgram;
 }
 
@@ -1163,7 +1179,7 @@ export interface WebGLEdgeDrawer extends WebGLDrawer {
     edge: Edge,
     source: Node,
     target: Node,
-    data,
+    data: Float32Array,
     i: number,
     prefix: string,
     settings: Settings
@@ -1173,7 +1189,7 @@ export interface WebGLEdgeDrawer extends WebGLDrawer {
 export interface WebGLNodeDrawer extends WebGLDrawer {
   addNode(
     node: Node,
-    data,
+    data: Float32Array,
     i: number,
     prefix: string,
     settings: Settings
@@ -1226,16 +1242,23 @@ export interface SigmaMisc extends Keyed<any> {
   animation: SigmaMiscAnimation;
 }
 
+export interface AnimationReference {
+  type: string;
+  target: any;
+  frameId: number;
+  options: any;
+  fn: Function;
+}
+
 export interface SigmaMiscAnimation extends Keyed<any> {
   running: {
-    [key: string]: { type: string; target: any; frameId: number; options: any };
+    [key: string]: AnimationReference;
   };
 
   /**
    * Kills a running animation. It triggers the eventual onComplete callback.
    *
    * @param  {number} id  The id of the animation to kill.
-   * @return {object}     Returns the sigma.misc.animation package.
    */
   kill(id: number): void;
 
@@ -1249,7 +1272,7 @@ export interface SigmaMiscAnimation extends Keyed<any> {
    * @return {number}                  Returns the number of animations killed
    *                                   that way.
    */
-  killAll(filter: string | object): void;
+  killAll(filter: string | object): number;
 
   /**
    * Returns "true" if any animation that is currently still running matches
@@ -1261,7 +1284,7 @@ export interface SigmaMiscAnimation extends Keyed<any> {
    * @return {boolean}              Returns true if any running animation
    *                                matches.
    */
-  has(filter: string): void;
+  has(filter: string): boolean;
 
   /**
    * This function animates a camera. It has to be called with the camera to

@@ -3,7 +3,7 @@ import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
 import { Edge, Node } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
-import { getColor } from "./utils";
+import { getColor, shaders } from "./utils";
 
 /**
  * This will render edges as thick lines using four points translated
@@ -175,7 +175,7 @@ export default {
       params.start || 0
     );
   },
-  initProgram(gl) {
+  initProgram(gl: WebGLRenderingContext) {
     const vertexShader = loadShader(
       gl,
       [
@@ -226,7 +226,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
 };

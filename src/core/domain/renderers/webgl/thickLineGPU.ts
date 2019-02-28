@@ -1,6 +1,6 @@
 import { Edge, Node, SigmaLibrary } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
-import { getColor } from "./utils";
+import { getColor, shaders } from "./utils";
 
 /**
  * This will render edges as thick lines using four points translated
@@ -23,7 +23,7 @@ export default (sigma: SigmaLibrary) => ({
     edge: Edge,
     source: Node,
     target: Node,
-    data: ArrayBuffer,
+    data: Float32Array,
     i: number,
     prefix: string,
     settings: Settings
@@ -75,7 +75,7 @@ export default (sigma: SigmaLibrary) => ({
     data[i++] = thickness;
     data[i++] = color;
   },
-  computeIndices(data) {
+  computeIndices(data: Float32Array) {
     const indices = new Uint16Array(data.length * 6);
     let c = 0;
     const l = data.length / this.ATTRIBUTES;
@@ -231,7 +231,10 @@ export default (sigma: SigmaLibrary) => ({
       gl.FRAGMENT_SHADER
     );
 
-    const program = sigma.webgl.loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = sigma.webgl.loadProgram(
+      gl,
+      shaders(vertexShader, fragmentShader)
+    );
     return program;
   }
 });
