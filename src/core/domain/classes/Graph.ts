@@ -1,3 +1,4 @@
+import { Edge, Node } from "../../interfaces";
 import emptyObject from "../utils/misc/emptyObject";
 type NamedBindings = { [key: string]: Function };
 
@@ -501,34 +502,32 @@ class Graph {
    * call it with an array of ids, and it will return the array of nodes, in
    * the same order.
    *
-   * @param  {?(string|array)} v Eventually one id, an array of ids.
+   * @param  {?(string|array)} ids Eventually one id, an array of ids.
    * @return {object|array}      The related node or array of nodes.
    */
-  public nodes(v?: string | string[]) {
+  public nodes(...ids: string[]): Node[] {
     // Clone the array of nodes and return it:
     if (!arguments.length) return this.nodesArray.slice(0);
 
     // Return the related node:
     if (
       arguments.length === 1 &&
-      (typeof v === "string" || typeof v === "number")
+      (typeof ids === "string" || typeof ids === "number")
     )
-      return this.nodesIndex[v];
+      return [this.nodesIndex[ids]];
 
     // Return an array of the related node:
     if (
       arguments.length === 1 &&
-      Object.prototype.toString.call(v) === "[object Array]"
+      Object.prototype.toString.call(ids) === "[object Array]"
     ) {
-      let i;
-      let l;
-      const a = [];
-      for (i = 0, l = v.length; i < l; i++)
-        if (typeof v[i] === "string" || typeof v[i] === "number")
-          a.push(this.nodesIndex[v[i]]);
-        else throw new Error("nodes: Wrong arguments.");
-
-      return a;
+      return (ids as string[]).map(id => {
+        if (typeof id === "string" || typeof id === "number") {
+          return this.nodesIndex[id];
+        } else {
+          throw new Error("nodes: Wrong arguments.");
+        }
+      });
     }
 
     throw new Error("nodes: Wrong arguments.");
@@ -580,35 +579,32 @@ class Graph {
    * call it with an array of ids, and it will return the array of edges, in
    * the same order.
    *
-   * @param  {?(string|array)} v Eventually one id, an array of ids.
-   * @return {object|array}      The related edge or array of edges.
+   * @param  {?(string|array)} ids Eventually one id, an array of ids.
+   * @return {array}      The related edge or array of edges.
    */
-  public edges(v?: string | string[]) {
+  public edges(...ids: string[]): Edge[] {
     // Clone the array of edges and return it:
     if (!arguments.length) return this.edgesArray.slice(0);
 
     // Return the related edge:
     if (
       arguments.length === 1 &&
-      (typeof v === "string" || typeof v === "number")
+      (typeof ids === "string" || typeof ids === "number")
     )
-      return this.edgesIndex[v];
+      return [this.edgesIndex[ids]];
 
     // Return an array of the related edge:
     if (
       arguments.length === 1 &&
-      Object.prototype.toString.call(v) === "[object Array]"
+      Object.prototype.toString.call(ids) === "[object Array]"
     ) {
-      let i;
-      let l;
-      const a = [];
-
-      for (i = 0, l = v.length; i < l; i++)
-        if (typeof v[i] === "string" || typeof v[i] === "number")
-          a.push(this.edgesIndex[v[i]]);
-        else throw new Error("edges: Wrong arguments.");
-
-      return a;
+      return (ids as any[]).map(id => {
+        if (typeof id === "string" || typeof id === "number") {
+          return this.edgesIndex[id];
+        } else {
+          throw new Error("edges: Wrong arguments.");
+        }
+      });
     }
 
     throw new Error("edges: Wrong arguments.");
@@ -730,6 +726,7 @@ class Graph {
     fn: Function,
     before?: boolean
   ) {
+    ``;
     if (
       typeof methodName !== "string" ||
       typeof key !== "string" ||

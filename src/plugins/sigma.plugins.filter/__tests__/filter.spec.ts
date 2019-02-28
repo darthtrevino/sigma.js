@@ -186,7 +186,7 @@ describe("Plugin: sigma.plugins.filter", () => {
     filter.edgesBy(myEdgeAttrPredicate).apply();
 
     expect(hiddenEdges()).toEqual(
-      [s.graph.edges("e0"), s.graph.edges("e1"), s.graph.edges("e3")]
+      [[s.graph.edges("e0")], [s.graph.edges("e1")], [s.graph.edges("e3")]]
       //'"apply" applies an edgesBy filter'
     );
 

@@ -15,8 +15,6 @@ export default function configure(sigma: SigmaLibrary) {
     const hoveredEdges: { [key: string]: Edge } = {};
 
     const draw = () => {
-      let source;
-      let target;
       let hoveredNode;
       let hoveredEdge;
       const c = this.contexts.hover.canvas;
@@ -26,7 +24,7 @@ export default function configure(sigma: SigmaLibrary) {
       const edgeRenderers = sigma.canvas.edgehovers;
       const extremitiesRenderers = sigma.canvas.extremities;
       const embedSettings = this.settings.embedObjects({ prefix });
-      const hoverContext = this.contexts.hover as CanvasRenderingContext2D;
+      const hoverContext = this.contexts.hover! as CanvasRenderingContext2D;
 
       // Clear this.contexts.hover:
       hoverContext.clearRect(0, 0, c.width, c.height);
@@ -58,8 +56,10 @@ export default function configure(sigma: SigmaLibrary) {
         Object.keys(hoveredEdges).length
       ) {
         hoveredEdge = hoveredEdges[Object.keys(hoveredEdges)[0]];
-        source = this.graph.nodes(hoveredEdge.source);
-        target = this.graph.nodes(hoveredEdge.target);
+        const [source, target] = this.graph.nodes(
+          hoveredEdge.source,
+          hoveredEdge.target
+        );
 
         if (!hoveredEdge.hidden) {
           (edgeRenderers[hoveredEdge.type] ||
@@ -104,8 +104,10 @@ export default function configure(sigma: SigmaLibrary) {
       ) {
         Object.keys(hoveredEdges).forEach(k => {
           hoveredEdge = hoveredEdges[k];
-          source = this.graph.nodes(hoveredEdge.source);
-          target = this.graph.nodes(hoveredEdge.target);
+          const [source, target] = this.graph.nodes(
+            hoveredEdge.source,
+            hoveredEdge.target
+          );
 
           if (!hoveredEdge.hidden) {
             (edgeRenderers[hoveredEdge.type] ||

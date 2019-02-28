@@ -164,9 +164,10 @@ export default (sigma: SigmaLibrary) => {
         // edges.
         for (a = graph.edges(), i = 0, l = a.length; i < l; i++) {
           o = a[i];
+          const [source, target] = graph.nodes(o.source, o.target);
           if (
             (index[o.source] || index[o.target]) &&
-            (!o.hidden && !nodes(o.source).hidden && !nodes(o.target).hidden)
+            (!o.hidden && !source.hidden && !target.hidden)
           )
             this.edgesOnScreen.push(o);
         }

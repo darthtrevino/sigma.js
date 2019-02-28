@@ -115,7 +115,6 @@ export default (sigma: SigmaLibrary) => {
       let renderers;
       const index = {};
       const { graph } = this;
-      const { nodes } = graph;
       let drawEdges = this.settings(options, "drawEdges");
       const drawNodes = this.settings(options, "drawNodes");
       const embedSettings = this.settings.embedObjects(options, {
@@ -152,9 +151,10 @@ export default (sigma: SigmaLibrary) => {
 
       // Find which edges are on screen
       graph.edges().forEach(o => {
+        const [source, target] = graph.nodes(o.source, o.target);
         if (
           (index[o.source] || index[o.target]) &&
-          (!o.hidden && !nodes(o.source).hidden && !nodes(o.target).hidden)
+          (!o.hidden && !source.hidden && !target.hidden)
         )
           this.edgesOnScreen.push(o);
       });
@@ -216,9 +216,7 @@ export default (sigma: SigmaLibrary) => {
       if (drawEdges)
         for (a = this.edgesOnScreen, i = 0, l = a.length; i < l; i++) {
           if (!this.domElements.edges[a[i].id]) {
-            source = nodes(a[i].source);
-            target = nodes(a[i].target);
-
+            const [source, target] = graph.nodes(a[i].source, a[i].target);
             e = (renderers[a[i].type] || renderers.def).create(
               a[i],
               source,
@@ -234,9 +232,7 @@ export default (sigma: SigmaLibrary) => {
       // -- Second we update the edges
       if (drawEdges)
         for (a = this.edgesOnScreen, i = 0, l = a.length; i < l; i++) {
-          source = nodes(a[i].source);
-          target = nodes(a[i].target);
-
+          const [source, target] = graph.nodes(a[i].source, a[i].target);
           (renderers[a[i].type] || renderers.def).update(
             a[i],
             this.domElements.edges[a[i].id],

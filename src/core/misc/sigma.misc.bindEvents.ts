@@ -1,4 +1,4 @@
-import { SigmaLibrary, Edge, Node, Renderer } from "../interfaces";
+import { SigmaLibrary, Edge, Node, Renderer, Captor } from "../interfaces";
 
 export default function configure(sigma: SigmaLibrary) {
   /**
@@ -91,8 +91,6 @@ export default function configure(sigma: SigmaLibrary) {
       let edge;
       let s;
       const maxEpsilon = self.settings("edgeHoverPrecision");
-      let source;
-      let target;
       let cp;
       const nodeIndex: { [key: string]: Node } = {};
       let inserted;
@@ -130,8 +128,7 @@ export default function configure(sigma: SigmaLibrary) {
       if (edges.length)
         for (i = 0, l = edges.length; i < l; i++) {
           edge = edges[i];
-          source = self.graph.nodes(edge.source);
-          target = self.graph.nodes(edge.target);
+          const [source, target] = self.graph.nodes(edge.source, edge.target);
           // (HACK) we can't get edge[prefix + 'size'] on WebGL renderer:
           s = edge[`${prefix}size`] || edge[`read_${prefix}size`];
 
@@ -226,7 +223,7 @@ export default function configure(sigma: SigmaLibrary) {
       return selected;
     }
 
-    function bindCaptor(captor: any) {
+    function bindCaptor(captor: Captor) {
       let nodes;
       let edges;
       let overNodes: { [key: string]: Node } = {};

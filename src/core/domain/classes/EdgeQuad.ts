@@ -309,8 +309,6 @@ export default class EdgeQuad {
     // Prefix
     const prefix = params.prefix || "";
     let cp;
-    let source;
-    let target;
     let n;
     let e;
 
@@ -322,37 +320,34 @@ export default class EdgeQuad {
       params.maxLevel
     );
 
-    const edges = graph.edges();
-
     // Inserting graph edges into the tree
-    for (let i = 0, l = edges.length; i < l; i++) {
-      source = graph.nodes(edges[i].source);
-      target = graph.nodes(edges[i].target);
+    graph.edges().forEach(edge => {
+      const [source, target] = graph.nodes(edge.source, edge.target);
       e = {
         x1: source[`${prefix}x`],
         y1: source[`${prefix}y`],
         x2: target[`${prefix}x`],
         y2: target[`${prefix}y`],
-        size: edges[i][`${prefix}size`] || 0
+        size: edge[`${prefix}size`] || 0
       };
 
       // Inserting edge
-      if (edges[i].type === "curve" || edges[i].type === "curvedArrow") {
+      if (edge.type === "curve" || edge.type === "curvedArrow") {
         if (source.id === target.id) {
           n = {
             x: source[`${prefix}x`],
             y: source[`${prefix}y`],
             size: source[`${prefix}size`] || 0
           };
-          quadInsert(edges[i], selfLoopToSquare(n), this.tree);
+          quadInsert(edge, selfLoopToSquare(n), this.tree);
         } else {
           cp = getQuadraticControlPoint(e.x1, e.y1, e.x2, e.y2);
-          quadInsert(edges[i], quadraticCurveToSquare(e, cp), this.tree);
+          quadInsert(edge, quadraticCurveToSquare(e, cp), this.tree);
         }
       } else {
-        quadInsert(edges[i], lineToSquare(e), this.tree);
+        quadInsert(edge, lineToSquare(e), this.tree);
       }
-    }
+    });
 
     // Reset cache:
     this.cache = {

@@ -101,7 +101,7 @@ describe("The Graph Class", () => {
       counter
       //    "Attached functions are effectively executed when the anchor method is called."
     );
-    expect(myGraph.nodes("n0").color).toEqual(
+    expect(myGraph.nodes("n0")[0].color).toEqual(
       "#C3CBE1"
       //  'Attached "before" functions are effectively executed before when the anchor method is called.'
     );
@@ -483,9 +483,9 @@ describe("The Graph Class", () => {
     it("cannot alter nodes when the graph is immutable", () => {
       const { graph, data } = createGraph(true, true);
       expect(() => {
-        graph.nodes(data.nodes[0].id).id = "new_n0";
+        graph.nodes(data.nodes[0].id)[0].id = "new_n0";
       }).toThrow();
-      expect(data.nodes[0].id).toEqual(graph.nodes(data.nodes[0].id).id);
+      expect(data.nodes[0].id).toEqual(graph.nodes(data.nodes[0].id)[0].id);
     });
 
     it("preserves object identity internally when clone is false", () => {
@@ -495,7 +495,7 @@ describe("The Graph Class", () => {
 
     it("allows alteration to node ids when graphs are mutable", () => {
       const { graph, data } = createGraph(false, true);
-      const node = graph.nodes(data.nodes[1].id);
+      const node = graph.nodes(data.nodes[1].id)[0];
       node.id = "new_n0";
       expect("new_n0").toEqual(node.id);
       node.id = "n1";
@@ -503,9 +503,9 @@ describe("The Graph Class", () => {
 
     it("allows alteration to other node props when graph is mutable", () => {
       const { graph, data } = createGraph(false, false);
-      graph.nodes(data.nodes[0].id).label = "New node 0";
-      expect("New node 0").toEqual(graph.nodes(data.nodes[0].id).label);
-      graph.nodes(data.nodes[0].id).label = "Node 0";
+      graph.nodes(data.nodes[0].id)[0].label = "New node 0";
+      expect("New node 0").toEqual(graph.nodes(data.nodes[0].id)[0].label);
+      graph.nodes(data.nodes[0].id)[0].label = "Node 0";
     });
   });
 
@@ -561,14 +561,14 @@ describe("The Graph Class", () => {
   describe("addEdge", () => {
     it("can add an edge correctly with properties preserved ", () => {
       const { graph, data } = createGraph(true, false);
-      expect(data.edges[0]).toEqual(graph.edges(data.edges[0].id));
+      expect([data.edges[0]]).toEqual(graph.edges(data.edges[0].id));
     });
   });
 
   describe("edge mutability", () => {
     it("creates new objects when clone is set to true", () => {
       const { graph, data } = createGraph(true, true);
-      expect(data.edges[0]).not.toBe(graph.edges(data.edges[0].id));
+      expect([data.edges[0]]).not.toBe(graph.edges(data.edges[0].id));
     });
 
     it("does not create new objects when clone is set to false", () => {
@@ -579,19 +579,19 @@ describe("The Graph Class", () => {
     it("throws if an edge is altered when immutable is set to true", () => {
       const { graph, data } = createGraph(true, true);
       expect(() => {
-        graph.edges(data.edges[0].id).id = "new_e0";
+        graph.edges(data.edges[0].id)[0].id = "new_e0";
       }).toThrow();
       expect(() => {
-        graph.edges(data.edges[0].id).source = "undefined_node";
+        graph.edges(data.edges[0].id)[0].source = "undefined_node";
       }).toThrow();
       expect(() => {
-        graph.edges(data.edges[0].id).target = "undefined_node";
+        graph.edges(data.edges[0].id)[0].target = "undefined_node";
       }).toThrow();
     });
 
     it("allows edge sources, targets, and IDS to be writable when immutable is false", () => {
       const { graph, data } = createGraph(false, true);
-      const edge = graph.edges(data.edges[1].id);
+      const [edge] = graph.edges(data.edges[1].id);
       edge.id = "new_e0";
       edge.source = "undefined_node";
       edge.target = "undefined_node";
@@ -604,14 +604,14 @@ describe("The Graph Class", () => {
 
     it("allows other edge properties to be writable when immutable is false", () => {
       const { graph, data } = createGraph(false, true);
-      const edge = graph.edges(data.edges[1].id);
+      const [edge] = graph.edges(data.edges[1].id);
       edge.id = "e1";
       edge.source = "n1";
       edge.target = "n2";
 
-      graph.edges(data.edges[0].id).myEdgeAttr = 456;
+      (graph.edges(data.edges[0].id)[0] as any).myEdgeAttr = 456;
       expect(456).toEqual(
-        graph.edges(data.edges[0].id).myEdgeAttr
+        (graph.edges(data.edges[0].id)[0] as any).myEdgeAttr
         //      "Other edge attributes are writable."
       );
     });

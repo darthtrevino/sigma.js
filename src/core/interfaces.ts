@@ -428,7 +428,7 @@ export interface Renderer extends Killable, Dispatchable {
   height: number;
   settings: Settings;
   captors: Captor[];
-  contexts?: {
+  contexts: {
     [key: string]: CanvasRenderingContext2D | WebGLRenderingContext;
   };
 
@@ -1227,8 +1227,8 @@ export interface SigmaMisc extends Keyed<any> {
 }
 
 export interface SigmaMiscAnimation extends Keyed<any> {
-  running?: {
-    [key: string]: { type: string; target: any; frameId: string; options: any };
+  running: {
+    [key: string]: { type: string; target: any; frameId: number; options: any };
   };
 
   /**

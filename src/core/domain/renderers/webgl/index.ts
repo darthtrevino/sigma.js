@@ -5,7 +5,7 @@ import Dispatcher from "../../classes/Dispatcher";
 import getPixelRatio from "../../utils/events/getPixelRatio";
 import multiply from "../../utils/matrices/multiply";
 import translation from "../../utils/matrices/translation";
-import { SigmaLibrary, Renderer, Captor } from "../../../interfaces";
+import { SigmaLibrary, Renderer, Captor, Edge } from "../../../interfaces";
 import Graph from "../../classes/Graph";
 import Camera from "../../classes/Camera";
 import { Settings } from "../../classes/Configurable";
@@ -36,7 +36,9 @@ export default (sigma: SigmaLibrary) => {
     private nodePrograms = {};
     private edgePrograms = {};
     private nodeFloatArrays = {};
-    private edgeFloatArrays = {};
+    private edgeFloatArrays: {
+      [key: string]: { edges: Edge[]; array?: Float32Array };
+    } = {};
     private edgeIndicesArrays = {};
 
     /**
@@ -143,17 +145,18 @@ export default (sigma: SigmaLibrary) => {
       );
 
       // Sort edges and nodes per types:
-      for (a = graph.edges(), i = 0, l = a.length; i < l; i++) {
-        type = a[i].type || defaultEdgeType;
+      graph.edges().forEach(edge => {
+        type = edge.type || defaultEdgeType;
         const k = type && sigma.webgl.edges[type] ? type : "def";
 
-        if (!this.edgeFloatArrays[k])
+        if (!this.edgeFloatArrays[k]) {
           this.edgeFloatArrays[k] = {
             edges: []
           };
+        }
 
-        this.edgeFloatArrays[k].edges.push(a[i]);
-      }
+        this.edgeFloatArrays[k].edges.push(edge);
+      });
 
       for (a = graph.nodes(), i = 0, l = a.length; i < l; i++) {
         type = a[i].type || defaultNodeType;
@@ -178,16 +181,14 @@ export default (sigma: SigmaLibrary) => {
         );
 
         for (i = 0, l = a.length; i < l; i++) {
+          const [source, target] = graph.nodes(a[i].source, a[i].target);
+
           // Just check that the edge and both its extremities are visible:
-          if (
-            !a[i].hidden &&
-            !graph.nodes(a[i].source).hidden &&
-            !graph.nodes(a[i].target).hidden
-          )
+          if (!a[i].hidden && !source.hidden && !target.hidden)
             renderer.addEdge(
               a[i],
-              graph.nodes(a[i].source),
-              graph.nodes(a[i].target),
+              source,
+              target,
               this.edgeFloatArrays[k].array,
               i * renderer.POINTS * renderer.ATTRIBUTES,
               options.prefix,
@@ -580,7 +581,7 @@ export default (sigma: SigmaLibrary) => {
 
       // Kill contexts:
       Object.keys(this.domElements).forEach(k => {
-        this.domElements[k].parentNode.removeChild(this.domElements[k]);
+        this.domElements[k]!.parentNode.removeChild(this.domElements[k]);
         delete this.domElements[k];
         delete this.contexts[k];
       });

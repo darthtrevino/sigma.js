@@ -130,8 +130,6 @@ export default function configure(sigma: SigmaLibrary) {
       if (typeof (o.options || {}).onComplete === "function")
         o.options.onComplete();
     }
-
-    return this;
   }
 
   function killAll(filter?: string | object) {
