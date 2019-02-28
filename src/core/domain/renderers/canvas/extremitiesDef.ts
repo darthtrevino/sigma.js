@@ -1,4 +1,5 @@
-import { SigmaLibrary } from "../../../interfaces";
+import { SigmaLibrary, Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * The default renderer for hovered edge extremities. It renders the edge
@@ -11,7 +12,13 @@ import { SigmaLibrary } from "../../../interfaces";
  * @param  {configurable}             settings     The settings function.
  */
 export default (sigma: SigmaLibrary) =>
-  function extremitiesDef(edge, source, target, context, settings) {
+  function extremitiesDef(
+    edge: Edge,
+    source: Node,
+    target: Node,
+    context: CanvasRenderingContext2D,
+    settings: Settings
+  ) {
     // Source Node:
     (sigma.canvas.hovers[source.type] || sigma.canvas.hovers.def)(
       source,

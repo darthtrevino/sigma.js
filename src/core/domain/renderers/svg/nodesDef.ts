@@ -1,3 +1,6 @@
+import { Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * The default node renderer. It renders the node as a simple disc.
  */
@@ -8,7 +11,7 @@ export default {
    * @param  {object}                   node     The node object.
    * @param  {configurable}             settings The settings function.
    */
-  create(node, settings) {
+  create(node: Node, settings: Settings) {
     const circle = document.createElementNS(settings("xmlns"), "circle");
 
     // Defining the node's circle
@@ -31,7 +34,7 @@ export default {
    * @param  {DOMElement}               circle   The node DOM element.
    * @param  {configurable}             settings The settings function.
    */
-  update(node, circle, settings) {
+  update(node: Node, circle: HTMLElement, settings: Settings) {
     const prefix = settings("prefix") || "";
 
     // Applying changes

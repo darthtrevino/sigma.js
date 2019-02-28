@@ -16,16 +16,16 @@ export default function getBoundaries(
 
   if (doEdges) {
     edges.forEach(edge => {
-      weightMax = Math.max(edge[`${prefix}size`], weightMax);
+      weightMax = Math.max((edge as any)[`${prefix}size`], weightMax);
     });
   }
 
   nodes.forEach(node => {
-    sizeMax = Math.max(node[`${prefix}size`], sizeMax);
-    maxX = Math.max(node[`${prefix}x`], maxX);
-    minX = Math.min(node[`${prefix}x`], minX);
-    maxY = Math.max(node[`${prefix}y`], maxY);
-    minY = Math.min(node[`${prefix}y`], minY);
+    sizeMax = Math.max((node as any)[`${prefix}size`], sizeMax);
+    maxX = Math.max((node as any)[`${prefix}x`], maxX);
+    minX = Math.min((node as any)[`${prefix}x`], minX);
+    maxY = Math.max((node as any)[`${prefix}y`], maxY);
+    minY = Math.min((node as any)[`${prefix}y`], minY);
   });
 
   weightMax = weightMax || 1;

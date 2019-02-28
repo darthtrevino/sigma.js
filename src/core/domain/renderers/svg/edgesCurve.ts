@@ -1,3 +1,6 @@
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * The curve edge renderer. It renders the node as a bezier curve.
  */
@@ -10,7 +13,7 @@ export default {
    * @param  {object}                   target     The target node object.
    * @param  {configurable}             settings   The settings function.
    */
-  create(edge, source, target, settings) {
+  create(edge: Edge, source: Node, target: Node, settings: Settings) {
     let { color } = edge;
     const edgeColor = settings("edgeColor");
     const defaultNodeColor = settings("defaultNodeColor");
@@ -48,7 +51,13 @@ export default {
    * @param  {object}                   target     The target node object.
    * @param  {configurable}             settings   The settings function.
    */
-  update(edge, path, source, target, settings) {
+  update(
+    edge: Edge,
+    path: HTMLElement,
+    source: Node,
+    target: Node,
+    settings: Settings
+  ) {
     const prefix = settings("prefix") || "";
 
     path.setAttributeNS(null, "stroke-width", edge[`${prefix}size`] || 1);

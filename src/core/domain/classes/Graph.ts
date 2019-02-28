@@ -1,3 +1,4 @@
+import { Edge, Node } from "../../interfaces";
 import emptyObject from "../utils/misc/emptyObject";
 type NamedBindings = { [key: string]: Function };
 
@@ -165,12 +166,12 @@ class Graph {
     } else validNode = node;
 
     // Check the "immutable" option:
-    if (this.settings("immutable"))
+    if (this.settings("immutable")) {
       Object.defineProperty(validNode, "id", {
         value: id,
         enumerable: true
       });
-    else validNode.id = id;
+    } else validNode.id = id;
 
     // Add empty containers for edges indexes:
     this.inNeighborsIndex[id] = Object.create(null);
@@ -488,16 +489,8 @@ class Graph {
    * @return {object}   The graph instance.
    */
   public read(g) {
-    let i;
-    let a;
-    let l;
-
-    a = g.nodes || [];
-    for (i = 0, l = a.length; i < l; i++) this.addNode(a[i]);
-
-    a = g.edges || [];
-    for (i = 0, l = a.length; i < l; i++) this.addEdge(a[i]);
-
+    (g.nodes || []).forEach(n => this.addNode(n));
+    (g.edges || []).forEach(e => this.addEdge(e));
     return this;
   }
 
@@ -509,37 +502,20 @@ class Graph {
    * call it with an array of ids, and it will return the array of nodes, in
    * the same order.
    *
-   * @param  {?(string|array)} v Eventually one id, an array of ids.
+   * @param  {?(string|array)} ids Eventually one id, an array of ids.
    * @return {object|array}      The related node or array of nodes.
    */
-  public nodes(v?: string | string[]) {
+  public nodes(...ids: string[]): Node[] {
     // Clone the array of nodes and return it:
-    if (!arguments.length) return this.nodesArray.slice(0);
+    if (!ids.length) return this.nodesArray.slice(0);
 
-    // Return the related node:
-    if (
-      arguments.length === 1 &&
-      (typeof v === "string" || typeof v === "number")
-    )
-      return this.nodesIndex[v];
-
-    // Return an array of the related node:
-    if (
-      arguments.length === 1 &&
-      Object.prototype.toString.call(v) === "[object Array]"
-    ) {
-      let i;
-      let l;
-      const a = [];
-      for (i = 0, l = v.length; i < l; i++)
-        if (typeof v[i] === "string" || typeof v[i] === "number")
-          a.push(this.nodesIndex[v[i]]);
-        else throw new Error("nodes: Wrong arguments.");
-
-      return a;
-    }
-
-    throw new Error("nodes: Wrong arguments.");
+    return (ids as string[]).map(id => {
+      if (typeof id === "string" || typeof id === "number") {
+        return this.nodesIndex[id];
+      } else {
+        throw new Error("nodes: Wrong arguments.");
+      }
+    });
   }
 
   /**
@@ -588,38 +564,20 @@ class Graph {
    * call it with an array of ids, and it will return the array of edges, in
    * the same order.
    *
-   * @param  {?(string|array)} v Eventually one id, an array of ids.
-   * @return {object|array}      The related edge or array of edges.
+   * @param  {?(string|array)} ids Eventually one id, an array of ids.
+   * @return {array}      The related edge or array of edges.
    */
-  public edges(v?: string | string[]) {
+  public edges(...ids: string[]): Edge[] {
     // Clone the array of edges and return it:
-    if (!arguments.length) return this.edgesArray.slice(0);
+    if (!ids.length) return this.edgesArray.slice(0);
 
-    // Return the related edge:
-    if (
-      arguments.length === 1 &&
-      (typeof v === "string" || typeof v === "number")
-    )
-      return this.edgesIndex[v];
-
-    // Return an array of the related edge:
-    if (
-      arguments.length === 1 &&
-      Object.prototype.toString.call(v) === "[object Array]"
-    ) {
-      let i;
-      let l;
-      const a = [];
-
-      for (i = 0, l = v.length; i < l; i++)
-        if (typeof v[i] === "string" || typeof v[i] === "number")
-          a.push(this.edgesIndex[v[i]]);
-        else throw new Error("edges: Wrong arguments.");
-
-      return a;
-    }
-
-    throw new Error("edges: Wrong arguments.");
+    return (ids as any[]).map(id => {
+      if (typeof id === "string" || typeof id === "number") {
+        return this.edgesIndex[id];
+      } else {
+        throw new Error("edges: Wrong arguments.");
+      }
+    });
   }
 
   /**
@@ -738,6 +696,7 @@ class Graph {
     fn: Function,
     before?: boolean
   ) {
+    ``;
     if (
       typeof methodName !== "string" ||
       typeof key !== "string" ||

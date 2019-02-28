@@ -1,6 +1,8 @@
 import getSelfLoopControlPoints from "../../utils/geometry/getSelfLoopControlPoints";
 import getQuadraticControlPoint from "../../utils/geometry/getQuadraticControlPoint";
 import { Line, Point } from "../../utils/geometry/interfaces";
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This edge renderer will display edges as curves with arrow heading.
@@ -12,11 +14,11 @@ import { Line, Point } from "../../utils/geometry/interfaces";
  * @param  {configurable}             settings     The settings function.
  */
 export default function edgesCurvedArrow(
-  edge,
-  source,
-  target,
-  context,
-  settings
+  edge: Edge,
+  source: Node,
+  target: Node,
+  context: CanvasRenderingContext2D,
+  settings: Settings
 ) {
   let { color } = edge;
 

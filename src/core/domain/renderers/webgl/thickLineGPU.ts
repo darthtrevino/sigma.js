@@ -1,6 +1,6 @@
-import floatColor from "../../utils/misc/floatColor";
-import loadShader from "../../utils/webgl/loadShader";
-import loadProgram from "../../utils/webgl/loadProgram";
+import { Edge, Node, SigmaLibrary } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+import { getColor, shaders } from "./utils";
 
 /**
  * This will render edges as thick lines using four points translated
@@ -16,32 +16,28 @@ import loadProgram from "../../utils/webgl/loadProgram";
  * the handled array buffer heavier but sparing costly computation to the
  * CPU side.
  */
-export default {
+export default (sigma: SigmaLibrary) => ({
   POINTS: 4,
   ATTRIBUTES: 7,
-  addEdge(edge, source, target, data, i, prefix, settings) {
+  addEdge(
+    edge: Edge,
+    source: Node,
+    target: Node,
+    data: Float32Array,
+    i: number,
+    prefix: string,
+    settings: Settings
+  ) {
     const thickness = edge[`${prefix}size`] || 1;
     const x1 = source[`${prefix}x`];
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
     const y2 = target[`${prefix}y`];
-    let { color } = edge;
-
-    if (!color)
-      switch (settings("edgeColor")) {
-        case "source":
-          color = source.color || settings("defaultNodeColor");
-          break;
-        case "target":
-          color = target.color || settings("defaultNodeColor");
-          break;
-        default:
-          color = settings("defaultEdgeColor");
-          break;
-      }
 
     // Normalize color:
-    color = floatColor(color);
+    const color = sigma.utils.floatColor(
+      getColor(edge, source, target, settings)
+    );
 
     // First point
     data[i++] = x1;
@@ -79,7 +75,7 @@ export default {
     data[i++] = thickness;
     data[i++] = color;
   },
-  computeIndices(data) {
+  computeIndices(data: Float32Array) {
     const indices = new Uint16Array(data.length * 6);
     let c = 0;
     const l = data.length / this.ATTRIBUTES;
@@ -94,7 +90,7 @@ export default {
 
     return indices;
   },
-  render(gl, program, data, params) {
+  render(gl: WebGLRenderingContext, program: WebGLProgram, data, params) {
     // Define attributes:
     const position1Location = gl.getAttribLocation(program, "a_position1");
     const position2Location = gl.getAttribLocation(program, "a_position2");
@@ -181,7 +177,7 @@ export default {
     );
   },
   initProgram(gl) {
-    const vertexShader = loadShader(
+    const vertexShader = sigma.webgl.loadShader(
       gl,
       [
         "attribute vec2 a_position1;",
@@ -221,7 +217,7 @@ export default {
       error => console.log(error)
     );
 
-    const fragmentShader = loadShader(
+    const fragmentShader = sigma.webgl.loadShader(
       gl,
       [
         "precision mediump float;",
@@ -235,7 +231,10 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = sigma.webgl.loadProgram(
+      gl,
+      shaders(vertexShader, fragmentShader)
+    );
     return program;
   }
-};
+});

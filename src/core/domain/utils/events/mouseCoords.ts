@@ -2,15 +2,6 @@ import getX from "./getX";
 import getY from "./getY";
 import getCenter from "./getCenter";
 
-/**
- * Convert mouse coords to sigma coords
- *
- * @param  {event}   e A mouse or touch event.
- * @param  {number?} x The x coord to convert
- * @param  {number?} x The y coord to convert
- *
- * @return {object}    The standardized event
- */
 export default function mouseCoords(
   e: MouseEvent | TouchEvent,
   x?: number,

@@ -215,13 +215,13 @@ export default (sigma: SigmaLibrary) => {
   // WebGL Renderer
   sigma.register("sigma.renderers.webgl", WebGLRenderer(sigma));
   sigma.register("sigma.webgl.edges.arrow", webglEdgesArrow);
+  sigma.register("sigma.webgl.edges.thickLine", webglEdgesThickLine);
+  sigma.register("sigma.webgl.edges.thickLineCPU", webglThickLineCPU);
+  sigma.register("sigma.webgl.edges.thickLineGPU", webglThickLineGPU(sigma));
   sigma.register("sigma.webgl.edges.def", webglEdgesDef);
   sigma.register("sigma.webgl.edges.fast", webglEdgesFast);
   sigma.register("sigma.webgl.nodes.def", webglNodesDef);
   sigma.register("sigma.webgl.nodes.fast", webglNodesFast);
-  sigma.register("sigma.webgl.edges.thickLine", webglEdgesThickLine);
-  sigma.register("sigma.webgl.edges.thickLineCPU", webglThickLineCPU);
-  sigma.register("sigma.webgl.edges.thickLineGPU", webglThickLineGPU);
 
   // Middleware
   sigma.register("sigma.middlewares.copy", copy);

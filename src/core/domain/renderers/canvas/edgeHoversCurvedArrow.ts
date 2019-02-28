@@ -1,6 +1,8 @@
 import getSelfLoopControlPoints from "../../utils/geometry/getSelfLoopControlPoints";
 import getQuadraticControlPoint from "../../utils/geometry/getQuadraticControlPoint";
 import { Line, Point } from "../../utils/geometry/interfaces";
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
 
 /**
  * This hover renderer will display the edge with a different color or size.
@@ -13,11 +15,11 @@ import { Line, Point } from "../../utils/geometry/interfaces";
  */
 
 export default function edgeHoversCurvedArrow(
-  edge,
-  source,
-  target,
-  context,
-  settings
+  edge: Edge,
+  source: Node,
+  target: Node,
+  context: CanvasRenderingContext2D,
+  settings: Settings
 ) {
   let { color } = edge;
   const prefix = settings("prefix") || "";

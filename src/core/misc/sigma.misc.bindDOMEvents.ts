@@ -1,39 +1,46 @@
-import { SigmaLibrary } from "../interfaces";
+import { SigmaLibrary, Renderer, Edge } from "../interfaces";
 
 export default function configure(sigma: SigmaLibrary) {
   /**
    * This helper will bind any DOM renderer (for instance svg)
    * to its captors, to properly dispatch the good events to the sigma instance
    * to manage clicking, hovering etc...
-   *
-   * It has to be called in the scope of the related renderer.
    */
-  function bindDOMEvents(this: any, container: HTMLElement) {
+  function bindDOMEvents(this: Renderer, container: HTMLElement) {
     const self = this;
     const { graph } = this;
 
     // DOMElement abstraction
-    function Element(domElement: HTMLElement) {
-      // Helpers
-      this.attr = attrName => domElement.getAttributeNS(null, attrName);
+    class Element {
+      constructor(private domElement: HTMLElement) {}
 
-      // Properties
-      this.tag = domElement.tagName;
-      this.class = this.attr("class");
-      this.id = this.attr("id");
+      public get class() {
+        return this.attr("class");
+      }
 
-      // Methods
-      this.isNode = function isNode() {
+      public get id() {
+        return this.attr("id");
+      }
+
+      public get tag() {
+        return this.domElement.tagName;
+      }
+
+      public isNode(): boolean {
         return !!~this.class.indexOf(`${self.settings("classPrefix")}-node`);
-      };
+      }
 
-      this.isEdge = function isEdge() {
+      public isEdge(): boolean {
         return !!~this.class.indexOf(`${self.settings("classPrefix")}-edge`);
-      };
+      }
 
-      this.isHover = function isHover() {
+      public isHover(): boolean {
         return !!~this.class.indexOf(`${self.settings("classPrefix")}-hover`);
-      };
+      }
+
+      public attr(name: string): string {
+        return this.domElement.getAttributeNS(null, name) || "";
+      }
     }
 
     // Click
@@ -89,7 +96,7 @@ export default function configure(sigma: SigmaLibrary) {
           node: graph.nodes(el.attr("data-node-id"))
         });
       } else if (el.isEdge()) {
-        const edge = graph.edges(el.attr("data-edge-id"));
+        const [edge] = graph.edges(el.attr("data-edge-id"));
         self.dispatchEvent("overEdge", {
           edge,
           source: graph.nodes(edge.source),
@@ -100,7 +107,7 @@ export default function configure(sigma: SigmaLibrary) {
 
     // On out
     function onOut(e: any) {
-      const target = e.fromElement || e.originalTarget;
+      const target = (e.fromElement || e.originalTarget) as HTMLElement;
 
       if (!self.settings("eventsEnabled")) return;
 
@@ -111,7 +118,7 @@ export default function configure(sigma: SigmaLibrary) {
           node: graph.nodes(el.attr("data-node-id"))
         });
       } else if (el.isEdge()) {
-        const edge = graph.edges(el.attr("data-edge-id"));
+        const [edge] = graph.edges(el.attr("data-edge-id"));
         self.dispatchEvent("outEdge", {
           edge,
           source: graph.nodes(edge.source),

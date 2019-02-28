@@ -1,17 +1,16 @@
 import getBoundaries from "../utils/geometry/getBoundaries";
+import Sigma from "../classes/Sigma";
 
 /**
  * This middleware will rescale the graph such that it takes an optimal space
  * on the renderer.
- *
- * As each middleware, this function is executed in the scope of the sigma
- * instance.
  *
  * @param {?string} readPrefix  The read prefix.
  * @param {?string} writePrefix The write prefix.
  * @param {object}  options     The parameters.
  */
 export default function rescale(
+  this: Sigma,
   readPrefix: string,
   writePrefix: string,
   options?: any

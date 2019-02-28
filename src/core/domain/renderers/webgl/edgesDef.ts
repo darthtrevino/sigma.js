@@ -2,6 +2,9 @@ import floatColor from "../../utils/misc/floatColor";
 import loadProgram from "../../utils/webgl/loadProgram";
 import loadShader from "../../utils/webgl/loadShader";
 import rotation from "../../utils/matrices/rotation";
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+import { getColor, shaders } from "./utils";
 
 /**
  * This edge renderer will display edges as lines going from the source node
@@ -15,30 +18,23 @@ import rotation from "../../utils/matrices/rotation";
 export default {
   POINTS: 6,
   ATTRIBUTES: 7,
-  addEdge(edge, source, target, data, i, prefix, settings) {
+  addEdge(
+    edge: Edge,
+    source: Node,
+    target: Node,
+    data,
+    i: number,
+    prefix: string,
+    settings: Settings
+  ) {
     const w = (edge[`${prefix}size`] || 1) / 2;
     const x1 = source[`${prefix}x`];
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
     const y2 = target[`${prefix}y`];
 
-    let { color } = edge;
-    if (!color)
-      switch (settings("edgeColor")) {
-        case "source":
-          color = source.color || settings("defaultNodeColor");
-          break;
-        case "target":
-          color = target.color || settings("defaultNodeColor");
-          break;
-        default:
-          color = settings("defaultEdgeColor");
-          break;
-      }
-
     // Normalize color:
-    color = floatColor(color);
-
+    const color = floatColor(getColor(edge, source, target, settings));
     data[i++] = x1;
     data[i++] = y1;
     data[i++] = x2;
@@ -87,7 +83,7 @@ export default {
     data[i++] = 0.0;
     data[i++] = color;
   },
-  render(gl, program, data, params) {
+  render(gl: WebGLRenderingContext, program: WebGLProgram, data, params) {
     // Define attributes:
     const colorLocation = gl.getAttribLocation(program, "a_color");
     const positionLocation1 = gl.getAttribLocation(program, "a_position1");
@@ -244,7 +240,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
 };

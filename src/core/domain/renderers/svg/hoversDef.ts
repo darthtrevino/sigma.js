@@ -1,3 +1,6 @@
+import { Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * The default hover renderer.
  */
@@ -12,7 +15,12 @@ export default {
    * @param  {DOMElement}       nodeCircle         The node DOM Element.
    * @param  {configurable}     settings           The settings function.
    */
-  create(node, nodeCircle, measurementCanvas, settings) {
+  create(
+    node: Node,
+    nodeCircle: HTMLElement,
+    measurementCanvas: CanvasRenderingContext2D,
+    settings: Settings
+  ) {
     // Defining visual properties
     let w;
     let h;

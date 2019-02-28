@@ -1,6 +1,9 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+import { getColor, shaders } from "./utils";
 
 /**
  * This will render edges as thick lines using four points translated
@@ -18,35 +21,25 @@ import loadProgram from "../../utils/webgl/loadProgram";
 export default {
   POINTS: 4,
   ATTRIBUTES: 6,
-  addEdge(edge, source, target, data, i, prefix, settings) {
+  addEdge(
+    edge: Edge,
+    source: Node,
+    target: Node,
+    data,
+    i: number,
+    prefix: string,
+    settings: Settings
+  ) {
     const thickness = edge[`${prefix}size`] || 1;
     const x1 = source[`${prefix}x`];
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
     const y2 = target[`${prefix}y`];
-    let { color } = edge;
-
-    if (!color)
-      switch (settings("edgeColor")) {
-        case "source":
-          color = source.color || settings("defaultNodeColor");
-          break;
-        case "target":
-          color = target.color || settings("defaultNodeColor");
-          break;
-        default:
-          color = settings("defaultEdgeColor");
-          break;
-      }
-
-    // Normalize color:
-    color = floatColor(color);
+    const color = floatColor(getColor(edge, source, target, settings));
 
     // Computing normals:
     const dx = x2 - x1;
-
     const dy = y2 - y1;
-
     let len = dx * dx + dy * dy;
 
     let normals;
@@ -182,7 +175,7 @@ export default {
       params.start || 0
     );
   },
-  initProgram(gl) {
+  initProgram(gl: WebGLRenderingContext) {
     const vertexShader = loadShader(
       gl,
       [
@@ -233,7 +226,7 @@ export default {
       gl.FRAGMENT_SHADER
     );
 
-    const program = loadProgram(gl, [vertexShader, fragmentShader]);
+    const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
 };

@@ -1,3 +1,6 @@
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * The default edge renderer. It renders the edge as a simple line.
  *
@@ -7,7 +10,13 @@
  * @param  {CanvasRenderingContext2D} context      The canvas context.
  * @param  {configurable}             settings     The settings function.
  */
-export default function edgesDef(edge, source, target, context, settings) {
+export default function edgesDef(
+  edge: Edge,
+  source: Node,
+  target: Node,
+  context: CanvasRenderingContext2D,
+  settings: Settings
+) {
   let { color } = edge;
 
   const prefix = settings("prefix") || "";

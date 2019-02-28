@@ -1,3 +1,6 @@
+import { Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * The default label renderer. It renders the label as a simple text.
  */
@@ -8,7 +11,7 @@ export default {
    * @param  {object}                   node       The node object.
    * @param  {configurable}             settings   The settings function.
    */
-  create(node, settings) {
+  create(node: Node, settings: Settings) {
     const prefix = settings("prefix") || "";
     const size = node[`${prefix}size`];
     const text = document.createElementNS(settings("xmlns"), "text");
@@ -42,11 +45,9 @@ export default {
    * @param  {DOMElement}               text     The label DOM element.
    * @param  {configurable}             settings The settings function.
    */
-  update(node, text, settings) {
+  update(node: Node, text: HTMLElement, settings: Settings) {
     const prefix = settings("prefix") || "";
-
     const size = node[`${prefix}size`];
-
     const fontSize =
       settings("labelSize") === "fixed"
         ? settings("defaultLabelSize")
@@ -59,11 +60,15 @@ export default {
     if (typeof node.label !== "string") return this;
 
     // Updating
-    text.setAttributeNS(null, "x", Math.round(node[`${prefix}x`] + size + 3));
+    text.setAttributeNS(
+      null,
+      "x",
+      `${Math.round(node[`${prefix}x`] + size + 3)}`
+    );
     text.setAttributeNS(
       null,
       "y",
-      Math.round(node[`${prefix}y`] + fontSize / 3)
+      `${Math.round(node[`${prefix}y`] + fontSize / 3)}`
     );
 
     // Showing

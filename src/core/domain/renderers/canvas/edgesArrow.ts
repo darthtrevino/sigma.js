@@ -1,3 +1,6 @@
+import { Edge, Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * This edge renderer will display edges as arrows going from the source node
  *
@@ -7,7 +10,13 @@
  * @param  {CanvasRenderingContext2D} context      The canvas context.
  * @param  {configurable}             settings     The settings function.
  */
-export default function edgesArrow(edge, source, target, context, settings) {
+export default function edgesArrow(
+  edge: Edge,
+  source: Node,
+  target: Node,
+  context: CanvasRenderingContext2D,
+  settings: Settings
+) {
   let { color } = edge;
 
   const prefix = settings("prefix") || "";

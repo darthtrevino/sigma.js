@@ -1,3 +1,6 @@
+import { Node } from "../../../interfaces";
+import { Settings } from "../../classes/Configurable";
+
 /**
  * The default node renderer. It renders the node as a simple disc.
  *
@@ -5,7 +8,11 @@
  * @param  {CanvasRenderingContext2D} context  The canvas context.
  * @param  {configurable}             settings The settings function.
  */
-export default function nodesDef(node, context, settings) {
+export default function nodesDef(
+  node: Node,
+  context: CanvasRenderingContext2D,
+  settings: Settings
+) {
   const prefix = settings("prefix") || "";
 
   context.fillStyle = node.color || settings("defaultNodeColor");
