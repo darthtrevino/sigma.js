@@ -1,7 +1,7 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadProgram from "../../utils/webgl/loadProgram";
 import loadShader from "../../utils/webgl/loadShader";
-import { Edge, Node } from "../../../interfaces";
+import { Edge, Node, WebGLEdgeDrawer } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
@@ -126,4 +126,4 @@ export default {
     const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
-};
+} as WebGLEdgeDrawer;

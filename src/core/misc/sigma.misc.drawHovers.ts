@@ -1,6 +1,11 @@
-import { Event, Node, Edge, SigmaLibrary, Renderer } from "../interfaces";
-import Dispatcher from "../domain/classes/Dispatcher";
-import Sigma from "../domain/classes/Sigma";
+import {
+  Event,
+  Node,
+  Edge,
+  SigmaLibrary,
+  Renderer,
+  Keyed
+} from "../interfaces";
 
 export default function configure(sigma: SigmaLibrary) {
   /**
@@ -11,8 +16,8 @@ export default function configure(sigma: SigmaLibrary) {
    */
   function drawHovers(this: Renderer, prefix: string) {
     //TODO: this type should be renderer
-    const hoveredNodes: { [key: string]: Node } = {};
-    const hoveredEdges: { [key: string]: Edge } = {};
+    const hoveredNodes: Keyed<Node> = {};
+    const hoveredEdges: Keyed<Edge> = {};
 
     const draw = () => {
       let hoveredNode;

@@ -1,4 +1,4 @@
-import { SigmaDispatcher, SigmaEventHandler } from "../../interfaces";
+import { SigmaDispatcher, SigmaEventHandler, Keyed } from "../../interfaces";
 
 /*
  * Dispatcher constructor.
@@ -6,7 +6,7 @@ import { SigmaDispatcher, SigmaEventHandler } from "../../interfaces";
  * @return {dispatcher} The new dispatcher instance.
  */
 export default class Dispatcher implements SigmaDispatcher {
-  private handlers: { [key: string]: SigmaEventHandler[] } = {};
+  private handlers: Keyed<SigmaEventHandler[]> = {};
 
   constructor() {
     this.bind = this.bind.bind(this);
@@ -23,10 +23,7 @@ export default class Dispatcher implements SigmaDispatcher {
    * @param  {function(Object)} handler The handler to bind.
    * @return {dispatcher}               Returns the instance itself.
    */
-  public bind(
-    events: { [key: string]: Function } | string[] | string,
-    handler?: Function
-  ) {
+  public bind(events: Keyed<Function> | string[] | string, handler?: Function) {
     /* eslint-disable prefer-rest-params */
     if (arguments.length === 1 && typeof arguments[0] === "object") {
       const argObject = events;

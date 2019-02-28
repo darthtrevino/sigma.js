@@ -84,7 +84,7 @@ export default {
       circle.setAttributeNS(null, "fill", "#fff");
       circle.setAttributeNS(null, "cx", `${nodeX}`);
       circle.setAttributeNS(null, "cy", `${nodeY}`);
-      circle.setAttributeNS(null, "r", e);
+      circle.setAttributeNS(null, "r", `${e}`);
 
       // Rectangle
       rectangle.setAttributeNS(
@@ -95,8 +95,8 @@ export default {
       rectangle.setAttributeNS(null, "fill", "#fff");
       rectangle.setAttributeNS(null, "x", `${nodeX + e / 4}`);
       rectangle.setAttributeNS(null, "y", `${nodeY - e}`);
-      rectangle.setAttributeNS(null, "width", w);
-      rectangle.setAttributeNS(null, "height", h);
+      rectangle.setAttributeNS(null, "width", `${w}`);
+      rectangle.setAttributeNS(null, "height", `${h}`);
     }
 
     // Appending childs

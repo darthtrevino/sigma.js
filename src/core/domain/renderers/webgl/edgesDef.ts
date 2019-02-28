@@ -2,7 +2,7 @@ import floatColor from "../../utils/misc/floatColor";
 import loadProgram from "../../utils/webgl/loadProgram";
 import loadShader from "../../utils/webgl/loadShader";
 import rotation from "../../utils/matrices/rotation";
-import { Edge, Node } from "../../../interfaces";
+import { Edge, Node, WebGLEdgeDrawer } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
@@ -27,7 +27,7 @@ export default {
     prefix: string,
     settings: Settings
   ) {
-    const w = (edge[`${prefix}size`] || 1) / 2;
+    const w = ((edge as any)[`${prefix}size`] || 1) / 2;
     const x1 = source[`${prefix}x`];
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
@@ -243,4 +243,4 @@ export default {
     const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
-};
+} as WebGLEdgeDrawer;

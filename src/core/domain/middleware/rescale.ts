@@ -1,5 +1,6 @@
 import getBoundaries from "../utils/geometry/getBoundaries";
 import Sigma from "../classes/Sigma";
+import { Keyed } from "../../interfaces";
 
 /**
  * This middleware will rescale the graph such that it takes an optimal space
@@ -15,10 +16,10 @@ export default function rescale(
   writePrefix: string,
   options?: any
 ) {
-  let a;
-  let b;
-  let c;
-  let d;
+  let a: number;
+  let b: number;
+  let c: number;
+  let d: number;
   let scale: number;
   const settings = this.settings.embedObjects(options || {});
   const bounds =
@@ -30,7 +31,7 @@ export default function rescale(
   const h = settings("height") || 1;
 
   let rescaleSettings = settings("autoRescale");
-  const validSettings = {
+  const validSettings: Keyed<any> = {
     nodePosition: 1,
     nodeSize: 1,
     edgeSize: 1

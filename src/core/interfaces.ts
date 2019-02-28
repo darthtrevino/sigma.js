@@ -384,7 +384,7 @@ export interface Captor extends Killable, SigmaDispatcher {}
 export interface SigmaLibrary {
   new (item?: any): Sigma;
 
-  instances(id?: string): Sigma | { [key: string]: Sigma };
+  instances(id?: string): Sigma | Keyed<Sigma>;
   register(packageName: string, item: any): void;
 
   classes: SigmaClasses;
@@ -394,8 +394,8 @@ export interface SigmaLibrary {
 
   settings: Keyed<any>;
   misc: SigmaMisc;
-  middlewares: { [key: string]: any };
-  plugins: { [key: string]: any };
+  middlewares: Keyed<any>;
+  plugins: Keyed<any>;
 
   // Renderer Utils
   canvas: SigmaCanvasUtils;
@@ -407,7 +407,7 @@ export interface Event<T> {
   data: T;
 }
 
-export interface Node {
+export interface Node extends Keyed<any> {
   id: string;
   type: string;
   size: number;
@@ -416,7 +416,7 @@ export interface Node {
   hidden?: boolean;
 }
 
-export interface Edge {
+export interface Edge extends Keyed<any> {
   id: string;
   source: string;
   target: string;
@@ -460,7 +460,7 @@ export interface SigmaDispatcher {
    * @return {dispatcher}               Returns the instance itself.
    */
   bind(
-    events: { [key: string]: Function } | string[] | string,
+    events: Keyed<Function> | string[] | string,
     handler?: Function
   ): SigmaDispatcher;
 
@@ -1034,8 +1034,12 @@ export interface SigmaCanvasUtils extends Keyed<any> {
     [key: string]: CanvasEdgeDrawer;
   };
   edges: {
+    labels: {
+      def: CanvasEdgeDrawer;
+      [key: string]: CanvasEdgeDrawer;
+    };
     def: CanvasEdgeDrawer;
-    [key: string]: CanvasEdgeDrawer;
+    [key: string]: Keyed<CanvasEdgeDrawer> | CanvasEdgeDrawer;
   };
   extremities: {
     def: CanvasEdgeDrawer;
@@ -1184,6 +1188,8 @@ export interface WebGLEdgeDrawer extends WebGLDrawer {
     prefix: string,
     settings: Settings
   ): void;
+  computeIndices(data: Float32Array): Uint16Array;
+  initProgram(gl: WebGLRenderingContext): WebGLProgram;
 }
 
 export interface WebGLNodeDrawer extends WebGLDrawer {

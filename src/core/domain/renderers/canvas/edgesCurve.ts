@@ -23,7 +23,7 @@ export default function edgesCurve(
   let { color } = edge;
 
   const prefix = settings("prefix") || "";
-  const size = edge[`${prefix}size`] || 1;
+  const size = (edge as any)[`${prefix}size`] || 1;
   const edgeColor = settings("edgeColor");
   const defaultNodeColor = settings("defaultNodeColor");
   const defaultEdgeColor = settings("defaultEdgeColor");

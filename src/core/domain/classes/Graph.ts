@@ -1,6 +1,6 @@
-import { Edge, Node } from "../../interfaces";
+import { Edge, Node, Keyed } from "../../interfaces";
 import emptyObject from "../utils/misc/emptyObject";
-type NamedBindings = { [key: string]: Function };
+type NamedBindings = Keyed<Function>;
 
 const _methods: NamedBindings = Object.create(null);
 // tracks binding objects that have been registered.
@@ -12,7 +12,7 @@ const _methodBindings: { [methodName: string]: NamedBindings } = Object.create(
 const _methodBeforeBindings: {
   [methodName: string]: NamedBindings;
 } = Object.create(null);
-const _defaultSettings: { [key: string]: any } = {
+const _defaultSettings: Keyed<any> = {
   immutable: true,
   clone: true
 };

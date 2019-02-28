@@ -9,9 +9,14 @@ export default function mouseCoords(
 ) {
   x = x || getX(e);
   y = y || getY(e);
+
+  const center = getCenter(e);
+  x = x - center.x;
+  y = y - center.y;
+
   return {
-    x: x - getCenter(e).x,
-    y: y - getCenter(e).y,
+    x,
+    y,
     clientX: (e as any).clientX,
     clientY: (e as any).clientY,
     ctrlKey: e.ctrlKey,

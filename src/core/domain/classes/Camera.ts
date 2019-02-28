@@ -92,7 +92,7 @@ export default class Camera extends Dispatcher {
    *                           - A height.
    * @return {camera}        Returns the camera.
    */
-  public applyView = (read: string, write: string, options?: any) => {
+  public applyView = (read?: string, write?: string, options?: any) => {
     options = options || {};
     write = write !== undefined ? write : this.prefix;
     read = read !== undefined ? read : this.readPrefix;

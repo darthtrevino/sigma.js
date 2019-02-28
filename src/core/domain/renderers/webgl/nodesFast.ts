@@ -1,7 +1,7 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
-import { Node } from "../../../interfaces";
+import { Node, WebGLNodeDrawer } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 import { shaders } from "./utils";
 
@@ -27,7 +27,7 @@ export default {
   ATTRIBUTES: 4,
   addNode(
     node: Node,
-    data: ArrayBuffer,
+    data: Float32Array,
     i: number,
     prefix: string,
     settings: Settings
@@ -165,4 +165,4 @@ export default {
 
     return program;
   }
-};
+} as WebGLNodeDrawer;

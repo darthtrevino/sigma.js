@@ -60,7 +60,11 @@ export default {
   ) {
     const prefix = settings("prefix") || "";
 
-    line.setAttributeNS(null, "stroke-width", edge[`${prefix}size`] || 1);
+    line.setAttributeNS(
+      null,
+      "stroke-width",
+      (edge as any)[`${prefix}size`] || 1
+    );
     line.setAttributeNS(null, "x1", source[`${prefix}x`]);
     line.setAttributeNS(null, "y1", source[`${prefix}y`]);
     line.setAttributeNS(null, "x2", target[`${prefix}x`]);

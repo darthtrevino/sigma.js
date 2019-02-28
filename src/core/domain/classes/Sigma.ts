@@ -136,8 +136,8 @@ class Sigma extends Dispatcher {
 
   // utility namespaces
   public static renderers: Keyed<any> = {};
-  public static plugins: { [key: string]: any };
-  public static middlewares: { [key: string]: any };
+  public static plugins: Keyed<any> = {};
+  public static middlewares: Keyed<any> = {};
   public static utils: SigmaUtils = {
     pkg: getPackageObject
   } as any;
@@ -235,7 +235,7 @@ class Sigma extends Dispatcher {
 
   // Add a custom handler, to redispatch events from renderers:
   private _handler = e => {
-    const data: { [key: string]: any } = {};
+    const data: Keyed<any> = {};
     Object.keys(e.data).forEach(key => {
       data[key] = e.data[key];
     });
@@ -709,7 +709,7 @@ class Sigma extends Dispatcher {
 }
 
 function getPackageObject(pkgName: string) {
-  const getPackage = (levels: string[], root: { [key: string]: any }) => {
+  const getPackage = (levels: string[], root: Keyed<any>) => {
     return levels.reduce((context, objName) => {
       if (!context[objName]) {
         context[objName] = {};

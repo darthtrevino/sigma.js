@@ -1,4 +1,6 @@
-type ConfigMap = { [key: string]: any };
+import { Keyed } from "../../interfaces";
+
+type ConfigMap = Keyed<any>;
 
 export interface Settings {
   (a1: string | ConfigMap, a2?: any): any;

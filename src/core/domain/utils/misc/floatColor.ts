@@ -1,4 +1,6 @@
-const floatColorCache: { [key: string]: number } = {};
+import { Keyed } from "../../../interfaces";
+
+const floatColorCache: Keyed<number> = {};
 
 export default function floatColor(input: string): number {
   let val = input;

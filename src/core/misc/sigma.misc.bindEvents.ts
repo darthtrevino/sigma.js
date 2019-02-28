@@ -4,7 +4,8 @@ import {
   Node,
   Renderer,
   Captor,
-  SigmaDispatchedEvent as SigmaEvent
+  SigmaDispatchedEvent as SigmaEvent,
+  Keyed
 } from "../interfaces";
 
 export default function configure(sigma: SigmaLibrary) {
@@ -99,7 +100,7 @@ export default function configure(sigma: SigmaLibrary) {
       let s;
       const maxEpsilon = self.settings("edgeHoverPrecision");
       let cp;
-      const nodeIndex: { [key: string]: Node } = {};
+      const nodeIndex: Keyed<Node> = {};
       let inserted;
       const selected: Edge[] = [];
       const modifiedX = mX + self.width / 2;
@@ -152,33 +153,33 @@ export default function configure(sigma: SigmaLibrary) {
             !target.hidden &&
             (!isCanvas || (nodeIndex[edge.source] || nodeIndex[edge.target])) &&
             sigma.utils.geom.getDistance(
-              (source as any)[`${prefix}x`],
-              (source as any)[`${prefix}y`],
+              source[`${prefix}x`],
+              source[`${prefix}y`],
               modifiedX,
               modifiedY
-            ) > (source as any)[`${prefix}size`] &&
+            ) > source[`${prefix}size`] &&
             sigma.utils.geom.getDistance(
-              (target as any)[`${prefix}x`],
-              (target as any)[`${prefix}y`],
+              target[`${prefix}x`],
+              target[`${prefix}y`],
               modifiedX,
               modifiedY
-            ) > (target as any)[`${prefix}size`]
+            ) > target[`${prefix}size`]
           ) {
             if (edge.type === "curve" || edge.type === "curvedArrow") {
               if (source.id === target.id) {
                 cp = sigma.utils.getSelfLoopControlPoints(
-                  (source as any)[`${prefix}x`],
-                  (source as any)[`${prefix}y`],
-                  (source as any)[`${prefix}size`]
+                  source[`${prefix}x`],
+                  source[`${prefix}y`],
+                  source[`${prefix}size`]
                 );
                 if (
                   sigma.utils.geom.isPointOnBezierCurve(
                     modifiedX,
                     modifiedY,
-                    (source as any)[`${prefix}x`],
-                    (source as any)[`${prefix}y`],
-                    (target as any)[`${prefix}x`],
-                    (target as any)[`${prefix}y`],
+                    source[`${prefix}x`],
+                    source[`${prefix}y`],
+                    target[`${prefix}x`],
+                    target[`${prefix}y`],
                     cp.x1,
                     cp.y1,
                     cp.x2,
@@ -190,19 +191,19 @@ export default function configure(sigma: SigmaLibrary) {
                 }
               } else {
                 cp = sigma.utils.geom.getQuadraticControlPoint(
-                  (source as any)[`${prefix}x`],
-                  (source as any)[`${prefix}y`],
-                  (target as any)[`${prefix}x`],
-                  (target as any)[`${prefix}y`]
+                  source[`${prefix}x`],
+                  source[`${prefix}y`],
+                  target[`${prefix}x`],
+                  target[`${prefix}y`]
                 );
                 if (
                   sigma.utils.geom.isPointOnQuadraticCurve(
                     modifiedX,
                     modifiedY,
-                    (source as any)[`${prefix}x`],
-                    (source as any)[`${prefix}y`],
-                    (target as any)[`${prefix}x`],
-                    (target as any)[`${prefix}y`],
+                    source[`${prefix}x`],
+                    source[`${prefix}y`],
+                    target[`${prefix}x`],
+                    target[`${prefix}y`],
                     cp.x,
                     cp.y,
                     Math.max(s, maxEpsilon)
@@ -215,10 +216,10 @@ export default function configure(sigma: SigmaLibrary) {
               sigma.utils.geom.isPointOnSegment(
                 modifiedX,
                 modifiedY,
-                (source as any)[`${prefix}x`],
-                (source as any)[`${prefix}y`],
-                (target as any)[`${prefix}x`],
-                (target as any)[`${prefix}y`],
+                source[`${prefix}x`],
+                source[`${prefix}y`],
+                target[`${prefix}x`],
+                target[`${prefix}y`],
                 Math.max(s, maxEpsilon)
               )
             ) {
@@ -233,8 +234,8 @@ export default function configure(sigma: SigmaLibrary) {
     function bindCaptor(captor: Captor) {
       let nodes;
       let edges;
-      let overNodes: { [key: string]: Node } = {};
-      let overEdges: { [key: string]: Edge } = {};
+      let overNodes: Keyed<Node> = {};
+      let overEdges: Keyed<Edge> = {};
 
       function onClick(e: SigmaEvent) {
         if (!self.settings("eventsEnabled")) return;
@@ -371,11 +372,11 @@ export default function configure(sigma: SigmaLibrary) {
         let edge;
         const newOutNodes: Node[] = [];
         const newOverNodes: Node[] = [];
-        const currentOverNodes: { [key: string]: Node } = {};
+        const currentOverNodes: Keyed<Node> = {};
         let l = nodes.length;
         const newOutEdges: Edge[] = [];
         const newOverEdges: Edge[] = [];
-        const currentOverEdges: { [key: string]: Edge } = {};
+        const currentOverEdges: Keyed<Edge> = {};
         let le = edges.length;
 
         // Check newly overred nodes:
