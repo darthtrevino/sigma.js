@@ -1,290 +1,69 @@
 import Configurable from "../Configurable";
 import Graph from "../Graph";
 
+function getGraphData() {
+  return {
+    nodes: [
+      {
+        id: "n0",
+        label: "Node 0",
+        myNodeAttr: 123
+      },
+      {
+        id: "n1",
+        label: "Node 1"
+      },
+      {
+        id: "n2",
+        label: "Node 2"
+      },
+      {
+        id: "n3",
+        label: "Node 3"
+      }
+    ],
+    edges: [
+      {
+        id: "e0",
+        source: "n0",
+        target: "n1",
+        myEdgeAttr: 123
+      },
+      {
+        id: "e1",
+        source: "n1",
+        target: "n2"
+      },
+      {
+        id: "e2",
+        source: "n1",
+        target: "n3"
+      },
+      {
+        id: "e3",
+        source: "n2",
+        target: "n3"
+      },
+      {
+        id: "e4",
+        source: "n2",
+        target: "n2"
+      }
+    ]
+  };
+}
+
+function createGraph(immutable: boolean, clone: boolean) {
+  const opts = { immutable, clone };
+  const settings = Configurable(opts);
+  const data = getGraphData();
+  const graph = new Graph(settings);
+  data.nodes.forEach(n => graph.addNode(n));
+  data.edges.forEach(e => graph.addEdge(e));
+  return { graph, data };
+}
+
 describe("The Graph Class", () => {
-  it("Basic manipulation", () => {
-    const opts: any = {};
-    const settings = Configurable(opts);
-    const graph = {
-      nodes: [
-        {
-          id: "n0",
-          label: "Node 0",
-          myNodeAttr: 123
-        },
-        {
-          id: "n1",
-          label: "Node 1"
-        },
-        {
-          id: "n2",
-          label: "Node 2"
-        },
-        {
-          id: "n3",
-          label: "Node 3"
-        }
-      ],
-      edges: [
-        {
-          id: "e0",
-          source: "n0",
-          target: "n1",
-          myEdgeAttr: 123
-        },
-        {
-          id: "e1",
-          source: "n1",
-          target: "n2"
-        },
-        {
-          id: "e2",
-          source: "n1",
-          target: "n3"
-        },
-        {
-          id: "e3",
-          source: "n2",
-          target: "n3"
-        },
-        {
-          id: "e4",
-          source: "n2",
-          target: "n2"
-        }
-      ]
-    };
-
-    // Initialize the graph:
-    let myGraph = new Graph(settings);
-
-    opts.immutable = opts.clone = true;
-    myGraph.addNode(graph.nodes[0]);
-    opts.clone = false;
-    myGraph.addNode(graph.nodes[1]);
-    myGraph.addNode(graph.nodes[2]);
-    myGraph.addNode(graph.nodes[3]);
-
-    opts.immutable = opts.clone = true;
-    myGraph.addEdge(graph.edges[0]);
-    opts.clone = false;
-    myGraph.addEdge(graph.edges[1]);
-    myGraph.addEdge(graph.edges[2]);
-    myGraph.addEdge(graph.edges[3]);
-    myGraph.addEdge(graph.edges[4]);
-
-    // NODES:
-    // ******
-    expect(graph.nodes[0]).toEqual(
-      myGraph.nodes(graph.nodes[0].id)
-      //      '"addNode" works and the node properties have been preserved.'
-    );
-
-    expect(graph.nodes[0]).not.toBe(
-      myGraph.nodes(graph.nodes[0].id)
-      //    'With {clone: true}, "addNode" creates a new object.'
-    );
-
-    expect(graph.nodes[1]).toEqual(
-      myGraph.nodes(graph.nodes[1].id)
-      //      'With {clone: false}, "addNode" keeps the same object.'
-    );
-
-    expect(() => {
-      myGraph.nodes(graph.nodes[0].id).id = "new_n0";
-    }).toThrow();
-    expect(graph.nodes[0].id).toEqual(
-      myGraph.nodes(graph.nodes[0].id).id
-      //      "With {immutable: true}, node ids in the graph are not writable."
-    );
-
-    const node = myGraph.nodes(graph.nodes[1].id);
-    node.id = "new_n0";
-    expect("new_n0").toEqual(
-      node.id
-      //      "With {immutable: false}, node ids in the graph are writable."
-    );
-    node.id = "n1";
-
-    myGraph.nodes(graph.nodes[0].id).label = "New node 0";
-    expect("New node 0").toEqual(
-      myGraph.nodes(graph.nodes[0].id).label
-      //      "Other node attributes are writable."
-    );
-    myGraph.nodes(graph.nodes[0].id).label = "Node 0";
-
-    expect(myGraph.nodes()).not.toBe(
-      myGraph.nodes()
-      //'"nodes" without arguments returns a copy of the nodes array.'
-    );
-
-    expect(myGraph.nodes("unexisting_id")).toEqual(
-      undefined
-      //'"nodes" with an unreferenced id returns undefined and does not throw an error.'
-    );
-
-    expect(myGraph.nodes(["n0", "n1", "n0"])).toEqual(
-      [graph.nodes[0], graph.nodes[1], graph.nodes[0]]
-      //      '"nodes" with a strings array as arguments returns the array of specified nodes.'
-    );
-
-    expect(() => myGraph.nodes(["n0", "n1", {} as string])).toThrow(
-      /nodes: Wrong arguments/
-      //      '"nodes" with an array containing a non-string or non-number value throws an error.'
-    );
-
-    expect(() => myGraph.addNode(graph.nodes[0])).toThrow(
-      /The node "n0" already exists./
-      //   "Adding an already existing node throws an error."
-    );
-
-    myGraph.addNode({ id: "prototype" }).addNode({ id: "constructor" });
-    expect(
-      myGraph.nodes("prototype") && myGraph.nodes("constructor")
-    ).toBeDefined();
-    myGraph.dropNode("prototype").dropNode("constructor");
-
-    // EDGES:
-    // ******
-    expect(graph.edges[0]).toEqual(
-      myGraph.edges(graph.edges[0].id)
-      //      '"addEdge" works and the edge properties have been preserved.'
-    );
-
-    expect(graph.edges[0]).not.toBe(
-      myGraph.edges(graph.edges[0].id)
-      //'With {clone: true}, "addEdge" creates a new object.'
-    );
-
-    expect(graph.edges[1]).toEqual(
-      myGraph.edges(graph.edges[1].id)
-      //'With {clone: false}, "addEdge" keeps the same object.'
-    );
-
-    expect(() => {
-      myGraph.edges(graph.edges[0].id).id = "new_e0";
-    }).toThrow();
-    expect(() => {
-      myGraph.edges(graph.edges[0].id).source = "undefined_node";
-    }).toThrow();
-    expect(() => {
-      myGraph.edges(graph.edges[0].id).target = "undefined_node";
-    }).toThrow();
-    expect([
-      graph.edges[0].id,
-      graph.edges[0].source,
-      graph.edges[0].target
-    ]).toEqual(
-      [
-        myGraph.edges(graph.edges[0].id).id,
-        myGraph.edges(graph.edges[0].id).source,
-        myGraph.edges(graph.edges[0].id).target
-      ]
-      //      "With {immutable: true}, edge sources, targets and ids in the graph are not writable."
-    );
-
-    const edge = myGraph.edges(graph.edges[1].id);
-    edge.id = "new_e0";
-    edge.source = "undefined_node";
-    edge.target = "undefined_node";
-    expect(["new_e0", "undefined_node", "undefined_node"]).toEqual(
-      [edge.id, edge.source, edge.target]
-      //      "With {immutable: false}, edge sources, targets and ids in the graph are writable."
-    );
-    edge.id = "e1";
-    edge.source = "n1";
-    edge.target = "n2";
-
-    myGraph.edges(graph.edges[0].id).myEdgeAttr = 456;
-    expect(456).toEqual(
-      myGraph.edges(graph.edges[0].id).myEdgeAttr
-      //      "Other edge attributes are writable."
-    );
-    myGraph.edges(graph.edges[0].id).myEdgeAttr = 123;
-
-    expect(myGraph.edges()).not.toBe(
-      myGraph.edges()
-      //      '"edges" without arguments returns a copy of the edge array.'
-    );
-
-    expect(myGraph.edges("unexisting_id")).toEqual(
-      undefined
-      //      '"edges" with an unreferenced id returns undefined and does not throw an error.'
-    );
-
-    expect(myGraph.edges(["e0", "e0"])).toEqual(
-      [graph.edges[0], graph.edges[0]]
-      //   '"edges" with a strings array as arguments returns the array of specified edge.'
-    );
-
-    expect(() => myGraph.edges(["e0", {} as string])).toThrow(
-      /edges: Wrong arguments/
-      //'"edges" with an array containing a non-string or non-number value throws an error.'
-    );
-
-    expect(() => myGraph.addEdge(graph.edges[0])).toThrow(
-      /The edge "e0" already exists./
-      //      "Adding an already existing edge throws an error."
-    );
-
-    // DROPING AND CLEARING:
-    // *********************
-    myGraph.dropNode("n0");
-    expect(myGraph.nodes().map(n => n.id)).toEqual(
-      ["n1", "n2", "n3"]
-      //      '"dropNode" actually drops the node.'
-    );
-    expect(myGraph.edges().map(e => e.id)).toEqual(
-      ["e1", "e2", "e3", "e4"]
-      //      '"dropNode" also kills the edges linked to the related nodes..'
-    );
-
-    expect(() => myGraph.dropNode("n0")).toThrow(
-      /The node "n0" does not exist./
-      //      "Droping an unexisting node throws an error."
-    );
-
-    myGraph.dropEdge("e1");
-    expect(myGraph.edges().map(e => e.id)).toEqual(
-      ["e2", "e3", "e4"]
-      //      '"dropEdge" actually drops the edge.'
-    );
-
-    myGraph.dropEdge("e4");
-    expect(myGraph.edges().map(e => e.id)).toEqual(
-      ["e2", "e3"]
-      //      '"dropEdge" with a self loops works. (#286)'
-    );
-
-    expect(() => myGraph.dropEdge("e1")).toThrow(
-      /The edge "e1" does not exist./
-      //      "Droping an unexisting edge throws an error."
-    );
-
-    // Reinitialize the graph:
-    myGraph.addNode(graph.nodes[0]);
-    myGraph.addEdge(graph.edges[0]);
-    myGraph.addEdge(graph.edges[1]);
-
-    myGraph.clear();
-    expect([myGraph.nodes(), myGraph.edges()]).toEqual(
-      [[], []]
-      //      '"clear" empties the nodes and edges arrays.'
-    );
-
-    myGraph = new Graph();
-    myGraph.read(graph);
-
-    expect(myGraph.nodes()).toEqual(
-      graph.nodes
-      //    '"read" adds properly the nodes.'
-    );
-    expect(myGraph.edges()).toEqual(
-      graph.edges
-      //  '"read" adds properly the edges.'
-    );
-  });
-
   it("Methods and attached functions", () => {
     let counter;
     const colorPalette = { Person: "#C3CBE1", Place: "#9BDEBD" };
@@ -698,5 +477,237 @@ describe("The Graph Class", () => {
       (myGraph as any).getNodesCount()
       //      "Indexes work, and the scope is effectively shared with custom methods."
     );
+  });
+
+  describe("node mutability", () => {
+    it("cannot alter nodes when the graph is immutable", () => {
+      const { graph, data } = createGraph(true, true);
+      expect(() => {
+        graph.nodes(data.nodes[0].id).id = "new_n0";
+      }).toThrow();
+      expect(data.nodes[0].id).toEqual(graph.nodes(data.nodes[0].id).id);
+    });
+
+    it("preserves object identity internally when clone is false", () => {
+      const { graph, data } = createGraph(true, false);
+      expect(data.nodes[1]).toEqual(graph.nodes(data.nodes[1].id));
+    });
+
+    it("allows alteration to node ids when graphs are mutable", () => {
+      const { graph, data } = createGraph(false, true);
+      const node = graph.nodes(data.nodes[1].id);
+      node.id = "new_n0";
+      expect("new_n0").toEqual(node.id);
+      node.id = "n1";
+    });
+
+    it("allows alteration to other node props when graph is mutable", () => {
+      const { graph, data } = createGraph(false, false);
+      graph.nodes(data.nodes[0].id).label = "New node 0";
+      expect("New node 0").toEqual(graph.nodes(data.nodes[0].id).label);
+      graph.nodes(data.nodes[0].id).label = "Node 0";
+    });
+  });
+
+  describe(".nodes()", () => {
+    it("returns a copy of the nodes array when .nodes() is called without arguments", () => {
+      const { graph } = createGraph(true, false);
+      expect(graph.nodes()).not.toBe(graph.nodes());
+    });
+
+    it("returns undefined on node lookup of an unknown id", () => {
+      const { graph } = createGraph(true, false);
+      expect(graph.nodes("unexisting_id")).toEqual(undefined);
+    });
+
+    it("returns an array of nodes when an array of ids is passed into .nodes()", () => {
+      const { graph, data } = createGraph(true, false);
+      expect(graph.nodes(["n0", "n1", "n0"])).toEqual([
+        data.nodes[0],
+        data.nodes[1],
+        data.nodes[0]
+      ]);
+    });
+
+    it("throws when invalid id arguments are used", () => {
+      const { graph } = createGraph(true, false);
+      expect(() => graph.nodes(["n0", "n1", {} as string])).toThrow(
+        /nodes: Wrong arguments/
+      );
+    });
+  });
+
+  describe("addNode/dropNode", () => {
+    it("throws if a node id is double-added", () => {
+      const { graph, data } = createGraph(true, false);
+      expect(() => graph.addNode(data.nodes[0])).toThrow(
+        /The node "n0" already exists./
+      );
+    });
+
+    it("can be used to add/drop nodes", () => {
+      const { graph } = createGraph(true, false);
+      expect(graph.nodes("n1")).toBeDefined();
+      expect(graph.nodes("n2")).toBeDefined();
+
+      // drop
+      graph.dropNode("n1");
+      expect(graph.nodes("n1")).not.toBeDefined();
+      graph.dropNode("n2");
+      expect(graph.nodes("n2")).not.toBeDefined();
+    });
+  });
+
+  describe("addEdge", () => {
+    it("can add an edge correctly with properties preserved ", () => {
+      const { graph, data } = createGraph(true, false);
+      expect(data.edges[0]).toEqual(graph.edges(data.edges[0].id));
+    });
+  });
+
+  describe("edge mutability", () => {
+    it("creates new objects when clone is set to true", () => {
+      const { graph, data } = createGraph(true, true);
+      expect(data.edges[0]).not.toBe(graph.edges(data.edges[0].id));
+    });
+
+    it("does not create new objects when clone is set to false", () => {
+      const { graph, data } = createGraph(true, true);
+      expect(data.edges[1]).toEqual(graph.edges(data.edges[1].id));
+    });
+
+    it("throws if an edge is altered when immutable is set to true", () => {
+      const { graph, data } = createGraph(true, true);
+      expect(() => {
+        graph.edges(data.edges[0].id).id = "new_e0";
+      }).toThrow();
+      expect(() => {
+        graph.edges(data.edges[0].id).source = "undefined_node";
+      }).toThrow();
+      expect(() => {
+        graph.edges(data.edges[0].id).target = "undefined_node";
+      }).toThrow();
+    });
+
+    it("allows edge sources, targets, and IDS to be writable when immutable is false", () => {
+      const { graph, data } = createGraph(false, true);
+      const edge = graph.edges(data.edges[1].id);
+      edge.id = "new_e0";
+      edge.source = "undefined_node";
+      edge.target = "undefined_node";
+      expect(["new_e0", "undefined_node", "undefined_node"]).toEqual([
+        edge.id,
+        edge.source,
+        edge.target
+      ]);
+    });
+
+    it("allows other edge properties to be writable when immutable is false", () => {
+      const { graph, data } = createGraph(false, true);
+      const edge = graph.edges(data.edges[1].id);
+      edge.id = "e1";
+      edge.source = "n1";
+      edge.target = "n2";
+
+      graph.edges(data.edges[0].id).myEdgeAttr = 456;
+      expect(456).toEqual(
+        graph.edges(data.edges[0].id).myEdgeAttr
+        //      "Other edge attributes are writable."
+      );
+    });
+
+    describe(".edges()", () => {
+      it("returns a copy of the edge array without arguments", () => {
+        const { graph } = createGraph(false, true);
+        expect(graph.edges()).not.toBe(graph.edges());
+      });
+
+      it("does not throw an error when an unknown id is used", () => {
+        const { graph } = createGraph(false, true);
+        expect(graph.edges("unexisting_id")).toEqual(undefined);
+      });
+
+      it("returns an array of edges when an id array is used", () => {
+        const { graph, data } = createGraph(false, true);
+        expect(graph.edges(["e0", "e0"])).toEqual([
+          data.edges[0],
+          data.edges[0]
+        ]);
+      });
+
+      it("throws when invalid id types are used", () => {
+        const { graph } = createGraph(false, true);
+        expect(() => graph.edges(["e0", {} as string])).toThrow(
+          /edges: Wrong arguments/
+        );
+      });
+
+      it("throws if an edge is already present", () => {
+        const { graph, data } = createGraph(false, true);
+        expect(() => graph.addEdge(data.edges[0])).toThrow(
+          /The edge "e0" already exists./
+        );
+      });
+    });
+  });
+
+  describe("edge dropping and clearing", () => {
+    it("can drop and clear edges", () => {
+      const { graph, data } = createGraph(false, true);
+
+      graph.dropNode("n0");
+      expect(graph.nodes().map(n => n.id)).toEqual(
+        ["n1", "n2", "n3"]
+        //      '"dropNode" actually drops the node.'
+      );
+      expect(graph.edges().map(e => e.id)).toEqual(
+        ["e1", "e2", "e3", "e4"]
+        //      '"dropNode" also kills the edges linked to the related nodes..'
+      );
+
+      expect(() => graph.dropNode("n0")).toThrow(
+        /The node "n0" does not exist./
+        //      "Droping an unexisting node throws an error."
+      );
+
+      graph.dropEdge("e1");
+      expect(graph.edges().map(e => e.id)).toEqual(
+        ["e2", "e3", "e4"]
+        //      '"dropEdge" actually drops the edge.'
+      );
+
+      graph.dropEdge("e4");
+      expect(graph.edges().map(e => e.id)).toEqual(
+        ["e2", "e3"]
+        //      '"dropEdge" with a self loops works. (#286)'
+      );
+
+      expect(() => graph.dropEdge("e1")).toThrow(
+        /The edge "e1" does not exist./
+        //      "Droping an unexisting edge throws an error."
+      );
+
+      // Reinitialize the graph:
+      graph.addNode(data.nodes[0]);
+      graph.addEdge(data.edges[0]);
+      graph.addEdge(data.edges[1]);
+
+      graph.clear();
+      expect([graph.nodes(), graph.edges()]).toEqual(
+        [[], []]
+        //      '"clear" empties the nodes and edges arrays.'
+      );
+    });
+
+    describe("read", () => {
+      it("can read in data", () => {
+        const graph = new Graph();
+        const data = getGraphData();
+        graph.read(data);
+
+        expect(graph.nodes()).toEqual(data.nodes);
+        expect(graph.edges()).toEqual(data.edges);
+      });
+    });
   });
 });

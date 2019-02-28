@@ -14,17 +14,11 @@ export interface Settings {
  * @return {configurable} The "settings" function.
  */
 export default function configurable(...args: any[]): Settings {
-  const data: ConfigMap = {};
-  const datas = [...args];
+  const data: ConfigMap = Object.assign({}, ...args);
 
   function getData(key: string) {
     if (data[key] !== undefined) {
       return data[key];
-    }
-    for (let i = 0; i < datas.length; i++) {
-      if (datas[i][key] !== undefined) {
-        return datas[i][key];
-      }
     }
     return undefined;
   }
@@ -90,7 +84,7 @@ export default function configurable(...args: any[]): Settings {
    *                    more about how it works.
    */
   settings.embedObjects = function embedObjects(...extraData: ConfigMap[]) {
-    return configurable([data, datas, ...extraData]);
+    return configurable(data, ...extraData);
   };
 
   // Initialize

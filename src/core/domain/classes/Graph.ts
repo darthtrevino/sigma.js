@@ -165,12 +165,12 @@ class Graph {
     } else validNode = node;
 
     // Check the "immutable" option:
-    if (this.settings("immutable"))
+    if (this.settings("immutable")) {
       Object.defineProperty(validNode, "id", {
         value: id,
         enumerable: true
       });
-    else validNode.id = id;
+    } else validNode.id = id;
 
     // Add empty containers for edges indexes:
     this.inNeighborsIndex[id] = Object.create(null);
