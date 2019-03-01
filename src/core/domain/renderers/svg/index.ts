@@ -1,6 +1,14 @@
 import id from "../../utils/misc/id";
 import Dispatcher from "../../classes/Dispatcher";
-import { SigmaLibrary, Renderer, Keyed, Captor } from "../../../interfaces";
+import {
+  SigmaLibrary,
+  Renderer,
+  Keyed,
+  Captor,
+  SigmaDispatchedEvent,
+  Node,
+  Edge
+} from "../../../interfaces";
 import Graph from "../../classes/Graph";
 import Camera from "../../classes/Camera";
 import { Settings } from "../../classes/Configurable";
@@ -10,15 +18,17 @@ export default (sigma: SigmaLibrary) => {
     public id = "__ID_NOT_SET__";
     private container: HTMLElement;
     private domElements: {
-      graph?: HTMLElement;
-      groups?: Keyed<HTMLElement>;
-      nodes?: Keyed<HTMLElement>;
-      edges?: Keyed<HTMLElement>;
-      labels?: Keyed<HTMLElement>;
-    } = {};
-    private measurementCanvas = null;
-    private nodesOnScreen = [];
-    private edgesOnScreen = [];
+      graph: HTMLElement;
+      groups: Keyed<HTMLElement>;
+      nodes: Keyed<HTMLElement>;
+      edges: Keyed<HTMLElement>;
+      labels: Keyed<HTMLElement>;
+      hovers: Keyed<HTMLElement>;
+      [key: string]: HTMLElement | Keyed<HTMLElement>;
+    } = {} as any;
+    private measurementCanvas: CanvasRenderingContext2D | undefined;
+    private nodesOnScreen: Node[] = [];
+    private edgesOnScreen: Edge[] = [];
     public captors: Captor[];
     public width = 0;
     public height = 0;
@@ -79,7 +89,7 @@ export default (sigma: SigmaLibrary) => {
         sigma.captors.mouse,
         sigma.captors.touch
       ];
-      this.captors = captors.map(captor => {
+      this.captors = captors.map((captor: string | Function) => {
         const Captor =
           typeof captor === "function" ? captor : sigma.captors[captor];
         return new Captor(this.domElements.graph, this.camera, this.settings);
@@ -105,26 +115,17 @@ export default (sigma: SigmaLibrary) => {
      */
     public render(options?: any) {
       options = options || {};
-
-      let a;
-      let i;
-      let e;
-      let l;
-      let source;
-      let target;
-      let renderers;
-      const index = {};
-      const { graph } = this;
-      let drawEdges = this.settings(options, "drawEdges");
+      const drawEdges =
+        this.settings(options, "drawEdges") &&
+        !(
+          this.settings(options, "hideEdgesOnMove") &&
+          (this.camera.isAnimated || this.camera.isMoving)
+        );
       const drawNodes = this.settings(options, "drawNodes");
       const embedSettings = this.settings.embedObjects(options, {
         prefix: this.options.prefix,
         forceLabels: this.options.forceLabels
       });
-
-      // Check the 'hideEdgesOnMove' setting:
-      if (this.settings(options, "hideEdgesOnMove"))
-        if (this.camera.isAnimated || this.camera.isMoving) drawEdges = false;
 
       // Apply the camera's view:
       this.camera.applyView(undefined, this.options.prefix, {
@@ -138,113 +139,121 @@ export default (sigma: SigmaLibrary) => {
       this.hideDOMElements(this.domElements.edges);
       this.hideDOMElements(this.domElements.labels);
 
-      // Find which nodes are on screen
-      this.edgesOnScreen = [];
-      this.nodesOnScreen = this.camera.quadtree.area(
-        this.camera.getRectangle(this.width, this.height)
-      );
+      this.determineVisibleNodesAndEdges();
 
-      // Node index
-      this.nodesOnScreen.forEach(node => {
-        index[node.id] = node;
-      });
-
-      // Find which edges are on screen
-      graph.edges().forEach(o => {
-        const [source, target] = graph.nodes(o.source, o.target);
-        if (
-          (index[o.source] || index[o.target]) &&
-          (!o.hidden && !source.hidden && !target.hidden)
-        )
-          this.edgesOnScreen.push(o);
-      });
-
-      // Display nodes
-      //---------------
-      renderers = sigma.svg.nodes;
-      const subrenderers = sigma.svg.labels;
-
-      // -- First we create the nodes which are not already created
-      if (drawNodes)
-        for (a = this.nodesOnScreen, i = 0, l = a.length; i < l; i++) {
-          if (!a[i].hidden && !this.domElements.nodes[a[i].id]) {
-            // Node
-            e = (renderers[a[i].type] || renderers.def).create(
-              a[i],
-              embedSettings
-            );
-
-            this.domElements.nodes[a[i].id] = e;
-            this.domElements.groups.nodes.appendChild(e);
-
-            // Label
-            e = (subrenderers[a[i].type] || subrenderers.def).create(
-              a[i],
-              embedSettings
-            );
-
-            this.domElements.labels[a[i].id] = e;
-            this.domElements.groups.labels.appendChild(e);
-          }
-        }
-
-      // -- Second we update the nodes
-      if (drawNodes)
-        this.nodesOnScreen
-          .filter(node => !node.hidden)
-          .forEach(node => {
-            // Node
-            (renderers[node.type] || renderers.def).update(
-              node,
-              this.domElements.nodes[node.id],
-              embedSettings
-            );
-
-            // Label
-            (subrenderers[node.type] || subrenderers.def).update(
-              node,
-              this.domElements.labels[node.id],
-              embedSettings
-            );
-          });
-
-      // Display edges
-      //---------------
-      renderers = sigma.svg.edges;
-
-      // -- First we create the edges which are not already created
-      if (drawEdges)
-        for (a = this.edgesOnScreen, i = 0, l = a.length; i < l; i++) {
-          if (!this.domElements.edges[a[i].id]) {
-            const [source, target] = graph.nodes(a[i].source, a[i].target);
-            e = (renderers[a[i].type] || renderers.def).create(
-              a[i],
-              source,
-              target,
-              embedSettings
-            );
-
-            this.domElements.edges[a[i].id] = e;
-            this.domElements.groups.edges.appendChild(e);
-          }
-        }
-
-      // -- Second we update the edges
-      if (drawEdges)
-        for (a = this.edgesOnScreen, i = 0, l = a.length; i < l; i++) {
-          const [source, target] = graph.nodes(a[i].source, a[i].target);
-          (renderers[a[i].type] || renderers.def).update(
-            a[i],
-            this.domElements.edges[a[i].id],
-            source,
-            target,
-            embedSettings
-          );
-        }
+      if (drawNodes) {
+        this.renderNodes(embedSettings);
+      }
+      if (drawEdges) {
+        this.renderEdges(embedSettings);
+      }
 
       this.dispatchEvent("render");
 
       return this;
+    }
+
+    private determineVisibleNodesAndEdges() {
+      const index: Keyed<boolean> = {};
+
+      this.nodesOnScreen = this.camera.quadtree!.area(
+        this.camera.getRectangle(this.width, this.height)
+      );
+      this.nodesOnScreen.forEach(node => (index[node.id] = true));
+
+      // Find which nodes are on screen
+      this.edgesOnScreen = [];
+
+      // Find which edges are on screen
+      this.graph.edges().forEach(edge => {
+        const [source, target] = this.graph.nodes(edge.source, edge.target);
+        const isEitherEndVisible = index[edge.source] || index[edge.target];
+        const isEitherEndHidden = edge.hidden || source.hidden || target.hidden;
+
+        if (isEitherEndVisible && !isEitherEndHidden)
+          this.edgesOnScreen.push(edge);
+      });
+    }
+
+    private renderNodes(embedSettings: Settings) {
+      // Display nodes
+      const renderers = sigma.svg.nodes;
+      const subrenderers = sigma.svg.labels;
+      const visibleNodes = this.nodesOnScreen.filter(node => !node.hidden);
+
+      // -- First we create the nodes which are not already created
+      visibleNodes
+        .filter(node => !this.domElements.nodes[node.id])
+        .forEach(node => {
+          if (!node.hidden && !this.domElements.nodes[node.id]) {
+            // Node
+            const nodeElement = (renderers[node.type] || renderers.def).create(
+              node,
+              embedSettings
+            );
+
+            this.domElements.nodes[node.id] = nodeElement;
+            this.domElements.groups.nodes.appendChild(nodeElement);
+
+            // Label
+            const labelElement = (
+              subrenderers[node.type] || subrenderers.def
+            ).create(node, embedSettings);
+            this.domElements.labels[node.id] = labelElement;
+            this.domElements.groups.labels.appendChild(labelElement);
+          }
+        });
+
+      // -- Second we update the nodes
+      visibleNodes.forEach(node => {
+        // Node
+        (renderers[node.type] || renderers.def).update(
+          node,
+          this.domElements.nodes[node.id],
+          embedSettings
+        );
+
+        // Label
+        (subrenderers[node.type] || subrenderers.def).update(
+          node,
+          this.domElements.labels[node.id],
+          embedSettings
+        );
+      });
+    }
+
+    private renderEdges(settings: Settings) {
+      // Display edges
+      const renderers = sigma.svg.edges;
+      const visibleEdges = this.edgesOnScreen;
+
+      // -- First we create the edges which are not already created
+      visibleEdges.forEach(edge => {
+        if (!this.domElements.edges[edge.id]) {
+          const [source, target] = this.graph.nodes(edge.source, edge.target);
+          const edgeElement = (renderers[edge.type] || renderers.def).create(
+            edge,
+            source,
+            target,
+            settings
+          );
+
+          this.domElements.edges[edge.id] = edgeElement;
+          this.domElements.groups.edges.appendChild(edgeElement);
+        }
+      });
+
+      // -- Second we update the edges
+      visibleEdges.forEach(edge => {
+        const [source, target] = this.graph.nodes(edge.source, edge.target);
+        (renderers[edge.type] || renderers.def).update(
+          edge,
+          this.domElements.edges[edge.id],
+          source,
+          target,
+          settings
+        );
+      });
     }
 
     /**
@@ -289,7 +298,7 @@ export default (sigma: SigmaLibrary) => {
 
       // Appending measurement canvas
       this.container.appendChild(canvas);
-      this.measurementCanvas = canvas.getContext("2d");
+      this.measurementCanvas = canvas.getContext("2d") || undefined;
     }
 
     /**
@@ -315,12 +324,8 @@ export default (sigma: SigmaLibrary) => {
     // TODO: add option about whether to display hovers or not
     public bindHovers(prefix: string) {
       const renderers = sigma.svg.hovers;
-
-      const self = this;
-
-      let hoveredNode;
-
-      function overNode(e) {
+      let hoveredNode: Node | undefined;
+      const overNode = (e: SigmaDispatchedEvent) => {
         const { node } = e.data;
         const embedSettings = this.settings.embedObjects({
           prefix
@@ -331,7 +336,7 @@ export default (sigma: SigmaLibrary) => {
         const hover = (renderers[node.type] || renderers.def).create(
           node,
           this.domElements.nodes[node.id],
-          this.measurementCanvas,
+          this.measurementCanvas!,
           embedSettings
         );
 
@@ -340,9 +345,9 @@ export default (sigma: SigmaLibrary) => {
         // Inserting the hover in the dom
         this.domElements.groups.hovers.appendChild(hover);
         hoveredNode = node;
-      }
+      };
 
-      function outNode(e) {
+      const outNode = (e: SigmaDispatchedEvent) => {
         const { node } = e.data;
         const embedSettings = this.settings.embedObjects({
           prefix
@@ -354,17 +359,17 @@ export default (sigma: SigmaLibrary) => {
         this.domElements.groups.hovers.removeChild(
           this.domElements.hovers[node.id]
         );
-        hoveredNode = null;
+        hoveredNode = undefined;
         delete this.domElements.hovers[node.id];
 
         // Reinstate
         this.domElements.groups.nodes.appendChild(
           this.domElements.nodes[node.id]
         );
-      }
+      };
 
       // OPTIMIZE: perform a real update rather than a deletion
-      function update() {
+      const update = () => {
         if (!hoveredNode) return;
 
         const embedSettings = this.settings.embedObjects({
@@ -380,7 +385,7 @@ export default (sigma: SigmaLibrary) => {
         const hover = (renderers[hoveredNode.type] || renderers.def).create(
           hoveredNode,
           this.domElements.nodes[hoveredNode.id],
-          this.measurementCanvas,
+          this.measurementCanvas!,
           embedSettings
         );
 
@@ -388,7 +393,7 @@ export default (sigma: SigmaLibrary) => {
 
         // Inserting the hover in the dom
         this.domElements.groups.hovers.appendChild(hover);
-      }
+      };
 
       // Binding events
       this.bind("overNode", overNode);
@@ -411,23 +416,25 @@ export default (sigma: SigmaLibrary) => {
       const oldHeight = this.height;
       const pixelRatio = 1;
 
-      if (w !== undefined && h !== undefined) {
+      if (w !== undefined) {
         this.width = w;
-        this.height = h;
       } else {
         this.width = this.container.offsetWidth;
-        this.height = this.container.offsetHeight;
-
         w = this.width;
+      }
+      if (h !== undefined) {
+        this.height = h;
+      } else {
+        this.height = this.container.offsetHeight;
         h = this.height;
       }
 
       if (oldWidth !== this.width || oldHeight !== this.height) {
-        this.domElements.graph.style.width = `${w}px`;
-        this.domElements.graph.style.height = `${h}px`;
+        this.domElements.graph.style.width = `${w!}px`;
+        this.domElements.graph.style.height = `${h!}px`;
         if (this.domElements.graph.tagName.toLowerCase() === "svg") {
-          this.domElements.graph.setAttribute("width", `${w * pixelRatio}`);
-          this.domElements.graph.setAttribute("height", `${h * pixelRatio}`);
+          this.domElements.graph.setAttribute("width", `${w! * pixelRatio}`);
+          this.domElements.graph.setAttribute("height", `${h! * pixelRatio}`);
         }
       }
 
@@ -455,9 +462,21 @@ export default (sigma: SigmaLibrary) => {
       while ((captor = this.captors.pop())) captor.kill();
       delete this.captors;
 
+      const remove = (element: HTMLElement) => {
+        if (element.parentNode) {
+          element.parentNode!.removeChild(element);
+        }
+      };
+
       // Kill contexts:
       Object.keys(this.domElements).forEach(k => {
-        this.domElements[k].parentNode.removeChild(this.domElements[k]);
+        if (this.domElements[k] instanceof HTMLElement) {
+          const element = this.domElements[k] as HTMLElement;
+          remove(element);
+        } else {
+          const map = this.domElements[k] as Keyed<HTMLElement>;
+          Object.keys(map).forEach(kk => remove(map[kk]));
+        }
         delete this.domElements[k];
       });
       delete this.domElements;

@@ -1,10 +1,16 @@
+import Sigma from "../classes/Sigma";
+
 /**
  * This middleware will just copy the graphic properties.
  *
  * @param {?string} readPrefix  The read prefix.
  * @param {?string} writePrefix The write prefix.
  */
-export default function copy(readPrefix: string, writePrefix: string) {
+export default function copy(
+  this: Sigma,
+  readPrefix: string,
+  writePrefix: string
+) {
   if (`${writePrefix}` === `${readPrefix}`) return;
 
   this.graph.nodes().forEach(node => {

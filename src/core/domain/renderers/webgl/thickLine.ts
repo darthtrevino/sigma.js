@@ -1,7 +1,7 @@
 import floatColor from "../../utils/misc/floatColor";
 import loadShader from "../../utils/webgl/loadShader";
 import loadProgram from "../../utils/webgl/loadProgram";
-import { Edge, Node } from "../../../interfaces";
+import { Edge, Node, WebGLEdgeDrawer } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
@@ -30,7 +30,7 @@ export default {
     prefix: string,
     settings: Settings
   ) {
-    const thickness = edge[`${prefix}size`] || 1;
+    const thickness = (edge as any)[`${prefix}size`] || 1;
     const x1 = source[`${prefix}x`];
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
@@ -83,7 +83,7 @@ export default {
     data[i++] = thickness;
     data[i++] = color;
   },
-  computeIndices(data) {
+  computeIndices(data: Float32Array) {
     const indices = new Uint16Array(data.length * 6);
     let c = 0;
     const l = data.length / this.ATTRIBUTES;
@@ -229,4 +229,4 @@ export default {
     const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
     return program;
   }
-};
+} as WebGLEdgeDrawer;

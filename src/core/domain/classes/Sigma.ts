@@ -12,10 +12,11 @@ import {
   SigmaWebGLUtilities,
   SigmaSvgUtils,
   SigmaCanvasUtils,
-  Killable
+  Killable,
+  SigmaDispatchedEvent
 } from "../../interfaces";
 
-const __instances = {};
+const __instances: Keyed<Sigma> = {};
 
 // Little shortcut:
 // ****************
@@ -136,8 +137,8 @@ class Sigma extends Dispatcher {
 
   // utility namespaces
   public static renderers: Keyed<any> = {};
-  public static plugins: { [key: string]: any };
-  public static middlewares: { [key: string]: any };
+  public static plugins: Keyed<any> = {};
+  public static middlewares: Keyed<any> = {};
   public static utils: SigmaUtils = {
     pkg: getPackageObject
   } as any;
@@ -188,8 +189,11 @@ class Sigma extends Dispatcher {
     __instances[this.id] = this;
 
     // Initialize locked attributes:
-    this.initializeSettings();
-    this.initializeGraphInstance();
+    this.settings = Sigma.classes.configurable(
+      Sigma.settings,
+      this.conf.settings || {}
+    );
+    this.graph = new Sigma.classes.graph(this.settings);
     this.initializeRenderers();
     this.initializeMiddleware();
     this.initializeGraphData();
@@ -198,20 +202,9 @@ class Sigma extends Dispatcher {
     window.addEventListener("resize", () => this.settings && this.refresh());
   }
 
-  private initializeSettings() {
-    this.settings = Sigma.classes.configurable(
-      Sigma.settings,
-      this.conf.settings || {}
-    );
-  }
-
-  private initializeGraphInstance() {
-    this.graph = new Sigma.classes.graph(this.settings);
-  }
-
   private initializeMiddleware() {
     const middlewares = this.conf.middlewares || [];
-    middlewares.forEach(item => {
+    middlewares.forEach((item: string | Function) => {
       const mw = item === "string" ? Sigma.middlewares[item] : item;
       this.middlewares.push(mw);
     });
@@ -234,8 +227,8 @@ class Sigma extends Dispatcher {
   }
 
   // Add a custom handler, to redispatch events from renderers:
-  private _handler = e => {
-    const data: { [key: string]: any } = {};
+  private _handler = (e: SigmaDispatchedEvent) => {
+    const data: Keyed<any> = {};
     Object.keys(e.data).forEach(key => {
       data[key] = e.data[key];
     });
@@ -272,7 +265,7 @@ class Sigma extends Dispatcher {
 
     // Add an edgequadtree to the camera:
     if (Sigma.classes.edgequad !== undefined) {
-      camera.edgequadtree = new Sigma.classes.edgequad();
+      camera.edgequadtree = new Sigma.classes.edgequad(this.graph);
     }
 
     camera.bind("coordinatesUpdated", () =>
@@ -541,7 +534,7 @@ class Sigma extends Dispatcher {
         bounds = Sigma.utils.geom.getBoundaries(this.graph, cam.readPrefix);
 
         // Refresh quadtree:
-        cam.quadtree.index(this.graph.nodes(), {
+        cam.quadtree!.index(this.graph.nodes(), {
           prefix: cam.readPrefix,
           bounds: {
             x: bounds.minX,
@@ -557,7 +550,7 @@ class Sigma extends Dispatcher {
           cam.settings("drawEdges") &&
           cam.settings("enableEdgeHovering")
         ) {
-          cam.edgequadtree.index(this.graph, {
+          cam.edgequadtree.index(this.graph.edges(), {
             prefix: cam.readPrefix,
             bounds: {
               x: bounds.minX,
@@ -684,7 +677,7 @@ class Sigma extends Dispatcher {
     delete this.cameras;
 
     // Kill everything else:
-    Object.keys(this).forEach(key => delete this[key]);
+    Object.keys(this).forEach(key => delete (this as any)[key]);
 
     delete __instances[this.id];
   }
@@ -697,7 +690,7 @@ class Sigma extends Dispatcher {
    *                      object.
    */
   public static instances(id?: string) {
-    return arguments.length ? __instances[id] : { ...__instances };
+    return arguments.length ? __instances[id!] : { ...__instances };
   }
 
   public static register(packageName: string, item: any, override?: boolean) {
@@ -709,7 +702,7 @@ class Sigma extends Dispatcher {
 }
 
 function getPackageObject(pkgName: string) {
-  const getPackage = (levels: string[], root: { [key: string]: any }) => {
+  const getPackage = (levels: string[], root: Keyed<any>) => {
     return levels.reduce((context, objName) => {
       if (!context[objName]) {
         context[objName] = {};

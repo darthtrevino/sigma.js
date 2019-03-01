@@ -1,5 +1,5 @@
-import MouseCaptor from "./domain/classes/MouseCaptor";
-import TouchCaptor from "./domain/classes/TouchCaptor";
+import MouseCaptor from "./domain/classes/captors/MouseCaptor";
+import TouchCaptor from "./domain/classes/captors/TouchCaptor";
 import Camera from "./domain/classes/Camera";
 import Configurable from "./domain/classes/Configurable";
 import Dispatcher from "./domain/classes/Dispatcher";
@@ -42,9 +42,9 @@ import translation from "./domain/utils/matrices/translation";
 import rotation from "./domain/utils/matrices/rotation";
 import scale from "./domain/utils/matrices/scale";
 import multiply from "./domain/utils/matrices/multiply";
-import EdgeQuad from "./domain/classes/EdgeQuad";
+import EdgeQuad from "./domain/classes/quadtree/EdgeQuad";
+import NodeQuad from "./domain/classes/quadtree/NodeQuad";
 import Graph from "./domain/classes/Graph";
-import Quad from "./domain/classes/Quad";
 import edgeHoversArrowCanvas from "./domain/renderers/canvas/edgeHoversArrow";
 import edgeHoversCurveCanvas from "./domain/renderers/canvas/edgeHoversCurve";
 import edgeHoversCurvedArrowCanvas from "./domain/renderers/canvas/edgeHoversCurvedArrow";
@@ -176,9 +176,9 @@ export default (sigma: SigmaLibrary) => {
   sigma.register("sigma.classes.dispatcher", Dispatcher);
   sigma.register("sigma.classes.configurable", Configurable);
   sigma.register("sigma.classes.camera", Camera);
-  sigma.register("sigma.classes.edgequad", EdgeQuad);
   sigma.register("sigma.classes.graph", Graph);
-  sigma.register("sigma.classes.quad", Quad);
+  sigma.register("sigma.classes.edgequad", EdgeQuad);
+  sigma.register("sigma.classes.quad", NodeQuad);
 
   // Register Captors
   sigma.register("sigma.captors.mouse", MouseCaptor(sigma));

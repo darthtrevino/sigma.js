@@ -23,7 +23,7 @@ export default function edgesArrow(
   const edgeColor = settings("edgeColor");
   const defaultNodeColor = settings("defaultNodeColor");
   const defaultEdgeColor = settings("defaultEdgeColor");
-  const size = edge[`${prefix}size`] || 1;
+  const size = (edge as any)[`${prefix}size`] || 1;
   const tSize = target[`${prefix}size`];
   const sX = source[`${prefix}x`];
   const sY = source[`${prefix}y`];

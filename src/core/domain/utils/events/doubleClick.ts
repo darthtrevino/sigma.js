@@ -1,7 +1,11 @@
 import { SigmaLibrary, SigmaDispatchedEvent } from "../../../interfaces";
 
 export default (sigma: SigmaLibrary) =>
-  function doubleClick(target: HTMLElement, type: string, callback) {
+  function doubleClick(
+    target: HTMLElement,
+    type: string,
+    callback: (input: SigmaDispatchedEvent) => void
+  ) {
     let clicks = 0;
     (target as any)._doubleClickHandler =
       (target as any)._doubleClickHandler || {};

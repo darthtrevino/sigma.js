@@ -1,4 +1,4 @@
-import { SigmaDispatcher, SigmaEventHandler } from "../../interfaces";
+import { SigmaDispatcher, SigmaEventHandler, Keyed } from "../../interfaces";
 
 /*
  * Dispatcher constructor.
@@ -6,7 +6,7 @@ import { SigmaDispatcher, SigmaEventHandler } from "../../interfaces";
  * @return {dispatcher} The new dispatcher instance.
  */
 export default class Dispatcher implements SigmaDispatcher {
-  private handlers: { [key: string]: SigmaEventHandler[] } = {};
+  private handlers: Keyed<SigmaEventHandler[]> = {};
 
   constructor() {
     this.bind = this.bind.bind(this);
@@ -23,20 +23,17 @@ export default class Dispatcher implements SigmaDispatcher {
    * @param  {function(Object)} handler The handler to bind.
    * @return {dispatcher}               Returns the instance itself.
    */
-  public bind(
-    events: { [key: string]: Function } | string[] | string,
-    handler?: Function
-  ) {
+  public bind(events: Keyed<Function> | string[] | string, handler?: Function) {
     /* eslint-disable prefer-rest-params */
     if (arguments.length === 1 && typeof arguments[0] === "object") {
-      const argObject = events;
+      const argObject: Keyed<Function> = events as any;
       Object.keys(argObject).forEach(evts => {
-        this.bind(evts, argObject[evts]);
+        this.bind(evts, argObject[evts] as Function);
       });
     } else if (arguments.length === 2 && typeof handler === "function") {
       const eventArray =
         typeof events === "string" ? events.split(" ") : events;
-      eventArray
+      (eventArray as string[])
         .filter(e => !!e)
         .forEach(event => {
           if (!this.handlers[event]) this.handlers[event] = [];
@@ -67,8 +64,6 @@ export default class Dispatcher implements SigmaDispatcher {
    * @return {dispatcher}                Returns the instance itself.
    */
   public unbind(events?: string | string[], handler?: Function) {
-    let i;
-    let n;
     const eArray = typeof events === "string" ? events.split(" ") : events;
 
     if (!arguments.length) {
@@ -77,9 +72,9 @@ export default class Dispatcher implements SigmaDispatcher {
     }
 
     if (handler) {
-      eArray.forEach(event => {
+      (eArray || []).forEach(event => {
         if (this.handlers[event]) {
-          const savedHandlers = [];
+          const savedHandlers: SigmaEventHandler[] = [];
           this.handlers[event].forEach(h => {
             if (h.handler !== handler) {
               savedHandlers.push(h);
@@ -91,9 +86,13 @@ export default class Dispatcher implements SigmaDispatcher {
         if (this.handlers[event] && this.handlers[event].length === 0)
           delete this.handlers[event];
       });
-    } else
-      for (i = 0, n = eArray.length; i !== n; i += 1)
-        delete this.handlers[eArray[i]];
+    } else {
+      (eArray || []).forEach(event => {
+        if (this.handlers[event]) {
+          delete this.handlers[event];
+        }
+      });
+    }
 
     return this;
   }
@@ -114,7 +113,7 @@ export default class Dispatcher implements SigmaDispatcher {
     eArray.forEach(eventName => {
       if (this.handlers[eventName]) {
         const event = self.getEvent(eventName, data);
-        const savedHandlers = [];
+        const savedHandlers: SigmaEventHandler[] = [];
 
         this.handlers[eventName].forEach(handler => {
           handler.handler(event);
@@ -157,7 +156,7 @@ export default class Dispatcher implements SigmaDispatcher {
           `dispatcher method ${method} is already defined on target`
         );
       }
-      target[method] = instance[method];
+      target[method] = (instance as any)[method];
     });
   }
 }

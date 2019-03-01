@@ -1,3 +1,5 @@
+import { Keyed } from "../../../core/interfaces";
+
 /* eslint-disable no-eval */
 export default function extend(sigma, global = window) {
   /**
@@ -165,7 +167,7 @@ export default function extend(sigma, global = window) {
   Supervisor.prototype.sendByteArrayToWorker = function sendByteArrayToWorker(
     action
   ) {
-    const content: { [key: string]: any } = {
+    const content: Keyed<any> = {
       action: action || "loop",
       nodes: this.nodesByteArray.buffer
     };

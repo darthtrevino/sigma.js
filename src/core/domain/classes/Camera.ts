@@ -3,8 +3,8 @@ import rotation from "../utils/matrices/rotation";
 import translation from "../utils/matrices/translation";
 import multiply from "../utils/matrices/multiply";
 import Dispatcher from "./Dispatcher";
-import Quad from "./Quad";
-import EdgeQuad from "./EdgeQuad";
+import { AbstractQuad as Quad } from "./quadtree/AbstractQuad";
+import { Edge, Node, Keyed } from "../../interfaces";
 
 export interface CameraLocation {
   x: number;
@@ -33,8 +33,8 @@ export default class Camera extends Dispatcher {
   public prefix: string;
   public readPrefix: string;
   public kill?: Function;
-  public quadtree?: Quad;
-  public edgequadtree?: EdgeQuad;
+  public quadtree?: Quad<Node>;
+  public edgequadtree?: Quad<Edge>;
 
   constructor(
     public id: string,
@@ -58,15 +58,15 @@ export default class Camera extends Dispatcher {
    * @param  {object} coordinates The new coordinates object.
    * @return {camera}             Returns the camera.
    */
-  public goTo = coordinates => {
+  public goTo = (coordinates?: CameraLocation) => {
     if (!this.settings("enableCamera")) return this;
 
-    const c = coordinates || {};
+    const c: Keyed<any> = coordinates || {};
     const keys = ["x", "y", "ratio", "angle"];
     keys.forEach(key => {
       if (c[key] !== undefined) {
         if (typeof c[key] === "number" && !Number.isNaN(c[key]))
-          this[key] = c[key];
+          (this as any)[key] = (c as any)[key];
         else throw new Error(`Value for "${key}" is not a number.`);
       }
     });
@@ -92,16 +92,18 @@ export default class Camera extends Dispatcher {
    *                           - A height.
    * @return {camera}        Returns the camera.
    */
-  public applyView = (read: string, write: string, options?: any) => {
+  public applyView = (read?: string, write?: string, options?: any) => {
     options = options || {};
     write = write !== undefined ? write : this.prefix;
     read = read !== undefined ? read : this.readPrefix;
-    const nodes = options.nodes || this.graph.nodes();
-    const edges = options.edges || this.graph.edges();
+
+    const nodes: Node[] = options.nodes || this.graph.nodes();
+    const edges: Edge[] = options.edges || this.graph.edges();
     const relCos = Math.cos(this.angle) / this.ratio;
     const relSin = Math.sin(this.angle) / this.ratio;
     const nodeRatio = this.ratio ** this.settings("nodesPowRatio");
     const edgeRatio = this.ratio ** this.settings("edgesPowRatio");
+
     const xOffset =
       (options.width || 0) / 2 - this.x * relCos - this.y * relSin;
     const yOffset =

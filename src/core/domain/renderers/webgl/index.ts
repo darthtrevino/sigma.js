@@ -5,7 +5,14 @@ import Dispatcher from "../../classes/Dispatcher";
 import getPixelRatio from "../../utils/events/getPixelRatio";
 import multiply from "../../utils/matrices/multiply";
 import translation from "../../utils/matrices/translation";
-import { SigmaLibrary, Renderer, Captor, Edge } from "../../../interfaces";
+import {
+  SigmaLibrary,
+  Renderer,
+  Captor,
+  Edge,
+  Node,
+  Keyed
+} from "../../../interfaces";
 import Graph from "../../classes/Graph";
 import Camera from "../../classes/Camera";
 import { Settings } from "../../classes/Configurable";
@@ -15,7 +22,7 @@ export default (sigma: SigmaLibrary) => {
     public id = "__ID_NOT_SET__";
 
     // Conrad Properties
-    private jobs = {};
+    private jobs: Keyed<Function> = {};
     private conradId = id();
 
     // Main attributes
@@ -26,20 +33,22 @@ export default (sigma: SigmaLibrary) => {
       edges: WebGLRenderingContext;
       [key: string]: WebGLRenderingContext | CanvasRenderingContext2D;
     } = {} as any;
-    private domElements: { [key: string]: HTMLElement } = {};
+    private domElements: Keyed<HTMLElement> = {};
     private container: HTMLElement;
     public captors: Captor[];
     public width: number = 0;
     public height: number = 0;
 
     // Rendering attributes
-    private nodePrograms = {};
-    private edgePrograms = {};
-    private nodeFloatArrays = {};
+    private nodePrograms: Keyed<WebGLProgram> = {};
+    private edgePrograms: Keyed<WebGLProgram> = {};
+    private nodeFloatArrays: {
+      [key: string]: { nodes: Node[]; array: Float32Array };
+    } = {} as any;
     private edgeFloatArrays: {
-      [key: string]: { edges: Edge[]; array?: Float32Array };
-    } = {};
-    private edgeIndicesArrays = {};
+      [key: string]: { edges: Edge[]; array: Float32Array };
+    } = {} as any;
+    private edgeIndicesArrays: Keyed<Uint16Array> = {};
 
     /**
      * This function is the constructor of the canvas sigma's renderer.
@@ -55,7 +64,7 @@ export default (sigma: SigmaLibrary) => {
       public graph: Graph,
       public camera: Camera,
       public settings: Settings,
-      public options
+      public options: any
     ) {
       super();
       if (typeof options !== "object") {
@@ -95,7 +104,7 @@ export default (sigma: SigmaLibrary) => {
         sigma.captors.mouse,
         sigma.captors.touch
       ];
-      this.captors = captors.map(captor => {
+      this.captors = captors.map((captor: Function | string) => {
         const Captor =
           typeof captor === "function" ? captor : sigma.captors[captor];
         return new Captor(this.domElements.mouse, this.camera, this.settings);
@@ -122,7 +131,7 @@ export default (sigma: SigmaLibrary) => {
      *
      * @return {WebGLRenderer} Returns the instance itself.
      */
-    public process(params) {
+    public process(params: any) {
       let a;
       let i;
       let l;
@@ -152,7 +161,7 @@ export default (sigma: SigmaLibrary) => {
         if (!this.edgeFloatArrays[k]) {
           this.edgeFloatArrays[k] = {
             edges: []
-          };
+          } as any;
         }
 
         this.edgeFloatArrays[k].edges.push(edge);
@@ -165,7 +174,7 @@ export default (sigma: SigmaLibrary) => {
         if (!this.nodeFloatArrays[k])
           this.nodeFloatArrays[k] = {
             nodes: []
-          };
+          } as any;
 
         this.nodeFloatArrays[k].nodes.push(a[i]);
       }
@@ -251,15 +260,16 @@ export default (sigma: SigmaLibrary) => {
       let matrix = this.camera.getMatrix();
       const options = { ...params, ...this.options };
       const drawLabels = this.settings(options, "drawLabels");
-      let drawEdges = this.settings(options, "drawEdges");
+      const drawEdges =
+        this.settings(options, "drawEdges") &&
+        !(
+          this.settings(options, "hideEdgesOnMove") &&
+          (this.camera.isAnimated || this.camera.isMoving)
+        );
       const drawNodes = this.settings(options, "drawNodes");
 
       // Call the resize function:
       this.resize();
-
-      // Check the 'hideEdgesOnMove' setting:
-      if (this.settings(options, "hideEdgesOnMove"))
-        if (this.camera.isAnimated || this.camera.isMoving) drawEdges = false;
 
       // Clear canvases:
       this.clear();
@@ -273,11 +283,11 @@ export default (sigma: SigmaLibrary) => {
       });
 
       if (drawEdges) {
-        if (this.settings(options, "batchEdgesDrawing"))
-          (function batch() {
-            let arr;
-            let end;
-            let start;
+        if (this.settings(options, "batchEdgesDrawing")) {
+          const batch = () => {
+            let arr: Float32Array;
+            let end: number;
+            let start: number;
 
             const edgeBatchId = `edges_${this.conradId}`;
             const batchSize = this.settings(options, "webglEdgesBatchSize");
@@ -348,8 +358,9 @@ export default (sigma: SigmaLibrary) => {
 
             this.jobs[edgeBatchId] = job;
             conrad.addJob(edgeBatchId, job);
-          }.call(this));
-        else {
+          };
+          batch();
+        } else {
           Object.keys(this.edgeFloatArrays).forEach(k => {
             const renderer = sigma.webgl.edges[k];
 
@@ -414,7 +425,7 @@ export default (sigma: SigmaLibrary) => {
         });
       }
 
-      const a = this.camera.quadtree.area(
+      const a = this.camera.quadtree!.area(
         this.camera.getRectangle(this.width, this.height)
       );
 
@@ -468,7 +479,7 @@ export default (sigma: SigmaLibrary) => {
           {
             preserveDrawingBuffer: true
           }
-        );
+        ) as WebGLRenderingContext | CanvasRenderingContext2D;
 
         // Adding webgl context loss listeners
         if (webgl) {
@@ -500,14 +511,16 @@ export default (sigma: SigmaLibrary) => {
       const oldHeight = this.height;
       const pixelRatio = getPixelRatio();
 
-      if (w !== undefined && h !== undefined) {
+      if (w !== undefined) {
         this.width = w;
-        this.height = h;
       } else {
         this.width = this.container.offsetWidth;
-        this.height = this.container.offsetHeight;
-
         w = this.width;
+      }
+      if (h !== undefined) {
+        this.height = h;
+      } else {
+        this.height = this.container.offsetHeight;
         h = this.height;
       }
 
@@ -516,24 +529,24 @@ export default (sigma: SigmaLibrary) => {
           const context = this.contexts[k] as CanvasRenderingContext2D;
           const element = this.domElements[k];
 
-          element.style.width = `${w}px`;
-          element.style.height = `${h}px`;
+          element.style.width = `${w!}px`;
+          element.style.height = `${h!}px`;
 
           if (element.tagName.toLowerCase() === "canvas") {
             // If simple 2D canvas:
             if (context && context.scale) {
-              element.setAttribute("width", `${w * pixelRatio}px`);
-              element.setAttribute("height", `${h * pixelRatio}px`);
+              element.setAttribute("width", `${w! * pixelRatio}px`);
+              element.setAttribute("height", `${h! * pixelRatio}px`);
 
               if (pixelRatio !== 1) context.scale(pixelRatio, pixelRatio);
             } else {
               element.setAttribute(
                 "width",
-                `${w * this.settings("webglOversamplingRatio")}px`
+                `${w! * this.settings("webglOversamplingRatio")}px`
               );
               element.setAttribute(
                 "height",
-                `${h * this.settings("webglOversamplingRatio")}px`
+                `${h! * this.settings("webglOversamplingRatio")}px`
               );
             }
           }
@@ -581,7 +594,10 @@ export default (sigma: SigmaLibrary) => {
 
       // Kill contexts:
       Object.keys(this.domElements).forEach(k => {
-        this.domElements[k]!.parentNode.removeChild(this.domElements[k]);
+        const parent = this.domElements[k]!.parentNode;
+        if (parent) {
+          parent.removeChild(this.domElements[k]);
+        }
         delete this.domElements[k];
         delete this.contexts[k];
       });

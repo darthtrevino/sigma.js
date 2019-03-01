@@ -59,8 +59,11 @@ export default {
     settings: Settings
   ) {
     const prefix = settings("prefix") || "";
-
-    path.setAttributeNS(null, "stroke-width", edge[`${prefix}size`] || 1);
+    path.setAttributeNS(
+      null,
+      "stroke-width",
+      (edge as any)[`${prefix}size`] || 1
+    );
 
     // Control point
     const cx =

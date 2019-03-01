@@ -1,4 +1,4 @@
-export default function getX(event: MouseEvent | TouchEvent) {
+export default function getX(event: MouseEvent | TouchEvent): number {
   const e = event as any;
   return (
     (e.offsetX !== undefined && e.offsetX) ||

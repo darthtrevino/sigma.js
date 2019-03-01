@@ -1,11 +1,11 @@
-export interface QuadTree {
+export interface QuadTree<T> {
   level: number;
   bounds: Boundaries;
   corners: QuadTreeRectangle;
   maxElements: number;
   maxLevel: number;
-  elements: any[];
-  nodes: any[];
+  elements: T[];
+  nodes: QuadTree<T>[];
 }
 
 export interface Point {

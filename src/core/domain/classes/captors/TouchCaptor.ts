@@ -1,10 +1,10 @@
-import Dispatcher from "./Dispatcher";
-import unbindDoubleClick from "../utils/events/unbindDoubleClick";
-import mouseCoords from "../utils/events/mouseCoords";
-import getCenter from "../utils/events/getCenter";
-import getOffset from "../utils/events/getOffset";
-import Camera from "./Camera";
-import { SigmaLibrary } from "../../interfaces";
+import Dispatcher from "../Dispatcher";
+import unbindDoubleClick from "../../utils/events/unbindDoubleClick";
+import mouseCoords from "../../utils/events/mouseCoords";
+import getCenter from "../../utils/events/getCenter";
+import getOffset from "../../utils/events/getOffset";
+import Camera from "../Camera";
+import { SigmaLibrary } from "../../../interfaces";
 
 export default function touchCaptor(sigma: SigmaLibrary) {
   /**
@@ -52,15 +52,12 @@ export default function touchCaptor(sigma: SigmaLibrary) {
     ) {
       super();
 
-      sigma.utils.events.doubleClick(
-        target,
-        "touchstart",
-        this.doubleTapHandler
-      );
+      sigma.utils.events.doubleClick(target, "touchstart", this
+        .doubleTapHandler as any);
       target.addEventListener("touchstart", this.handleStart, false);
       target.addEventListener("touchend", this.handleLeave, false);
-      target.addEventListener("touchcancel", this.handleLeave, false);
-      target.addEventListener("touchleave", this.handleLeave, false);
+      target.addEventListener("touchcancel", this.handleLeave as any, false);
+      target.addEventListener("touchleave", this.handleLeave as any, false);
       target.addEventListener("touchmove", this.handleMove, false);
     }
 
@@ -72,7 +69,7 @@ export default function touchCaptor(sigma: SigmaLibrary) {
       this.target.addEventListener("touchstart", this.handleStart);
       this.target.addEventListener("touchend", this.handleLeave);
       this.target.addEventListener("touchcancel", this.handleLeave);
-      this.target.addEventListener("touchleave", this.handleLeave);
+      this.target.addEventListener("touchleave", this.handleLeave as any);
       this.target.addEventListener("touchmove", this.handleMove);
     };
 
@@ -228,7 +225,7 @@ export default function touchCaptor(sigma: SigmaLibrary) {
      *
      * @param {event} e A touch event.
      */
-    private handleMove = e => {
+    private handleMove = (e: TouchEvent) => {
       if (!this.doubleTap && this.settings("touchEnabled")) {
         let x0;
         let x1;
@@ -286,8 +283,8 @@ export default function touchCaptor(sigma: SigmaLibrary) {
             }
             break;
           case 2:
-            pos0 = this.position(this.downTouches[0]);
-            pos1 = this.position(this.downTouches[1]);
+            pos0 = this.position(this.downTouches[0]!);
+            pos1 = this.position(this.downTouches[1]!);
             x0 = pos0.x;
             y0 = pos0.y;
             x1 = pos1.x;
@@ -367,7 +364,7 @@ export default function touchCaptor(sigma: SigmaLibrary) {
      *
      * @param {event} e A touch event.
      */
-    private doubleTapHandler = e => {
+    private doubleTapHandler = (e: TouchEvent) => {
       let pos;
       let ratio;
       let animation;
