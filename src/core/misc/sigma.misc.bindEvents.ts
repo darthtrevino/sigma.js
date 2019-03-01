@@ -106,7 +106,7 @@ export default function configure(sigma: SigmaLibrary) {
       const modifiedX = mX + self.width / 2;
       const modifiedY = mY + self.height / 2;
       const point = self.camera.cameraPosition(mX, mY);
-      let edges = [];
+      let edges: Edge[] = [];
 
       if (isCanvas) {
         const nodesOnScreen = self.camera.quadtree!.area(
@@ -134,8 +134,7 @@ export default function configure(sigma: SigmaLibrary) {
       }
 
       if (edges.length)
-        for (i = 0, l = edges.length; i < l; i++) {
-          edge = edges[i];
+        edges.forEach(edge => {
           const [source, target] = self.graph.nodes(edge.source, edge.target);
           // (HACK) we can't get edge[prefix + 'size'] on WebGL renderer:
           s = edge[`${prefix}size`] || edge[`read_${prefix}size`];
@@ -226,7 +225,7 @@ export default function configure(sigma: SigmaLibrary) {
               insertEdge(selected, edge);
             }
           }
-        }
+        });
 
       return selected;
     }

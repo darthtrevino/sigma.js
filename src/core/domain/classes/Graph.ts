@@ -1,6 +1,6 @@
 import { Edge, Node, Keyed } from "../../interfaces";
 import emptyObject from "../utils/misc/emptyObject";
-type NamedBindings = Keyed<Function>;
+type NamedBindings = Keyed<Function | null>;
 
 const _methods: NamedBindings = Object.create(null);
 // tracks binding objects that have been registered.
@@ -32,12 +32,19 @@ const _defaultSettingsFunction = function _defaultSettingsFunction(
  * @param  {function} fn         The method itself.
  * @return {function}            The new method.
  */
-function bindGraphMethod(methodName, scope, fn): Function {
-  return (...boundArgs) => {
+function bindGraphMethod(
+  methodName: string,
+  scope: any,
+  fn: Function
+): Function {
+  return (...boundArgs: any[]) => {
     // Execute "before" bound functions:
     const beforeBindings = _methodBeforeBindings[methodName];
     Object.keys(beforeBindings).forEach(k => {
-      beforeBindings[k].apply(scope, boundArgs);
+      const fn = beforeBindings[k];
+      if (fn) {
+        fn.apply(scope, boundArgs);
+      }
     });
 
     // Apply the method:
@@ -46,7 +53,10 @@ function bindGraphMethod(methodName, scope, fn): Function {
     // Execute bound functions:
     const methodBindings = _methodBindings[methodName];
     Object.keys(methodBindings).forEach(k => {
-      methodBindings[k].apply(scope, boundArgs);
+      const fn = methodBindings[k];
+      if (fn) {
+        fn.apply(scope, boundArgs);
+      }
     });
 
     // Return res:
@@ -78,16 +88,16 @@ class Graph {
    * MAIN DATA:
    * **********
    */
-  public nodesArray = [];
-  public edgesArray = [];
+  public nodesArray: Node[] = [];
+  public edgesArray: Edge[] = [];
 
   /**
    * GLOBAL INDEXES:
    * ***************
    * These indexes just index data by ids.
    */
-  public nodesIndex = Object.create(null);
-  public edgesIndex = Object.create(null);
+  public nodesIndex: Keyed<Node> = Object.create(null);
+  public edgesIndex: Keyed<Edge> = Object.create(null);
 
   /**
    * LOCAL INDEXES:
@@ -95,13 +105,13 @@ class Graph {
    * These indexes refer from node to nodes. Each key is an id, and each
    * value is the array of the ids of related nodes.
    */
-  public inNeighborsIndex = Object.create(null);
-  public outNeighborsIndex = Object.create(null);
-  public allNeighborsIndex = Object.create(null);
+  public inNeighborsIndex: Keyed<Keyed<Keyed<number>>> = Object.create(null);
+  public outNeighborsIndex: Keyed<Keyed<Keyed<number>>> = Object.create(null);
+  public allNeighborsIndex: Keyed<Keyed<Keyed<number>>> = Object.create(null);
 
-  public inNeighborsCount = Object.create(null);
-  public outNeighborsCount = Object.create(null);
-  public allNeighborsCount = Object.create(null);
+  public inNeighborsCount: Keyed<number> = Object.create(null);
+  public outNeighborsCount: Keyed<number> = Object.create(null);
+  public allNeighborsCount: Keyed<number> = Object.create(null);
 
   constructor(settings?: any) {
     this.settings = settings || _defaultSettingsFunction;
@@ -117,16 +127,21 @@ class Graph {
     this.edges = this.edges.bind(this);
 
     // Execute bindings:
-    Object.keys(_initBindings).forEach(k => _initBindings[k].call(this));
+    Object.keys(_initBindings).forEach(k => {
+      const fn = _initBindings[k];
+      if (fn) {
+        fn.call(this);
+      }
+    });
 
     // Add methods to both the scope and the data objects:
     Object.keys(_methods).forEach(methodName => {
       const method = bindGraphMethod(
         methodName,
         this,
-        _methods[methodName] || this[methodName]
+        _methods[methodName] || (this as any)[methodName]
       );
-      this[methodName] = method;
+      (this as any)[methodName] = method;
     });
   }
 
@@ -142,7 +157,7 @@ class Graph {
    * @param  {object} node The node to add.
    * @return {object}      The graph instance.
    */
-  public addNode(node) {
+  public addNode(node: Node) {
     // Check that the node is an object and has an id:
     if (Object(node) !== node || arguments.length !== 1)
       throw new Error("addNode: Wrong arguments.");
@@ -204,7 +219,7 @@ class Graph {
    * @param  {object} edge The edge to add.
    * @return {object}      The graph instance.
    */
-  public addEdge(edge) {
+  public addEdge(edge: Edge) {
     // Check that the edge is an object and has an id:
     if (Object(edge) !== edge || arguments.length !== 1)
       throw new Error("addEdge: Wrong arguments.");
@@ -488,7 +503,7 @@ class Graph {
    * @param  {object} g The graph object.
    * @return {object}   The graph instance.
    */
-  public read(g) {
+  public read(g: { nodes?: Node[]; edges?: Edge[] }) {
     (g.nodes || []).forEach(n => this.addNode(n));
     (g.edges || []).forEach(e => this.addEdge(e));
     return this;
@@ -528,29 +543,28 @@ class Graph {
    *                              'out', and by default the normal degree.
    * @return {number|array}       The related degree or array of degrees.
    */
-  public degree(v: string | string[], which?: "in" | "out") {
+  public degree(v: string | string[], inWhich?: "in" | "out") {
     // Check which degree is required:
-    which =
-      {
-        in: this.inNeighborsCount,
-        out: this.outNeighborsCount
-      }[which || ""] || this.allNeighborsCount;
+    const whichMap: Keyed<Keyed<number>> = {
+      in: this.inNeighborsCount,
+      out: this.outNeighborsCount
+    };
+    const which = inWhich ? whichMap[inWhich] : this.allNeighborsCount;
 
     // Return the related node:
-    if (typeof v === "string" || typeof v === "number") return which[v];
+    if (typeof v === "string" || typeof v === "number") {
+      return which[v];
+    }
 
     // Return an array of the related node:
     if (Object.prototype.toString.call(v) === "[object Array]") {
-      let i;
-      let l;
-      const a = [];
-
-      for (i = 0, l = v.length; i < l; i++)
-        if (typeof v[i] === "string" || typeof v[i] === "number")
-          a.push(which[v[i]]);
-        else throw new Error("degree: Wrong arguments.");
-
-      return a;
+      return (v as string[]).map(arg => {
+        if (typeof arg === "string" || typeof arg === "number") {
+          return which[arg];
+        } else {
+          throw new Error("degree: Wrong arguments.");
+        }
+      });
     }
 
     throw new Error("degree: Wrong arguments.");
@@ -609,7 +623,7 @@ class Graph {
     )
       throw new Error("addMethod: Wrong arguments.");
 
-    if (_methods[methodName] || Graph[methodName])
+    if (_methods[methodName] || (Graph as any)[methodName]!)
       throw new Error(`The method "${methodName}" already exists.`);
 
     _methods[methodName] = fn;
@@ -644,7 +658,7 @@ class Graph {
    * @return {boolean}            The result.
    */
   public static hasMethod(methodName: string) {
-    return !!(_methods[methodName] || Graph[methodName]);
+    return !!(_methods[methodName] || (Graph as any)[methodName]);
   }
 
   /**
@@ -782,17 +796,19 @@ class Graph {
     )
       throw new Error("addIndex: Wrong arguments.");
 
-    if (_indexes[name]) throw new Error(`The index "${name}" already exists.`);
+    if (_indexes.has(name)) {
+      throw new Error(`The index "${name}" already exists.`);
+    }
 
     // Store the bindings:
-    _indexes[name] = bindings;
+    _indexes.add(name);
 
     // Attach the bindings:
     Object.keys(bindings).forEach(k => {
       if (typeof bindings[k] !== "function") {
         throw new Error("The bindings must be functions.");
       }
-      Graph.attach(k, name, bindings[k]);
+      Graph.attach(k, name, bindings[k]!);
     });
 
     return this;

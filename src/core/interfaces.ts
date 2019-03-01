@@ -4,13 +4,16 @@ import Graph from "./domain/classes/Graph";
 import { Point, Line } from "./domain/utils/geometry/interfaces";
 import Dispatcher from "./domain/classes/Dispatcher";
 import configurable, { Settings } from "./domain/classes/Configurable";
-import EdgeQuad from "./domain/classes/EdgeQuad";
-import Quad from "./domain/classes/Quad";
+import EdgeQuad from "./domain/classes/quadtree/EdgeQuad";
+import NodeQuad from "./domain/classes/quadtree/NodeQuad";
 
 export interface Keyed<T> {
   [key: string]: T;
 }
 
+export interface Identified {
+  id: string;
+}
 export interface SigmaEventHandler {
   handler: Function;
   one?: boolean;
@@ -993,9 +996,9 @@ export interface SigmaClasses extends Keyed<any> {
   dispatcher: typeof Dispatcher;
   configurable: typeof configurable;
   camera: typeof Camera;
-  edgequad: typeof EdgeQuad;
   graph: typeof Graph;
-  quad: typeof Quad;
+  edgequad: typeof EdgeQuad;
+  quad: typeof NodeQuad;
 }
 
 /**

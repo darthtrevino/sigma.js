@@ -1,12 +1,12 @@
-import Dispatcher from "./Dispatcher";
-import unbindDoubleClick from "../utils/events/unbindDoubleClick";
-import mouseCoords from "../utils/events/mouseCoords";
-import getX from "../utils/events/getX";
-import getY from "../utils/events/getY";
-import getCenter from "../utils/events/getCenter";
-import getDelta from "../utils/events/getDelta";
-import Camera from "./Camera";
-import { SigmaLibrary } from "../../interfaces";
+import Dispatcher from "../Dispatcher";
+import unbindDoubleClick from "../../utils/events/unbindDoubleClick";
+import mouseCoords from "../../utils/events/mouseCoords";
+import getX from "../../utils/events/getX";
+import getY from "../../utils/events/getY";
+import getCenter from "../../utils/events/getCenter";
+import getDelta from "../../utils/events/getDelta";
+import Camera from "../Camera";
+import { SigmaLibrary } from "../../../interfaces";
 
 export default (sigma: SigmaLibrary) => {
   /**
@@ -39,7 +39,7 @@ export default (sigma: SigmaLibrary) => {
     private isMoving = false;
     private hasDragged = false;
     private downStartTime = 0;
-    private movingTimeoutId = null;
+    private movingTimeoutId: number | null = null;
 
     constructor(
       private target: HTMLElement,
@@ -50,14 +50,10 @@ export default (sigma: SigmaLibrary) => {
       sigma.utils.events.doubleClick(target, "click", this.doubleClickHandler);
       target.addEventListener(
         "DOMMouseScroll",
-        this.wheelHandler.bind(this),
+        this.wheelHandler as any,
         false
       );
-      target.addEventListener(
-        "mousewheel",
-        this.wheelHandler.bind(this),
-        false
-      );
+      target.addEventListener("mousewheel", this.wheelHandler as any, false);
       target.addEventListener("mousemove", this.moveHandler, false);
       target.addEventListener("mousedown", this.downHandler, false);
       target.addEventListener("click", this.clickHandler, false);
@@ -71,7 +67,7 @@ export default (sigma: SigmaLibrary) => {
      *
      * @param {event} e A mouse event.
      */
-    private moveHandler = e => {
+    private moveHandler = (e: MouseEvent) => {
       let x;
       let y;
       let pos;
@@ -86,9 +82,9 @@ export default (sigma: SigmaLibrary) => {
 
           if (this.movingTimeoutId) clearTimeout(this.movingTimeoutId);
 
-          this.movingTimeoutId = setTimeout(function stopMoving() {
+          this.movingTimeoutId = (setTimeout(() => {
             this.isMoving = false;
-          }, this.settings("dragTimeout"));
+          }, this.settings("dragTimeout")) as unknown) as number;
 
           sigma.misc.animation.killAll(this.camera);
 
@@ -128,10 +124,12 @@ export default (sigma: SigmaLibrary) => {
      *
      * @param {event} e A mouse event.
      */
-    private upHandler = e => {
+    private upHandler = (e: MouseEvent) => {
       if (this.settings("mouseEnabled") && this.isMouseDown) {
         this.isMouseDown = false;
-        if (this.movingTimeoutId) clearTimeout(this.movingTimeoutId);
+        if (this.movingTimeoutId) {
+          clearTimeout(this.movingTimeoutId);
+        }
 
         this.camera.isMoving = false;
 
@@ -176,7 +174,7 @@ export default (sigma: SigmaLibrary) => {
      *
      * @param {event} e A mouse event.
      */
-    private downHandler = e => {
+    private downHandler = (e: MouseEvent) => {
       if (this.settings("mouseEnabled")) {
         this.startCameraX = this.camera.x;
         this.startCameraY = this.camera.y;
@@ -340,8 +338,8 @@ export default (sigma: SigmaLibrary) => {
     public kill = () => {
       const { target } = this;
       unbindDoubleClick(target, "click");
-      target.removeEventListener("DOMMouseScroll", this.wheelHandler);
-      target.removeEventListener("mousewheel", this.wheelHandler);
+      target.removeEventListener("DOMMouseScroll", this.wheelHandler as any);
+      target.removeEventListener("mousewheel", this.wheelHandler as any);
       target.removeEventListener("mousemove", this.moveHandler);
       target.removeEventListener("mousedown", this.downHandler);
       target.removeEventListener("click", this.clickHandler);

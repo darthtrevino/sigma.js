@@ -44,7 +44,7 @@ export default function rescale(
     rescaleSettings = ["nodePosition", "nodeSize", "edgeSize"];
   }
 
-  rescaleSettings.forEach(setting => {
+  rescaleSettings.forEach((setting: any) => {
     if (!validSettings[setting])
       throw new Error(`The rescale setting "${setting}" is not recognized.`);
   });
