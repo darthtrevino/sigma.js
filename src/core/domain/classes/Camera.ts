@@ -96,12 +96,14 @@ export default class Camera extends Dispatcher {
     options = options || {};
     write = write !== undefined ? write : this.prefix;
     read = read !== undefined ? read : this.readPrefix;
+
     const nodes: Node[] = options.nodes || this.graph.nodes();
     const edges: Edge[] = options.edges || this.graph.edges();
     const relCos = Math.cos(this.angle) / this.ratio;
     const relSin = Math.sin(this.angle) / this.ratio;
     const nodeRatio = this.ratio ** this.settings("nodesPowRatio");
     const edgeRatio = this.ratio ** this.settings("edgesPowRatio");
+
     const xOffset =
       (options.width || 0) / 2 - this.x * relCos - this.y * relSin;
     const yOffset =

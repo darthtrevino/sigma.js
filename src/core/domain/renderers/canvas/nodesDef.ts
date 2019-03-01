@@ -14,9 +14,9 @@ export default function nodesDef(
   settings: Settings
 ) {
   const prefix = settings("prefix") || "";
-
   context.fillStyle = node.color || settings("defaultNodeColor");
   context.beginPath();
+
   context.arc(
     node[`${prefix}x`],
     node[`${prefix}y`],

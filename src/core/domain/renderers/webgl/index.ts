@@ -260,15 +260,16 @@ export default (sigma: SigmaLibrary) => {
       let matrix = this.camera.getMatrix();
       const options = { ...params, ...this.options };
       const drawLabels = this.settings(options, "drawLabels");
-      let drawEdges = this.settings(options, "drawEdges");
+      const drawEdges =
+        this.settings(options, "drawEdges") &&
+        !(
+          this.settings(options, "hideEdgesOnMove") &&
+          (this.camera.isAnimated || this.camera.isMoving)
+        );
       const drawNodes = this.settings(options, "drawNodes");
 
       // Call the resize function:
       this.resize();
-
-      // Check the 'hideEdgesOnMove' setting:
-      if (this.settings(options, "hideEdgesOnMove"))
-        if (this.camera.isAnimated || this.camera.isMoving) drawEdges = false;
 
       // Clear canvases:
       this.clear();
@@ -512,14 +513,14 @@ export default (sigma: SigmaLibrary) => {
 
       if (w !== undefined) {
         this.width = w;
-        this.width = this.container.offsetWidth;
       } else {
+        this.width = this.container.offsetWidth;
         w = this.width;
       }
       if (h !== undefined) {
         this.height = h;
-        this.height = this.container.offsetHeight;
       } else {
+        this.height = this.container.offsetHeight;
         h = this.height;
       }
 

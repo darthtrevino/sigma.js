@@ -418,14 +418,14 @@ export default (sigma: SigmaLibrary) => {
 
       if (w !== undefined) {
         this.width = w;
-        this.width = this.container.offsetWidth;
       } else {
+        this.width = this.container.offsetWidth;
         w = this.width;
       }
       if (h !== undefined) {
         this.height = h;
-        this.height = this.container.offsetHeight;
       } else {
+        this.height = this.container.offsetHeight;
         h = this.height;
       }
 
