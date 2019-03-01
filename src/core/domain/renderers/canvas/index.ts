@@ -112,7 +112,6 @@ export default (sigma: SigmaLibrary) => {
      */
     public render(options?: any) {
       options = options || {};
-      let o;
       const index: Keyed<boolean> = {};
       let drawEdges = this.settings(options, "drawEdges");
       const drawNodes = this.settings(options, "drawNodes");
