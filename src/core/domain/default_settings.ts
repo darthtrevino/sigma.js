@@ -109,6 +109,7 @@ const settings: SigmaSettings = {
   hideEdgesOnMove: false,
   // {numbers} The different batch sizes, when elements are displayed in
   //           several frames.
+  edgesBatchSize: 500,
   canvasEdgesBatchSize: 500,
   webglEdgesBatchSize: 1000,
 

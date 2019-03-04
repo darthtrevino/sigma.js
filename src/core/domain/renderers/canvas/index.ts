@@ -185,8 +185,9 @@ export default (sigma: SigmaLibrary) => {
       // If the "batchEdgesDrawing" settings is true, edges are batched:
       if (isBatched) {
         const edgeJobId = `edges_${this.conradId}`;
-        const batchSize = embedSettings("canvasEdgesBatchSize");
-
+        const batchSize =
+          embedSettings("canvasEdgesBatchSize") ||
+          embedSettings("edgesBatchSize");
         const edges = this.edgesOnScreen;
 
         let start = 0;

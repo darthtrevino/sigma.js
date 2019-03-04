@@ -340,7 +340,9 @@ export default (sigma: SigmaLibrary) => {
         let start: number;
 
         const edgeBatchId = `edges_${this.conradId}`;
-        const batchSize = this.settings(options, "webglEdgesBatchSize");
+        const batchSize =
+          this.settings(options, "webglEdgesBatchSize") ||
+          this.settings("edgesBatchSize");
         const a = Object.keys(this.edgeFloatArrays);
 
         if (!a.length) return;
