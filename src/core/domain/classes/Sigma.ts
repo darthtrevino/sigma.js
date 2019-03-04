@@ -53,6 +53,7 @@ function unpackConf(conf: string | HTMLElement | Object): SigmaConfiguration {
     )
       result.renderers = [o];
   }
+  console.log("SIGMA CONFIG", result);
   return result;
 }
 
@@ -362,7 +363,10 @@ class Sigma extends Dispatcher {
       );
 
     // Find the good constructor:
-    fn = typeof o.type === "function" ? o.type : Sigma.renderers[o.type];
+    fn =
+      typeof o.type === "function"
+        ? o.type
+        : Sigma.renderers[o.type || this.conf.type];
     fn = fn || Sigma.renderers.def;
 
     // Find the good camera:

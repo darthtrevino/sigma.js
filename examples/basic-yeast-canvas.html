@@ -43,7 +43,7 @@
       s = new sigma({
         graph: data,
         container: "graph-container",
-        type: "webgl",
+        type: "canvas",
         settings: {
           drawLabels: false,
           drawEdgeLabels: false,
@@ -54,6 +54,6 @@
         }
       });
       //s.startForceAtlas2();
-      console.log("Sigma", s, sigma);
+      window.s = s;
     });
 </script>

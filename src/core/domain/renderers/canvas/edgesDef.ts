@@ -18,15 +18,12 @@ export default function edgesDef(
   settings: Settings
 ) {
   let { color } = edge;
-
   const prefix = settings("prefix") || "";
   const size = (edge as any)[`${prefix}size`] || 1;
-  const edgeColor = settings("edgeColor");
   const defaultNodeColor = settings("defaultNodeColor");
-  const defaultEdgeColor = settings("defaultEdgeColor");
 
   if (!color)
-    switch (edgeColor) {
+    switch (settings("edgeColor")) {
       case "source":
         color = source.color || defaultNodeColor;
         break;
@@ -34,7 +31,7 @@ export default function edgesDef(
         color = target.color || defaultNodeColor;
         break;
       default:
-        color = defaultEdgeColor;
+        color = settings("defaultEdgeColor");
         break;
     }
 
