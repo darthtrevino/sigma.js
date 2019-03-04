@@ -1,0 +1,60 @@
+<script src="../build/sigma.umd.js"></script>
+<script src="../build/plugins/sigma.layout.forceatlas2.min.js"></script>
+<div id="container">
+  <style>
+    #graph-container {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+    }
+  </style>
+  <div id="graph-container"></div>
+</div>
+<script>
+  /**
+   * This is a basic example on how to instantiate sigma. A random graph is
+   * generated and stored in the "graph" variable, and then sigma is instantiated
+   * directly with the graph.
+   *
+   * The simple instance of sigma is enough to make it render the graph on the on
+   * the screen, since the graph is given directly to the constructor.
+   */
+  var colors = [];
+  while (colors.length < 100) {
+    do {
+      var color = Math.floor(Math.random() * 1000000 + 1);
+    } while (colors.indexOf(color) >= 0);
+    colors.push("#" + ("000000" + color.toString(16)).slice(-6));
+  }
+  console.log(colors);
+
+  fetch("data/yeast.json")
+    .then(res => res.json())
+    .then(data => {
+      // Instantiate sigma:
+      data.nodes.forEach(node => {
+        node.color = colors[node.community % colors.length];
+      });
+      data.edges.forEach(edge => {
+        edge.color = "rgba(0,0,0,0.05)";
+      });
+
+      s = new sigma({
+        //graph: g,
+        graph: data,
+        container: "graph-container",
+        type: "webgl",
+        settings: {
+          drawLabels: false,
+          drawEdgeLabels: false,
+          //drawEdges: false,
+          batchEdgesDrawing: true,
+          webglEdgesBatchSize: 10000
+        }
+      });
+      //s.startForceAtlas2();
+      console.log("Sigma", s, sigma);
+    });
+</script>

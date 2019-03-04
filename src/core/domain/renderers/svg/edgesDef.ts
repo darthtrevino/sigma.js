@@ -14,11 +14,11 @@ export default {
    * @param  {configurable}             settings   The settings function.
    */
   create(edge: Edge, source: Node, target: Node, settings: Settings) {
-    let { color } = edge;
     const edgeColor = settings("edgeColor");
     const defaultNodeColor = settings("defaultNodeColor");
     const defaultEdgeColor = settings("defaultEdgeColor");
 
+    let { color } = edge;
     if (!color)
       switch (edgeColor) {
         case "source":
@@ -37,7 +37,7 @@ export default {
     // Attributes
     line.setAttributeNS(null, "data-edge-id", edge.id);
     line.setAttributeNS(null, "class", `${settings("classPrefix")}-edge`);
-    line.setAttributeNS(null, "stroke", color);
+    line.setAttributeNS(null, "stroke", color!);
 
     return line;
   },

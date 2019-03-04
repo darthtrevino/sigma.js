@@ -157,7 +157,7 @@ class Graph {
    * @param  {object} node The node to add.
    * @return {object}      The graph instance.
    */
-  public addNode(node: Node) {
+  public addNode(node: Partial<Node>) {
     // Check that the node is an object and has an id:
     if (Object(node) !== node || arguments.length !== 1)
       throw new Error("addNode: Wrong arguments.");
@@ -168,7 +168,7 @@ class Graph {
     if (this.nodesIndex[node.id])
       throw new Error(`The node "${node.id}" already exists.`);
 
-    const { id } = node;
+    const { id, type, size, label } = node;
     let validNode = Object.create(null);
 
     // Check the "clone" option:
@@ -186,7 +186,24 @@ class Graph {
         value: id,
         enumerable: true
       });
-    } else validNode.id = id;
+      Object.defineProperty(validNode, "type", {
+        value: type || "def",
+        enumerable: true
+      });
+      Object.defineProperty(validNode, "size", {
+        value: size || 5,
+        enumerable: true
+      });
+      Object.defineProperty(validNode, "label", {
+        value: label || `${id}`,
+        enumerable: true
+      });
+    } else {
+      validNode.id = id;
+      validNode.type = type || "def";
+      validNode.size = size || 5;
+      validNode.label = label || `${id}`;
+    }
 
     // Add empty containers for edges indexes:
     this.inNeighborsIndex[id] = Object.create(null);
@@ -219,7 +236,7 @@ class Graph {
    * @param  {object} edge The edge to add.
    * @return {object}      The graph instance.
    */
-  public addEdge(edge: Edge) {
+  public addEdge(edge: Partial<Edge>) {
     // Check that the edge is an object and has an id:
     if (Object(edge) !== edge || arguments.length !== 1)
       throw new Error("addEdge: Wrong arguments.");
@@ -259,6 +276,11 @@ class Graph {
         enumerable: true
       });
 
+      Object.defineProperty(validEdge, "type", {
+        value: edge.type || "def",
+        enumerable: true
+      });
+
       Object.defineProperty(validEdge, "source", {
         value: edge.source,
         enumerable: true
@@ -272,6 +294,7 @@ class Graph {
       validEdge.id = edge.id;
       validEdge.source = edge.source;
       validEdge.target = edge.target;
+      validEdge.type = edge.type || "def";
     }
 
     // Add the edge to indexes:
@@ -503,7 +526,7 @@ class Graph {
    * @param  {object} g The graph object.
    * @return {object}   The graph instance.
    */
-  public read(g: { nodes?: Node[]; edges?: Edge[] }) {
+  public read(g: { nodes?: Partial<Node>[]; edges?: Partial<Edge>[] }) {
     (g.nodes || []).forEach(n => this.addNode(n));
     (g.edges || []).forEach(e => this.addEdge(e));
     return this;

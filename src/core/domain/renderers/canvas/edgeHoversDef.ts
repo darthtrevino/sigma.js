@@ -44,7 +44,7 @@ export default function edgeHoversDef(
   }
   size *= settings("edgeHoverSizeRatio");
 
-  context.strokeStyle = color;
+  context.strokeStyle = color!;
   context.lineWidth = size;
   context.beginPath();
   context.moveTo(source[`${prefix}x`], source[`${prefix}y`]);

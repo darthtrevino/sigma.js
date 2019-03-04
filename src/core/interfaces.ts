@@ -414,8 +414,8 @@ export interface Node extends Keyed<any> {
   id: string;
   type: string;
   size: number;
-  color: string;
   label: string;
+  color?: string;
   hidden?: boolean;
 }
 
@@ -424,7 +424,7 @@ export interface Edge extends Keyed<any> {
   source: string;
   target: string;
   type: string;
-  color: string;
+  color?: string;
   hidden?: boolean;
   hover?: boolean;
   hover_color?: string;

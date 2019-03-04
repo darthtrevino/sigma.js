@@ -73,7 +73,7 @@ export default function edgesCurvedArrow(
         break;
     }
 
-  context.strokeStyle = color;
+  context.strokeStyle = color!;
   context.lineWidth = size;
   context.beginPath();
   context.moveTo(sX, sY);
@@ -91,7 +91,7 @@ export default function edgesCurvedArrow(
   }
   context.stroke();
 
-  context.fillStyle = color;
+  context.fillStyle = color!;
   context.beginPath();
   context.moveTo(aX + vX, aY + vY);
   context.lineTo(aX + vY * 0.6, aY - vX * 0.6);

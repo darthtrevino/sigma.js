@@ -38,7 +38,7 @@ describe("The Camera class", () => {
       4
     ]);
 
-    expect(() => camera.goTo({ x: "abc" })).toThrow(
+    expect(() => camera.goTo({ x: "abc" } as any)).toThrow(
       /Value for "x" is not a number./
     );
 

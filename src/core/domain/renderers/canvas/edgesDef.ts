@@ -38,7 +38,7 @@ export default function edgesDef(
         break;
     }
 
-  context.strokeStyle = color;
+  context.strokeStyle = color!;
   context.lineWidth = size;
   context.beginPath();
   context.moveTo(source[`${prefix}x`], source[`${prefix}y`]);

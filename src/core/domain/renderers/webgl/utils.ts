@@ -8,20 +8,18 @@ export function getColor(
   settings: Settings
 ): string {
   let { color } = edge;
+  if (color != null) {
+    return color;
+  }
 
-  if (!color)
-    switch (settings("edgeColor")) {
-      case "source":
-        color = source.color || settings("defaultNodeColor");
-        break;
-      case "target":
-        color = target.color || settings("defaultNodeColor");
-        break;
-      default:
-        color = settings("defaultEdgeColor");
-        break;
-    }
-  return color;
+  switch (settings("edgeColor")) {
+    case "source":
+      return source.color || settings("defaultNodeColor");
+    case "target":
+      return target.color || settings("defaultNodeColor");
+    default:
+      return settings("defaultEdgeColor");
+  }
 }
 
 export function shaders(

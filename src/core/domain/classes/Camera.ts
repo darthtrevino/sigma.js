@@ -58,7 +58,7 @@ export default class Camera extends Dispatcher {
    * @param  {object} coordinates The new coordinates object.
    * @return {camera}             Returns the camera.
    */
-  public goTo = (coordinates?: CameraLocation) => {
+  public goTo = (coordinates?: Partial<CameraLocation>) => {
     if (!this.settings("enableCamera")) return this;
 
     const c: Keyed<any> = coordinates || {};

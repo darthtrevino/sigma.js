@@ -37,7 +37,7 @@ export default {
     // Attributes
     path.setAttributeNS(null, "data-edge-id", edge.id);
     path.setAttributeNS(null, "class", `${settings("classPrefix")}-edge`);
-    path.setAttributeNS(null, "stroke", color);
+    path.setAttributeNS(null, "stroke", color!);
 
     return path;
   },

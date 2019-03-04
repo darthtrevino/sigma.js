@@ -42,7 +42,7 @@ export default function edgeHoversCurve(
     color = edge.hover_color || settings("defaultEdgeHoverColor") || color;
   }
 
-  context.strokeStyle = color;
+  context.strokeStyle = color!;
   context.lineWidth = size;
   context.beginPath();
   context.moveTo(sX, sY);

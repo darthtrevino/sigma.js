@@ -1,7 +1,8 @@
 import Configurable from "../Configurable";
 import Graph from "../Graph";
+import { Node, Edge } from "../../../interfaces";
 
-function getGraphData() {
+function getGraphData(): { nodes: Partial<Node>[]; edges: Partial<Edge>[] } {
   return {
     nodes: [
       {
@@ -199,7 +200,8 @@ describe("The Graph Class", () => {
               id: "e0",
               myEdgeAttr: 123,
               source: "n0",
-              target: "n1"
+              target: "n1",
+              type: "def"
             }
           }
         },
@@ -208,7 +210,8 @@ describe("The Graph Class", () => {
             e1: {
               id: "e1",
               source: "n1",
-              target: "n2"
+              target: "n2",
+              type: "def"
             }
           }
         }
@@ -233,7 +236,8 @@ describe("The Graph Class", () => {
               id: "e0",
               myEdgeAttr: 123,
               source: "n0",
-              target: "n1"
+              target: "n1",
+              type: "def"
             }
           }
         },
@@ -242,7 +246,8 @@ describe("The Graph Class", () => {
             e1: {
               id: "e1",
               source: "n1",
-              target: "n2"
+              target: "n2",
+              type: "def"
             }
           }
         },
@@ -268,7 +273,8 @@ describe("The Graph Class", () => {
               id: "e0",
               myEdgeAttr: 123,
               source: "n0",
-              target: "n1"
+              target: "n1",
+              type: "def"
             }
           }
         },
@@ -278,14 +284,16 @@ describe("The Graph Class", () => {
               id: "e0",
               myEdgeAttr: 123,
               source: "n0",
-              target: "n1"
+              target: "n1",
+              type: "def"
             }
           },
           n2: {
             e1: {
               id: "e1",
               source: "n1",
-              target: "n2"
+              target: "n2",
+              type: "def"
             }
           }
         },
@@ -294,7 +302,8 @@ describe("The Graph Class", () => {
             e1: {
               id: "e1",
               source: "n1",
-              target: "n2"
+              target: "n2",
+              type: "def"
             }
           }
         }
@@ -322,7 +331,8 @@ describe("The Graph Class", () => {
               id: "e0",
               myEdgeAttr: 123,
               source: "n0",
-              target: "n1"
+              target: "n1",
+              type: "def"
             }
           }
         }
@@ -346,7 +356,8 @@ describe("The Graph Class", () => {
               id: "e0",
               myEdgeAttr: 123,
               source: "n0",
-              target: "n1"
+              target: "n1",
+              type: "def"
             }
           }
         },
@@ -371,7 +382,8 @@ describe("The Graph Class", () => {
               id: "e0",
               myEdgeAttr: 123,
               source: "n0",
-              target: "n1"
+              target: "n1",
+              type: "def"
             }
           }
         },
@@ -381,7 +393,8 @@ describe("The Graph Class", () => {
               id: "e0",
               myEdgeAttr: 123,
               source: "n0",
-              target: "n1"
+              target: "n1",
+              type: "def"
             }
           }
         }
@@ -572,8 +585,10 @@ describe("The Graph Class", () => {
     });
 
     it("does not create new objects when clone is set to false", () => {
-      const { graph, data } = createGraph(true, true);
-      expect([data.edges[1]]).toEqual(graph.edges(data.edges[1].id));
+      const { graph, data } = createGraph(false, false);
+      const firstEdge = data.edges[0];
+      const { id } = firstEdge;
+      expect(firstEdge).toBe(graph.edges(id)[0]);
     });
 
     it("throws if an edge is altered when immutable is set to true", () => {
@@ -629,7 +644,7 @@ describe("The Graph Class", () => {
 
       it("returns an array of edges when an id array is used", () => {
         const { graph, data } = createGraph(false, true);
-        expect(graph.edges("e0", "e0")).toEqual([data.edges[0], data.edges[0]]);
+        expect(graph.edges("e0", "e0").map(e => e.id)).toEqual(["e0", "e0"]);
       });
 
       it("throws when invalid id types are used", () => {
@@ -700,10 +715,16 @@ describe("The Graph Class", () => {
       it("can read in data", () => {
         const graph = new Graph();
         const data = getGraphData();
-        graph.read(data);
+        graph.read(data as any);
 
-        expect(graph.nodes()).toEqual(data.nodes);
-        expect(graph.edges()).toEqual(data.edges);
+        expect(graph.nodes().map(n => n.id)).toEqual(data.nodes.map(n => n.id));
+        expect(graph.edges().map(e => e.id)).toEqual(data.edges.map(e => e.id));
+        expect(graph.edges().map(e => e.source)).toEqual(
+          data.edges.map(e => e.source)
+        );
+        expect(graph.edges().map(e => e.target)).toEqual(
+          data.edges.map(e => e.target)
+        );
       });
     });
   });
