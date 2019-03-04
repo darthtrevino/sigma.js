@@ -36,7 +36,7 @@ export default (sigma: SigmaLibrary) =>
       const y2 = target[`${prefix}y`];
 
       // Normalize color:
-      const color = sigma.utils.floatColor(
+      const { color, alpha } = sigma.utils.floatColor(
         getColor(edge, source, target, settings)
       );
 

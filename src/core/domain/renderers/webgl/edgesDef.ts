@@ -34,7 +34,9 @@ export default {
     const y2 = target[`${prefix}y`];
 
     // Normalize color:
-    const color = floatColor(getColor(edge, source, target, settings));
+    const { color, alpha } = floatColor(
+      getColor(edge, source, target, settings)
+    );
     data[i++] = x1;
     data[i++] = y1;
     data[i++] = x2;

@@ -35,7 +35,9 @@ export default {
     const y1 = source[`${prefix}y`];
     const x2 = target[`${prefix}x`];
     const y2 = target[`${prefix}y`];
-    const color = floatColor(getColor(edge, source, target, settings));
+    const { color, alpha } = floatColor(
+      getColor(edge, source, target, settings)
+    );
 
     // Computing normals:
     const dx = x2 - x1;

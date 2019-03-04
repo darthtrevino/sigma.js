@@ -28,7 +28,6 @@
     } while (colors.indexOf(color) >= 0);
     colors.push("#" + ("000000" + color.toString(16)).slice(-6));
   }
-  console.log(colors);
 
   fetch("data/yeast.json")
     .then(res => res.json())
@@ -38,11 +37,10 @@
         node.color = colors[node.community % colors.length];
       });
       data.edges.forEach(edge => {
-        edge.color = "rgba(0,0,0,0.05)";
+        edge.color = "rgba(0, 0, 0, 0.05)";
       });
 
       s = new sigma({
-        //graph: g,
         graph: data,
         container: "graph-container",
         type: "webgl",
@@ -51,6 +49,7 @@
           drawEdgeLabels: false,
           //drawEdges: false,
           batchEdgesDrawing: true,
+          canvasEdgesBatchSize: 10000,
           webglEdgesBatchSize: 10000
         }
       });

@@ -20,7 +20,9 @@ export default {
   POINTS: 3,
   ATTRIBUTES: 5,
   addNode(node: Node, data, i: number, prefix: string, settings: Settings) {
-    const color = floatColor(node.color || settings("defaultNodeColor"));
+    const { color, alpha } = floatColor(
+      node.color || settings("defaultNodeColor")
+    );
 
     data[i++] = node[`${prefix}x`];
     data[i++] = node[`${prefix}y`];

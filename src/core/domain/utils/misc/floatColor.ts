@@ -1,8 +1,10 @@
 import { Keyed } from "../../../interfaces";
 
-const floatColorCache: Keyed<number> = {};
+const floatColorCache: Keyed<{ color: number; alpha: number }> = {};
 
-export default function floatColor(input: string): number {
+export default function floatColor(
+  input: string
+): { color: number; alpha: number } {
   let val = input;
 
   // Is the color already computed?
@@ -14,6 +16,7 @@ export default function floatColor(input: string): number {
   let r = 0;
   let g = 0;
   let b = 0;
+  let a = 1.0;
 
   if (val[0] === "#") {
     val = val.slice(1);
@@ -29,18 +32,20 @@ export default function floatColor(input: string): number {
     }
   } else if (val.match(/^ *rgba? *\(/)) {
     const matches = val.match(
-      /^ *rgba? *\( *([0-9]*) *, *([0-9]*) *, *([0-9]*) *(,.*)?\) *$/
+      /^ *rgba? *\( *([0-9]*) *, *([0-9]*) *, *([0-9]*) *,? *([0-9]*\.?[0-9]*)?\) *$/
     );
     if (matches) {
       r = +matches[1];
       g = +matches[2];
       b = +matches[3];
+      a = +matches[4];
     }
   }
 
   const color = r * 256 * 256 + g * 256 + b;
 
   // Caching the color
-  floatColorCache[original] = color;
-  return color;
+  const result = { color, alpha: a };
+  floatColorCache[original] = result;
+  return result;
 }

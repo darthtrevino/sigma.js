@@ -32,10 +32,13 @@ export default {
     prefix: string,
     settings: Settings
   ) {
+    const { color, alpha } = floatColor(
+      node.color || settings("defaultNodeColor")
+    );
     data[i++] = node[`${prefix}x`];
     data[i++] = node[`${prefix}y`];
     data[i++] = node[`${prefix}size`];
-    data[i++] = floatColor(node.color || settings("defaultNodeColor"));
+    data[i++] = color;
   },
   render(gl: WebGLRenderingContext, program: WebGLProgram, data, params) {
     // Define attributes:
