@@ -38,7 +38,7 @@ export default function floatColor(
       r = +matches[1];
       g = +matches[2];
       b = +matches[3];
-      a = +matches[4];
+      a = matches[4] == null ? 1.0 : +matches[4];
     }
   }
 

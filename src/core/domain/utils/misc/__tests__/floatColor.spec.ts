@@ -12,12 +12,12 @@ describe("The Float Color utils", () => {
     ];
 
     const outputs = [
-      16776960,
-      13750737,
-      13750737,
-      15398442,
-      15398442,
-      15398442
+      { color: 16776960, alpha: 1 },
+      { color: 13750737, alpha: 1 },
+      { color: 13750737, alpha: 1 },
+      { color: 15398442, alpha: 1 },
+      { color: 15398442, alpha: 0.1 },
+      { color: 15398442, alpha: 0.1 }
     ];
 
     inputs.forEach((input, i) => {
