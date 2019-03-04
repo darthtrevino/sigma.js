@@ -20,7 +20,7 @@ import { Settings } from "../../classes/Configurable";
 export default (sigma: SigmaLibrary) => {
   return class WebGLRenderer extends Dispatcher implements Renderer {
     public id = "__ID_NOT_SET__";
-
+    private previousRenderCameraMatrix: number[] = [];
     // Conrad Properties
     private jobs: Keyed<Function> = {};
     private conradId = id();
@@ -242,6 +242,12 @@ export default (sigma: SigmaLibrary) => {
       return this;
     }
 
+    private clearJobs() {
+      Object.keys(this.jobs).forEach(k => {
+        if (conrad.hasJob(k)) conrad.killJob(k);
+      });
+    }
+
     /**
      * This method renders the graph. It basically calls each program (and
      * generate them if they do not exist yet) to render nodes and edges, batched
@@ -254,10 +260,7 @@ export default (sigma: SigmaLibrary) => {
      * @return {WebGLRenderer}        Returns the instance itself.
      */
     public render(params?: any) {
-      const self = this;
-      const nodesGl = this.contexts.nodes;
-      const edgesGl = this.contexts.edges;
-      let matrix = this.camera.getMatrix();
+      let cameraMatrix = this.camera.getMatrix();
       const options = { ...params, ...this.options };
       const drawLabels = this.settings(options, "drawLabels");
       const drawEdges =
@@ -271,186 +274,213 @@ export default (sigma: SigmaLibrary) => {
       // Call the resize function:
       this.resize();
 
-      // Clear canvases:
-      this.clear();
-
       // Translate matrix to [width/2, height/2]:
-      matrix = multiply(matrix, translation(this.width / 2, this.height / 2));
+      cameraMatrix = multiply(
+        cameraMatrix,
+        translation(this.width / 2, this.height / 2)
+      );
 
-      // Kill running jobs:
-      Object.keys(this.jobs).forEach(k => {
-        if (conrad.hasJob(k)) conrad.killJob(k);
-      });
+      const matrixEqual = cameraMatrix.every(
+        (n, i) =>
+          !!this.previousRenderCameraMatrix &&
+          n === this.previousRenderCameraMatrix[i]
+      );
 
-      if (drawEdges) {
-        if (this.settings(options, "batchEdgesDrawing")) {
-          const batch = () => {
-            let arr: Float32Array;
-            let end: number;
-            let start: number;
+      if (!matrixEqual) {
+        // Clear canvases:
+        this.clear();
 
-            const edgeBatchId = `edges_${this.conradId}`;
-            const batchSize = this.settings(options, "webglEdgesBatchSize");
-            const a = Object.keys(this.edgeFloatArrays);
+        // Kill running jobs:
+        this.clearJobs();
 
-            if (!a.length) return;
-            let i = 0;
-            const renderer = sigma.webgl.edges[a[i]];
+        if (drawEdges) {
+          this.drawEdges(cameraMatrix, options);
+        }
+
+        if (drawNodes) {
+          this.drawNodes(cameraMatrix, options);
+        }
+
+        const nodesInView = this.camera.quadtree!.area(
+          this.camera.getRectangle(this.width, this.height)
+        );
+
+        // Apply camera view to these nodes:
+        this.camera.applyView(undefined, undefined, {
+          nodes: nodesInView,
+          edges: [],
+          width: this.width,
+          height: this.height
+        });
+
+        if (drawLabels) {
+          this.drawLabels(options, nodesInView);
+        }
+      }
+
+      this.dispatchEvent("render");
+      this.previousRenderCameraMatrix = cameraMatrix;
+      return this;
+    }
+
+    private drawEdges(cameraMatrix: number[], options: any) {
+      if (this.settings(options, "batchEdgesDrawing")) {
+        this.drawEdgesBatched(cameraMatrix, options);
+      } else {
+        this.drawEdgesUnbatched(cameraMatrix, options);
+      }
+    }
+
+    private drawEdgesBatched(cameraMatrix: number[], options: any) {
+      const edgesGl = this.contexts.edges;
+
+      const batch = () => {
+        let arr: Float32Array;
+        let end: number;
+        let start: number;
+
+        const edgeBatchId = `edges_${this.conradId}`;
+        const batchSize = this.settings(options, "webglEdgesBatchSize");
+        const a = Object.keys(this.edgeFloatArrays);
+
+        if (!a.length) return;
+        let i = 0;
+        const renderer = sigma.webgl.edges[a[i]];
+        arr = this.edgeFloatArrays[a[i]].array;
+        const indices = this.edgeIndicesArrays[a[i]];
+        start = 0;
+        end = Math.min(
+          start + batchSize * renderer.POINTS,
+          arr.length / renderer.ATTRIBUTES
+        );
+
+        const job = () => {
+          // Check program:
+          if (!this.edgePrograms[a[i]])
+            this.edgePrograms[a[i]] = renderer.initProgram(edgesGl);
+
+          if (start < end) {
+            edgesGl.useProgram(this.edgePrograms[a[i]]);
+            renderer.render(edgesGl, this.edgePrograms[a[i]], arr, {
+              settings: this.settings,
+              matrix: cameraMatrix,
+              width: this.width,
+              height: this.height,
+              ratio: this.camera.ratio,
+              scalingRatio: this.settings(options, "webglOversamplingRatio"),
+              start,
+              count: end - start,
+              indicesData: indices
+            });
+          }
+
+          // Catch job's end:
+          if (end >= arr.length / renderer.ATTRIBUTES && i === a.length - 1) {
+            delete this.jobs[edgeBatchId];
+            return false;
+          }
+
+          if (end >= arr.length / renderer.ATTRIBUTES) {
+            i++;
             arr = this.edgeFloatArrays[a[i]].array;
-            const indices = this.edgeIndicesArrays[a[i]];
+            const r = sigma.webgl.edges[a[i]];
             start = 0;
+            end = Math.min(
+              start + batchSize * r.POINTS,
+              arr.length / r.ATTRIBUTES
+            );
+          } else {
+            start = end;
             end = Math.min(
               start + batchSize * renderer.POINTS,
               arr.length / renderer.ATTRIBUTES
             );
-
-            const job = () => {
-              // Check program:
-              if (!this.edgePrograms[a[i]])
-                this.edgePrograms[a[i]] = renderer.initProgram(edgesGl);
-
-              if (start < end) {
-                edgesGl.useProgram(this.edgePrograms[a[i]]);
-                renderer.render(edgesGl, this.edgePrograms[a[i]], arr, {
-                  settings: this.settings,
-                  matrix,
-                  width: this.width,
-                  height: this.height,
-                  ratio: this.camera.ratio,
-                  scalingRatio: this.settings(
-                    options,
-                    "webglOversamplingRatio"
-                  ),
-                  start,
-                  count: end - start,
-                  indicesData: indices
-                });
-              }
-
-              // Catch job's end:
-              if (
-                end >= arr.length / renderer.ATTRIBUTES &&
-                i === a.length - 1
-              ) {
-                delete this.jobs[edgeBatchId];
-                return false;
-              }
-
-              if (end >= arr.length / renderer.ATTRIBUTES) {
-                i++;
-                arr = this.edgeFloatArrays[a[i]].array;
-                const r = sigma.webgl.edges[a[i]];
-                start = 0;
-                end = Math.min(
-                  start + batchSize * r.POINTS,
-                  arr.length / r.ATTRIBUTES
-                );
-              } else {
-                start = end;
-                end = Math.min(
-                  start + batchSize * renderer.POINTS,
-                  arr.length / renderer.ATTRIBUTES
-                );
-              }
-
-              return true;
-            };
-
-            this.jobs[edgeBatchId] = job;
-            conrad.addJob(edgeBatchId, job);
-          };
-          batch();
-        } else {
-          Object.keys(this.edgeFloatArrays).forEach(k => {
-            const renderer = sigma.webgl.edges[k];
-
-            // Check program:
-            if (!this.edgePrograms[k])
-              this.edgePrograms[k] = renderer.initProgram(edgesGl);
-
-            // Render
-            if (this.edgeFloatArrays[k]) {
-              edgesGl.useProgram(this.edgePrograms[k]);
-              renderer.render(
-                edgesGl,
-                this.edgePrograms[k],
-                this.edgeFloatArrays[k].array,
-                {
-                  settings: this.settings,
-                  matrix,
-                  width: this.width,
-                  height: this.height,
-                  ratio: this.camera.ratio,
-                  scalingRatio: this.settings(
-                    options,
-                    "webglOversamplingRatio"
-                  ),
-                  indicesData: this.edgeIndicesArrays[k]
-                }
-              );
-            }
-          });
-        }
-      }
-
-      if (drawNodes) {
-        // Enable blending:
-        nodesGl.blendFunc(nodesGl.SRC_ALPHA, nodesGl.ONE_MINUS_SRC_ALPHA);
-        nodesGl.enable(nodesGl.BLEND);
-
-        Object.keys(this.nodeFloatArrays).forEach(k => {
-          const renderer = sigma.webgl.nodes[k];
-
-          // Check program:
-          if (!this.nodePrograms[k])
-            this.nodePrograms[k] = renderer.initProgram(nodesGl);
-
-          // Render
-          if (this.nodeFloatArrays[k]) {
-            nodesGl.useProgram(this.nodePrograms[k]);
-            renderer.render(
-              nodesGl,
-              this.nodePrograms[k],
-              this.nodeFloatArrays[k].array,
-              {
-                settings: this.settings,
-                matrix,
-                width: this.width,
-                height: this.height,
-                ratio: this.camera.ratio,
-                scalingRatio: this.settings(options, "webglOversamplingRatio")
-              }
-            );
           }
-        });
-      }
 
-      const a = this.camera.quadtree!.area(
-        this.camera.getRectangle(this.width, this.height)
-      );
+          return true;
+        };
 
-      // Apply camera view to these nodes:
-      this.camera.applyView(undefined, undefined, {
-        nodes: a,
-        edges: [],
-        width: this.width,
-        height: this.height
+        this.jobs[edgeBatchId] = job;
+        conrad.addJob(edgeBatchId, job);
+      };
+      batch();
+    }
+
+    private drawEdgesUnbatched(cameraMatrix: number[], options: any) {
+      const edgesGl = this.contexts.edges;
+      Object.keys(this.edgeFloatArrays).forEach(k => {
+        const renderer = sigma.webgl.edges[k];
+
+        // Check program:
+        if (!this.edgePrograms[k])
+          this.edgePrograms[k] = renderer.initProgram(edgesGl);
+
+        // Render
+        if (this.edgeFloatArrays[k]) {
+          edgesGl.useProgram(this.edgePrograms[k]);
+          renderer.render(
+            edgesGl,
+            this.edgePrograms[k],
+            this.edgeFloatArrays[k].array,
+            {
+              settings: this.settings,
+              matrix: cameraMatrix,
+              width: this.width,
+              height: this.height,
+              ratio: this.camera.ratio,
+              scalingRatio: this.settings(options, "webglOversamplingRatio"),
+              indicesData: this.edgeIndicesArrays[k]
+            }
+          );
+        }
+      });
+    }
+
+    private drawNodes(cameraMatrix: number[], options: any) {
+      const nodesGl = this.contexts.nodes;
+      // Enable blending:
+      nodesGl.blendFunc(nodesGl.SRC_ALPHA, nodesGl.ONE_MINUS_SRC_ALPHA);
+      nodesGl.enable(nodesGl.BLEND);
+
+      Object.keys(this.nodeFloatArrays).forEach(k => {
+        const renderer = sigma.webgl.nodes[k];
+
+        // Check program:
+        if (!this.nodePrograms[k])
+          this.nodePrograms[k] = renderer.initProgram(nodesGl);
+
+        // Render
+        if (this.nodeFloatArrays[k]) {
+          nodesGl.useProgram(this.nodePrograms[k]);
+          renderer.render(
+            nodesGl,
+            this.nodePrograms[k],
+            this.nodeFloatArrays[k].array,
+            {
+              settings: this.settings,
+              matrix: cameraMatrix,
+              width: this.width,
+              height: this.height,
+              ratio: this.camera.ratio,
+              scalingRatio: this.settings(options, "webglOversamplingRatio")
+            }
+          );
+        }
+      });
+    }
+
+    private drawLabels(nodesInView: Node[], options: any) {
+      const labelSettings = this.settings.embedObjects({
+        prefix: this.camera.prefix
       });
 
-      if (drawLabels) {
-        const o = self.settings.embedObjects({
-          prefix: self.camera.prefix
+      nodesInView
+        .filter(n => !n.hidden)
+        .forEach(node => {
+          const type =
+            node.type || this.settings(options, "defaultNodeType") || "def";
+          sigma.canvas.labels[type](node, this.contexts.labels, labelSettings);
         });
-
-        for (let i = 0; i < a.length; i++)
-          if (!a[i].hidden)
-            (sigma.canvas.labels[
-              a[i].type || this.settings(options, "defaultNodeType")
-            ] || sigma.canvas.labels.def)(a[i], this.contexts.labels, o);
-      }
-
-      this.dispatchEvent("render");
-      return this;
     }
 
     /**
