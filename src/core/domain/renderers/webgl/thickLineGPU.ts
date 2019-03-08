@@ -2,6 +2,11 @@ import { Edge, Node, SigmaLibrary, WebGLEdgeDrawer } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
+// @ts-ignore
+import vertexShaderSource from "thickLineGPU.vs";
+// @ts-ignore
+import fragmentShaderSource from "thickLineGPU.fs";
+
 /**
  * This will render edges as thick lines using four points translated
  * orthogonally from the source & target's centers by half thickness.
@@ -184,51 +189,14 @@ export default (sigma: SigmaLibrary) =>
     initProgram(gl: WebGLRenderingContext) {
       const vertexShader = sigma.webgl.loadShader(
         gl,
-        [
-          "attribute vec2 a_position1;",
-          "attribute vec2 a_position2;",
-          "attribute float a_direction;",
-          "attribute float a_thickness;",
-          "attribute vec4 a_color;",
-
-          "uniform vec2 u_resolution;",
-          "uniform float u_ratio;",
-          "uniform mat3 u_matrix;",
-
-          "varying vec4 v_color;",
-
-          "void main() {",
-
-          // Scale from [[-1 1] [-1 1]] to the container:
-          "vec2 translation = a_position2 - a_position1;",
-          "vec2 orthogonal = vec2(translation.y, -translation.x);",
-          "vec2 delta = a_thickness / 2.0 * a_direction * normalize(orthogonal);",
-          "vec2 position = (u_matrix * vec3(a_position1 + delta, 1)).xy;",
-          "position = (position / u_resolution * 2.0 - 1.0) * vec2(1, -1);",
-
-          // Applying
-          "gl_Position = vec4(position, 0, 1);",
-          "gl_PointSize = 10.0;",
-
-          // Extract the color:
-          "color = a_color / 255.0;",
-          "}"
-        ].join("\n"),
+        vertexShaderSource,
         gl.VERTEX_SHADER,
         error => console.log(error)
       );
 
       const fragmentShader = sigma.webgl.loadShader(
         gl,
-        [
-          "precision mediump float;",
-
-          "varying vec4 v_color;",
-
-          "void main(void) {",
-          "gl_FragColor = v_color;",
-          "}"
-        ].join("\n"),
+        fragmentShaderSource,
         gl.FRAGMENT_SHADER
       );
 

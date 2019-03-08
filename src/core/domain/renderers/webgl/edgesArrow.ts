@@ -6,6 +6,11 @@ import { Edge, Node, WebGLEdgeDrawer } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
+// @ts-ignore
+import vertexShaderSource from "edgesArrow.vs";
+// @ts-ignore
+import fragmentShaderSource from "edgesArrow.fs";
+
 /**
  * This edge renderer will display edges as arrows going from the source node
  * to the target node. To deal with edge thicknesses, the lines are made of
@@ -290,81 +295,10 @@ export default {
     );
   },
   initProgram(gl: WebGLRenderingContext) {
-    const vertexShader = loadShader(
-      gl,
-      [
-        "attribute vec2 a_pos1;",
-        "attribute vec2 a_pos2;",
-        "attribute float a_thickness;",
-        "attribute float a_tSize;",
-        "attribute float a_delay;",
-        "attribute float a_minus;",
-        "attribute float a_head;",
-        "attribute float a_headPosition;",
-        "attribute vec4 a_color;",
-
-        "uniform vec2 u_resolution;",
-        "uniform float u_ratio;",
-        "uniform float u_nodeRatio;",
-        "uniform float u_arrowHead;",
-        "uniform float u_scale;",
-        "uniform mat3 u_matrix;",
-        "uniform mat2 u_matrixHalfPi;",
-        "uniform mat2 u_matrixHalfPiMinus;",
-
-        "varying vec4 color;",
-
-        "void main() {",
-        // Find the good point:
-        "vec2 pos = normalize(a_pos2 - a_pos1);",
-
-        "mat2 matrix = (1.0 - a_head) *",
-        "(",
-        "a_minus * u_matrixHalfPiMinus +",
-        "(1.0 - a_minus) * u_matrixHalfPi",
-        ") + a_head * (",
-        "a_headPosition * u_matrixHalfPiMinus * 0.6 +",
-        "(a_headPosition * a_headPosition - 1.0) * mat2(1.0)",
-        ");",
-
-        "pos = a_pos1 + (",
-        // Deal with body:
-        "(1.0 - a_head) * a_thickness * u_ratio * matrix * pos +",
-        // Deal with head:
-        "a_head * u_arrowHead * a_thickness * u_ratio * matrix * pos +",
-        // Deal with delay:
-        "a_delay * pos * (",
-        "a_tSize / u_nodeRatio +",
-        "u_arrowHead * a_thickness * u_ratio",
-        ")",
-        ");",
-
-        // Scale from [[-1 1] [-1 1]] to the container:
-        "gl_Position = vec4(",
-        "((u_matrix * vec3(pos, 1)).xy /",
-        "u_resolution * 2.0 - 1.0) * vec2(1, -1),",
-        "0,",
-        "1",
-        ");",
-
-        // Extract the color:
-        "color = a_color / 255.0;",
-        "}"
-      ].join("\n"),
-      gl.VERTEX_SHADER
-    );
-
+    const vertexShader = loadShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
     const fragmentShader = loadShader(
       gl,
-      [
-        "precision mediump float;",
-
-        "varying vec4 color;",
-
-        "void main(void) {",
-        "gl_FragColor = color;",
-        "}"
-      ].join("\n"),
+      fragmentShaderSource,
       gl.FRAGMENT_SHADER
     );
 
