@@ -37,9 +37,7 @@ export default {
     const y2 = target[`${prefix}y`];
 
     // Normalize color:
-    const { color, alpha } = floatColor(
-      getColor(edge, source, target, settings)
-    );
+    const color = floatColor(getColor(edge, source, target, settings));
     // Computing normals:
     const dx = x2 - x1;
     const dy = y2 - y1;
@@ -130,8 +128,8 @@ export default {
     );
     gl.vertexAttribPointer(
       colorLocation,
-      1,
-      gl.FLOAT,
+      4,
+      gl.UNSIGNED_BYTE,
       false,
       this.ATTRIBUTES * Float32Array.BYTES_PER_ELEMENT,
       8
@@ -174,11 +172,7 @@ export default {
         "gl_PointSize = 10.0;",
 
         // Extract the color:
-        "float c = a_color;",
-        "v_color.b = mod(c, 256.0); c = floor(c / 256.0);",
-        "v_color.g = mod(c, 256.0); c = floor(c / 256.0);",
-        "v_color.r = mod(c, 256.0); c = floor(c / 256.0); v_color /= 255.0;",
-        "v_color.a = 1.0;",
+        "v_color = a_color / 255.0;",
         "}"
       ].join("\n"),
       gl.VERTEX_SHADER

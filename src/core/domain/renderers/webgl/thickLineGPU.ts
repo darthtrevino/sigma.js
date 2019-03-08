@@ -36,7 +36,7 @@ export default (sigma: SigmaLibrary) =>
       const y2 = target[`${prefix}y`];
 
       // Normalize color:
-      const { color, alpha } = sigma.utils.floatColor(
+      const color = sigma.utils.floatColor(
         getColor(edge, source, target, settings)
       );
 
@@ -157,8 +157,8 @@ export default (sigma: SigmaLibrary) =>
       );
       gl.vertexAttribPointer(
         colorLocation,
-        1,
-        gl.FLOAT,
+        4,
+        gl.UNSIGNED_BYTE,
         false,
         this.ATTRIBUTES * Float32Array.BYTES_PER_ELEMENT,
         24
@@ -189,7 +189,7 @@ export default (sigma: SigmaLibrary) =>
           "attribute vec2 a_position2;",
           "attribute float a_direction;",
           "attribute float a_thickness;",
-          "attribute float a_color;",
+          "attribute vec4 a_color;",
 
           "uniform vec2 u_resolution;",
           "uniform float u_ratio;",
@@ -211,11 +211,7 @@ export default (sigma: SigmaLibrary) =>
           "gl_PointSize = 10.0;",
 
           // Extract the color:
-          "float c = a_color;",
-          "v_color.b = mod(c, 256.0); c = floor(c / 256.0);",
-          "v_color.g = mod(c, 256.0); c = floor(c / 256.0);",
-          "v_color.r = mod(c, 256.0); c = floor(c / 256.0); v_color /= 255.0;",
-          "v_color.a = 1.0;",
+          "color = a_color / 255.0;",
           "}"
         ].join("\n"),
         gl.VERTEX_SHADER,
