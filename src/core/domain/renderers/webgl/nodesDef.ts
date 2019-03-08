@@ -20,9 +20,7 @@ export default {
   POINTS: 3,
   ATTRIBUTES: 5,
   addNode(node: Node, data, i: number, prefix: string, settings: Settings) {
-    const { color, alpha } = floatColor(
-      node.color || settings("defaultNodeColor")
-    );
+    const color = floatColor(node.color || settings("defaultNodeColor"));
 
     data[i++] = node[`${prefix}x`];
     data[i++] = node[`${prefix}y`];
@@ -88,8 +86,8 @@ export default {
     );
     gl.vertexAttribPointer(
       colorLocation,
-      1,
-      gl.FLOAT,
+      4,
+      gl.UNSIGNED_BYTE,
       false,
       this.ATTRIBUTES * Float32Array.BYTES_PER_ELEMENT,
       12
@@ -115,7 +113,7 @@ export default {
       [
         "attribute vec2 a_position;",
         "attribute float a_size;",
-        "attribute float a_color;",
+        "attribute vec4 a_color;",
         "attribute float a_angle;",
 
         "uniform vec2 u_resolution;",
@@ -146,11 +144,7 @@ export default {
         "gl_Position = vec4(position, 0, 1);",
 
         // Extract the color:
-        "float c = a_color;",
-        "color.b = mod(c, 256.0); c = floor(c / 256.0);",
-        "color.g = mod(c, 256.0); c = floor(c / 256.0);",
-        "color.r = mod(c, 256.0); c = floor(c / 256.0); color /= 255.0;",
-        "color.a = 1.0;",
+        "color = a_color / 255.0;",
         "}"
       ].join("\n"),
       gl.VERTEX_SHADER

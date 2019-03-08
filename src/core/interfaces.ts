@@ -552,9 +552,9 @@ export interface SigmaUtils extends Keyed<any> {
    * Note that the function actually caches its results for better performance.
    *
    * @param  {string} val The hexa or rgba color.
-   * @return {object}     An object containing the parsed color and alpha values.
+   * @return {float}     An object containing the parsed color and alpha values.
    */
-  floatColor(input: string): { color: number; alpha: number };
+  floatColor(input: string): number;
 
   /**
    * Perform a zoom into a camera, with or without animation, to the

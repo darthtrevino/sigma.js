@@ -35,9 +35,7 @@ export default {
     const targetSize = target[`${prefix}size`];
 
     // Normalize color:
-    const { color, alpha } = floatColor(
-      getColor(edge, source, target, settings)
-    );
+    const color = floatColor(getColor(edge, source, target, settings));
     data[i++] = x1;
     data[i++] = y1;
     data[i++] = x2;
@@ -278,8 +276,8 @@ export default {
     );
     gl.vertexAttribPointer(
       colorLocation,
-      1,
-      gl.FLOAT,
+      4,
+      gl.UNSIGNED_BYTE,
       false,
       this.ATTRIBUTES * Float32Array.BYTES_PER_ELEMENT,
       40
@@ -303,7 +301,7 @@ export default {
         "attribute float a_minus;",
         "attribute float a_head;",
         "attribute float a_headPosition;",
-        "attribute float a_color;",
+        "attribute vec4 a_color;",
 
         "uniform vec2 u_resolution;",
         "uniform float u_ratio;",
@@ -350,11 +348,7 @@ export default {
         ");",
 
         // Extract the color:
-        "float c = a_color;",
-        "color.b = mod(c, 256.0); c = floor(c / 256.0);",
-        "color.g = mod(c, 256.0); c = floor(c / 256.0);",
-        "color.r = mod(c, 256.0); c = floor(c / 256.0); color /= 255.0;",
-        "color.a = 1.0;",
+        "color = a_color / 255.0;",
         "}"
       ].join("\n"),
       gl.VERTEX_SHADER

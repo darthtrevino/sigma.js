@@ -1,14 +1,12 @@
 import { Keyed } from "../../../interfaces";
 
-const floatColorCache: Keyed<{ color: number; alpha: number }> = {};
+const floatColorCache: Keyed<number> = {};
 
-export default function floatColor(
-  input: string
-): { color: number; alpha: number } {
+export default function floatColor(input: string): number {
   let val = input;
 
   // Is the color already computed?
-  if (floatColorCache[val]) {
+  if (floatColorCache.hasOwnProperty(val)) {
     return floatColorCache[val];
   }
 
@@ -42,10 +40,15 @@ export default function floatColor(
     }
   }
 
-  const color = r * 256 * 256 + g * 256 + b;
+  const buffer = new ArrayBuffer(4);
+  const view = new Uint8Array(buffer);
+  const float32 = new Float32Array(buffer);
+  view[0] = Math.min(255, r);
+  view[1] = Math.min(255, g);
+  view[2] = Math.min(255, b);
+  view[3] = Math.min(255, Math.floor(a * 255));
 
   // Caching the color
-  const result = { color, alpha: a };
-  floatColorCache[original] = result;
-  return result;
+  floatColorCache[original] = float32[0];
+  return float32[0];
 }
