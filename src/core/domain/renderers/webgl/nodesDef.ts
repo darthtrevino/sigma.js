@@ -21,22 +21,22 @@ export default {
   ATTRIBUTES: 5,
   addNode(node: Node, data, i: number, prefix: string, settings: Settings) {
     const color = floatColor(node.color || settings("defaultNodeColor"));
-
+    const size = node[`${prefix}size`];
     data[i++] = node[`${prefix}x`];
     data[i++] = node[`${prefix}y`];
-    data[i++] = node[`${prefix}size`];
+    data[i++] = size;
     data[i++] = color;
     data[i++] = 0;
 
     data[i++] = node[`${prefix}x`];
     data[i++] = node[`${prefix}y`];
-    data[i++] = node[`${prefix}size`];
+    data[i++] = size;
     data[i++] = color;
     data[i++] = (2 * Math.PI) / 3;
 
     data[i++] = node[`${prefix}x`];
     data[i++] = node[`${prefix}y`];
-    data[i++] = node[`${prefix}size`];
+    data[i++] = size;
     data[i++] = color;
     data[i++] = (4 * Math.PI) / 3;
   },
