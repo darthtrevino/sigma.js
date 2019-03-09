@@ -1,6 +1,7 @@
 import fs from "fs";
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
+import glslify from "rollup-plugin-glslify";
 import { terser } from "rollup-plugin-terser";
 
 const { NODE_ENV: environment } = process.env;
@@ -14,9 +15,13 @@ if (!fs.existsSync("build/temp")) {
   fs.mkdirSync("build/temp");
 }
 
+const glslConfig = {
+  basedir: "./src/domain/renderers/webgl/shaders"
+};
+
 const umdPlugins = isProd
-  ? [resolve(), commonjs(), terser()]
-  : [resolve(), commonjs()];
+  ? [resolve(), commonjs(), glslify(glslConfig), terser()]
+  : [resolve(), commonjs(), glslify(glslConfig)];
 const cjsPlugins = isProd ? [terser()] : undefined;
 
 function library(ns) {
