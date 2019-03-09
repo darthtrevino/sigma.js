@@ -131,6 +131,9 @@
       "^.+\\.jsx?$": "babel-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(j|t)sx?$",
+    "moduleNameMapper": {
+      "\\.(vs|fs)$": "<rootDir>/empty.js"
+    },
     "moduleFileExtensions": [
       "ts",
       "tsx",
