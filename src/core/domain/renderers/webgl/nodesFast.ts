@@ -5,6 +5,11 @@ import { Node, WebGLNodeDrawer } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 import { shaders } from "./utils";
 
+// @ts-ignore
+import vertexShaderSource from "nodesFast.vs";
+// @ts-ignore
+import fragmentShaderSource from "nodesFast.fs";
+
 /**
  * This node renderer will display nodes in the fastest way: Nodes are basic
  * squares, drawn through the gl.POINTS drawing method. The size of the nodes
@@ -96,70 +101,13 @@ export default {
     );
   },
   initProgram(gl: WebGLRenderingContext) {
-    const vertexShader = loadShader(
-      gl,
-      [
-        "attribute vec2 a_position;",
-        "attribute float a_size;",
-        "attribute vec4 a_color;",
-
-        "uniform vec2 u_resolution;",
-        "uniform float u_ratio;",
-        "uniform float u_scale;",
-        "uniform mat3 u_matrix;",
-
-        "varying vec4 color;",
-
-        "void main() {",
-        // Scale from [[-1 1] [-1 1]] to the container:
-        "gl_Position = vec4(",
-        "((u_matrix * vec3(a_position, 1)).xy /",
-        "u_resolution * 2.0 - 1.0) * vec2(1, -1),",
-        "0,",
-        "1",
-        ");",
-
-        // Multiply the point size twice:
-        //  - x SCALING_RATIO to correct the canvas scaling
-        //  - x 2 to correct the formulae
-        "gl_PointSize = a_size * u_ratio * u_scale * 2.0;",
-
-        // Extract the color:
-        "color = a_color / 255.0;",
-        "}"
-      ].join("\n"),
-      gl.VERTEX_SHADER
-    );
-
+    const vertexShader = loadShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
     const fragmentShader = loadShader(
       gl,
-      [
-        "precision mediump float;",
-
-        "varying vec4 color;",
-
-        "void main(void) {",
-        "float border = 0.01;",
-        "float radius = 0.5;",
-
-        "vec4 color0 = vec4(0.0, 0.0, 0.0, 0.0);",
-        "vec2 m = gl_PointCoord - vec2(0.5, 0.5);",
-        "float dist = radius - sqrt(m.x * m.x + m.y * m.y);",
-
-        "float t = 0.0;",
-        "if (dist > border)",
-        "t = 1.0;",
-        "else if (dist > 0.0)",
-        "t = dist / border;",
-
-        "gl_FragColor = mix(color0, color, t);",
-        "}"
-      ].join("\n"),
+      fragmentShaderSource,
       gl.FRAGMENT_SHADER
     );
-
     const program = loadProgram(gl, shaders(vertexShader, fragmentShader));
-
     return program;
   }
 } as WebGLNodeDrawer;
