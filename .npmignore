@@ -1,7 +1,4 @@
-build/*
-!build/sigma.require.js
-!build/sigma.min.js
-!build/plugins/*
+build/temp/*
 test/*
 node_modules/*
 examples/*

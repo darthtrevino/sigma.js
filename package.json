@@ -1,5 +1,5 @@
 {
-  "name": "sigma",
+  "name": "sigma-fork-darthtrevino",
   "version": "1.2.1",
   "description": "A JavaScript library dedicated to graph drawing.",
   "homepage": "http://sigmajs.org",
@@ -19,6 +19,7 @@
     "bundle:dev": "rollup -c",
     "bundle:prod": "env NODE_ENV=production rollup -c",
     "bundle": "run-p bundle:*",
+    "build": "run-s compile bundle",
     "lint": "eslint .",
     "prettify_all": "prettier {src,test,plugins}/**/*.js --write",
     "watch:rollup": "rollup -c -w",
