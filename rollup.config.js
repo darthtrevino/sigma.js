@@ -26,7 +26,6 @@ function library(ns) {
   fs.writeFileSync(
     rootFileName,
     `
-    import sigma from "sigma-fork-darthtrevino";
     if (typeof sigma === "undefined") {
       throw new Error("sigma is not declared");
     }
@@ -35,17 +34,28 @@ function library(ns) {
     `
   );
 
-  return {
-    input: rootFileName,
-    output: {
-      file: `build/plugins/${ns}${qualifier}js`,
-      format: "umd",
-      globals: {
-        sigma: "sigma"
-      }
+  return [
+    {
+      input: rootFileName,
+      output: {
+        file: `build/plugins/${ns}${qualifier}umd.js`,
+        format: "umd",
+        globals: {
+          sigma: "sigma"
+        }
+      },
+      plugins: umdPlugins
     },
-    plugins: umdPlugins
-  };
+    {
+      input: rootFileName,
+      external: ["ms"],
+      output: [
+        { file: `build/plugins/${ns}.cjs${qualifier}js`, format: "cjs" },
+        { file: `build/plugins/${ns}.esm${qualifier}js`, format: "es" }
+      ],
+      plugins: cjsPlugins
+    }
+  ];
 }
 
 export default [
@@ -74,23 +84,23 @@ export default [
     ],
     plugins: cjsPlugins
   },
-  library("sigma.exporters.svg"),
-  library("sigma.layout.noverlap"),
-  library("sigma.layout.forceAtlas2"),
-  library("sigma.neo4j.cypher"),
-  library("sigma.parsers.gexf"),
-  library("sigma.parsers.json"),
-  library("sigma.pathfinding.astar"),
-  library("sigma.plugins.animate"),
-  library("sigma.plugins.dragNodes"),
-  library("sigma.plugins.filter"),
-  library("sigma.plugins.neighborhoods"),
-  library("sigma.plugins.relativeSize"),
-  library("sigma.renderers.customEdgeShapes"),
-  library("sigma.renderers.customShapes"),
-  library("sigma.renderers.edgeDots"),
-  library("sigma.renderers.edgeLabels"),
-  library("sigma.renderers.parallelEdges"),
-  library("sigma.renderers.snapshot"),
-  library("sigma.statistics.HITS")
+  ...library("sigma.exporters.svg"),
+  ...library("sigma.layout.noverlap"),
+  ...library("sigma.layout.forceAtlas2"),
+  ...library("sigma.neo4j.cypher"),
+  ...library("sigma.parsers.gexf"),
+  ...library("sigma.parsers.json"),
+  ...library("sigma.pathfinding.astar"),
+  ...library("sigma.plugins.animate"),
+  ...library("sigma.plugins.dragNodes"),
+  ...library("sigma.plugins.filter"),
+  ...library("sigma.plugins.neighborhoods"),
+  ...library("sigma.plugins.relativeSize"),
+  ...library("sigma.renderers.customEdgeShapes"),
+  ...library("sigma.renderers.customShapes"),
+  ...library("sigma.renderers.edgeDots"),
+  ...library("sigma.renderers.edgeLabels"),
+  ...library("sigma.renderers.parallelEdges"),
+  ...library("sigma.renderers.snapshot"),
+  ...library("sigma.statistics.HITS")
 ];
