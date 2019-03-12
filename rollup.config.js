@@ -8,11 +8,8 @@ const { NODE_ENV: environment } = process.env;
 const isProd = environment === "production";
 const qualifier = isProd ? ".min." : ".";
 
-if (!fs.existsSync("build")) {
-  fs.mkdirSync("build");
-}
 if (!fs.existsSync("build/temp")) {
-  fs.mkdirSync("build/temp");
+  fs.mkdirSync("build/temp", { recursive: true });
 }
 
 const shaderConfig = {};
