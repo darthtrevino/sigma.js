@@ -26,7 +26,7 @@ function library(ns) {
   fs.writeFileSync(
     rootFileName,
     `
-    import sigma from "sigma";
+    import sigma from "sigma-fork-darthtrevino";
     if (typeof sigma === "undefined") {
       throw new Error("sigma is not declared");
     }
