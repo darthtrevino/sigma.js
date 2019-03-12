@@ -53,7 +53,6 @@ function unpackConf(conf: string | HTMLElement | Object): SigmaConfiguration {
     )
       result.renderers = [o];
   }
-  console.log("SIGMA CONFIG", result);
   return result;
 }
 
