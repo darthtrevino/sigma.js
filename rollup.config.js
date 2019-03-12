@@ -47,7 +47,7 @@ function library(ns) {
       plugins: umdPlugins
     },
     {
-      input: rootFileName,
+      input: `lib/plugins/${ns}/index.js`,
       external: ["ms"],
       output: [
         { file: `build/plugins/${ns}.cjs${qualifier}js`, format: "cjs" },
