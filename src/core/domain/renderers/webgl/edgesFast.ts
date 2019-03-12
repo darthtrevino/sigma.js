@@ -6,9 +6,9 @@ import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
 // @ts-ignore
-import vertexShaderSource from "edgesFast.vs";
+import vertexShaderSource from "./shaders/edgesFast.vs";
 // @ts-ignore
-import fragmentShaderSource from "edgesFast.fs";
+import fragmentShaderSource from "./shaders/edgesFast.fs";
 
 /**
  * This edge renderer will display edges as lines with the gl.LINES display

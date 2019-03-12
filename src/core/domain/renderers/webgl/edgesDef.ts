@@ -7,9 +7,9 @@ import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
 // @ts-ignore
-import vertexShaderSource from "edgesDef.vs";
+import vertexShaderSource from "./shaders/edgesDef.vs";
 // @ts-ignore
-import fragmentShaderSource from "edgesDef.fs";
+import fragmentShaderSource from "./shaders/edgesDef.fs";
 
 /**
  * This edge renderer will display edges as lines going from the source node

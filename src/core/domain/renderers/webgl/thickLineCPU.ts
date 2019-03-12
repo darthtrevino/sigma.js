@@ -6,9 +6,9 @@ import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
 // @ts-ignore
-import vertexShaderSource from "thickLineCPU.vs";
+import vertexShaderSource from "./shaders/thickLineCPU.vs";
 // @ts-ignore
-import fragmentShaderSource from "thickLineCPU.fs";
+import fragmentShaderSource from "./shaders/thickLineCPU.fs";
 
 /**
  * This will render edges as thick lines using four points translated

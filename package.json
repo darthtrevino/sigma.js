@@ -19,7 +19,7 @@
     "bundle:dev": "rollup -c",
     "bundle:prod": "env NODE_ENV=production rollup -c",
     "bundle": "run-p bundle:*",
-    "build": "run-s compile copy-shaders bundle",
+    "build": "run-s compile copy_shaders bundle",
     "copy_shaders": "cp -r src/core/domain/renderers/webgl/shaders/ lib/core/domain/renderers/webgl/shaders",
     "lint": "eslint .",
     "prettify_all": "prettier {src,test,plugins}/**/*.js --write",
@@ -63,8 +63,8 @@
     "rimraf": "^2.6.3",
     "rollup": "^1.2.2",
     "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-glslify": "^1.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-shader": "^0.0.3",
     "rollup-plugin-terser": "^4.0.4",
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.3"

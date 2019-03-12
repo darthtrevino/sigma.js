@@ -6,9 +6,9 @@ import { Settings } from "../../classes/Configurable";
 import { shaders } from "./utils";
 
 // @ts-ignore
-import vertexShaderSource from "nodesFast.vs";
+import vertexShaderSource from "./shaders/nodesFast.vs";
 // @ts-ignore
-import fragmentShaderSource from "nodesFast.fs";
+import fragmentShaderSource from "./shaders/nodesFast.fs";
 
 /**
  * This node renderer will display nodes in the fastest way: Nodes are basic

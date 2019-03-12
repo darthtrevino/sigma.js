@@ -5,9 +5,9 @@ import { Node, WebGLNodeDrawer } from "../../../interfaces";
 import { Settings } from "../../classes/Configurable";
 import { shaders } from "./utils";
 // @ts-ignore
-import vertexShaderSource from "nodesDef.vs";
+import vertexShaderSource from "./shaders/nodesDef.vs";
 // @ts-ignore
-import fragmentShaderSource from "nodesDef.fs";
+import fragmentShaderSource from "./shaders/nodesDef.fs";
 
 /**
  * This node renderer will display nodes as discs, shaped in triangles with

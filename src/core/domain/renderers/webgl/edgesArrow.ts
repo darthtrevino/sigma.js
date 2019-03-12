@@ -7,9 +7,9 @@ import { Settings } from "../../classes/Configurable";
 import { getColor, shaders } from "./utils";
 
 // @ts-ignore
-import vertexShaderSource from "edgesArrow.vs";
+import vertexShaderSource from "./shaders/edgesArrow.vs";
 // @ts-ignore
-import fragmentShaderSource from "edgesArrow.fs";
+import fragmentShaderSource from "./shaders/edgesArrow.fs";
 
 /**
  * This edge renderer will display edges as arrows going from the source node
